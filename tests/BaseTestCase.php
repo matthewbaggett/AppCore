@@ -4,7 +4,7 @@ namespace Segura\AppCore\Test;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
-use Zenderator\Db;
+use Segura\AppCore\Db;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
