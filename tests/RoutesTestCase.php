@@ -40,7 +40,9 @@ abstract class RoutesTestCase extends BaseTestCase
         } else {
             require(APP_ROOT . "/src/Routes.php");
         }
-        require(APP_ROOT . "/src/RoutesExtra.php");
+        if(file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
+            require(APP_ROOT . "/src/RoutesExtra.php");
+        }
 
         $this->waypoint("Loaded Routes");
 
