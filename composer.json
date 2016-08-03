@@ -35,11 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Segura\\AppCore\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
+            "Segura\\AppCore\\": "src",
             "Segura\\AppCore\\Test\\": "tests/"
         }
     }
