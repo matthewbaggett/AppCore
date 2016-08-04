@@ -1,10 +1,10 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
+use Segura\AppCore\Exceptions\TableGatewayException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
-use Segura\AppCore\Exceptions\TableGatewayException;
 
 abstract class CrudController extends Controller
 {

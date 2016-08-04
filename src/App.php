@@ -8,10 +8,10 @@ use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
-use Segura\Session\Session;
-use Slim;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
+use Segura\Session\Session;
+use Slim;
 use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
 
 class App
