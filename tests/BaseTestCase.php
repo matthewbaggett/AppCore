@@ -4,6 +4,7 @@ namespace Segura\AppCore\Test;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
+use Segura\AppCore\App;
 use Segura\AppCore\Db;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
@@ -39,12 +40,14 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             throw new \Exception("You must define AppCoreName in bootstrap.php. This must be the same as the core app container in /src");
         }
         $coreAppName                        = APP_CORE_NAME;
+
         $app                                = $coreAppName::Instance();
         $this->container                    = $app->getContainer();
         $this->container['TestAppInstance'] = function (\Slim\Container $c) use ($app) {
             return $app;
         };
         $this->app = $app;
+        \Kint::dump($coreAppName, get_class($app));
     }
 
     public function setUp()
@@ -111,7 +114,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \Slim\App
+     * @return App
      */
     public function getApp()
     {

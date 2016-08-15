@@ -50,7 +50,7 @@ abstract class RoutesTestCase extends BaseTestCase
          * @var \Slim\App $app
          */
         $this->waypoint("Before App Fetch");
-        $app = $this->getApp();
+        $applicationInstance = $this->getApp();
         $this->waypoint("After App Fetch");
         $calledClass = get_called_class();
 
@@ -63,7 +63,6 @@ abstract class RoutesTestCase extends BaseTestCase
         if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
             require(APP_ROOT . "/src/RoutesExtra.php");
         }
-
         $this->waypoint("Loaded Routes");
 
         $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
@@ -86,6 +85,8 @@ abstract class RoutesTestCase extends BaseTestCase
             $body->write(json_encode($post));
             $body->rewind();
         }
+
+
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
         if ($isJsonRequest) {
             $request = $request->withHeader("Content-type", "application/json");
@@ -93,7 +94,7 @@ abstract class RoutesTestCase extends BaseTestCase
         $this->waypoint("Before Response");
         $response = new Response();
         // Invoke app
-        $app($request, $response);
+        $applicationInstance->getApp()->process($request, $response);
         #echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
         #echo "Response: " . (string) $response->getBody()."\n";
         $this->waypoint("After Response");
