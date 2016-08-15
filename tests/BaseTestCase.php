@@ -47,7 +47,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             return $app;
         };
         $this->app = $app;
-        \Kint::dump($coreAppName, get_class($app));
     }
 
     public function setUp()
