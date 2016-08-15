@@ -12,6 +12,7 @@ abstract class RoutesTestCase extends BaseTestCase
 {
 
     private $defaultEnvironment = [];
+    private $defaultHeaders = [];
 
     public function setUp()
     {
@@ -19,12 +20,20 @@ abstract class RoutesTestCase extends BaseTestCase
             'SCRIPT_NAME'    => '/index.php',
             'RAND'           => rand(0, 100000000),
         ];
+        $this->defaultHeaders = [];
         parent::setUp();
     }
 
     protected function setEnvironmentVariable($key, $value)
     {
         $this->defaultEnvironment[$key] = $value;
+        return $this;
+    }
+
+    protected function setRequestHeader($header, $value)
+    {
+        $this->defaultHeaders[$header] = $value;
+        return $this;
     }
 
     /**
@@ -57,12 +66,13 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $this->waypoint("Loaded Routes");
 
-        $env = Environment::mock(
-            array_merge($this->defaultEnvironment, [
-                'REQUEST_URI'    => $path,
-                'REQUEST_METHOD' => $method,
-            ])
-        );
+        $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
+        $envArray = array_merge($envArray, [
+            'REQUEST_URI'    => $path,
+            'REQUEST_METHOD' => $method,
+        ]);
+
+        $env = Environment::mock($envArray);
         $uri     = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
 
