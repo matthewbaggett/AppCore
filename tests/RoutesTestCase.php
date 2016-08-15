@@ -94,7 +94,7 @@ abstract class RoutesTestCase extends BaseTestCase
         $this->waypoint("Before Response");
         $response = new Response();
         // Invoke app
-        $applicationInstance->getApp()->process($request, $response);
+        $response = $applicationInstance->getApp()->process($request, $response);
         #echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
         #echo "Response: " . (string) $response->getBody()."\n";
         $this->waypoint("After Response");
