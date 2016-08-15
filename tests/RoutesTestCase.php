@@ -11,9 +11,20 @@ use Slim\Http\Uri;
 abstract class RoutesTestCase extends BaseTestCase
 {
 
+    private $defaultEnvironment = [];
+
     public function setUp()
     {
+        $this->defaultEnvironment = [
+            'SCRIPT_NAME'    => '/index.php',
+            'RAND'           => rand(0, 100000000),
+        ];
         parent::setUp();
+    }
+
+    protected function setEnvironmentVariable($key, $value)
+    {
+        $this->defaultEnvironment[$key] = $value;
     }
 
     /**
@@ -47,12 +58,10 @@ abstract class RoutesTestCase extends BaseTestCase
         $this->waypoint("Loaded Routes");
 
         $env = Environment::mock(
-            [
-                'SCRIPT_NAME'    => '/index.php',
+            array_merge($this->defaultEnvironment, [
                 'REQUEST_URI'    => $path,
                 'REQUEST_METHOD' => $method,
-                'RAND'           => rand(0, 100000000),
-            ]
+            ])
         );
         $uri     = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
