@@ -67,14 +67,29 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$startTime = microtime(true);
-        Db::getInstance()->driver->getConnection()->beginTransaction();
+
+        // If MySQL has been configured, begin transaction.
+        $environment = array_merge($_ENV, $_SERVER);
+        if(isset($environment['MYSQL_PORT'])) {
+            Db::getInstance()->driver->getConnection()->beginTransaction();
+        }
+
+        // Continue setup.
         parent::setUpBeforeClass();
     }
 
     public static function tearDownAfterClass()
     {
-        Db::getInstance()->driver->getConnection()->rollback();
+        // If MySQL has been configured, roll back transaction.
+        $environment = array_merge($_ENV, $_SERVER);
+        if(isset($environment['MYSQL_PORT'])) {
+            Db::getInstance()->driver->getConnection()->rollback();
+        }
+
+        // Continue Teardown.
         parent::tearDownAfterClass();
+
+        // If we're in debug mode, show execution time.
         if (self::DEBUG_MODE) {
             $time = microtime(true) - self::$startTime;
             echo "\n" . get_called_class() . ": Took " . number_format($time, 3) . " seconds\n";
