@@ -12,7 +12,7 @@ abstract class RoutesTestCase extends BaseTestCase
 {
 
     private $defaultEnvironment = [];
-    private $defaultHeaders = [];
+    private $defaultHeaders     = [];
 
     public function setUp()
     {
@@ -71,7 +71,7 @@ abstract class RoutesTestCase extends BaseTestCase
             'REQUEST_METHOD' => $method,
         ]);
 
-        $env = Environment::mock($envArray);
+        $env     = Environment::mock($envArray);
         $uri     = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
 
