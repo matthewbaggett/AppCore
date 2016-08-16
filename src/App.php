@@ -200,7 +200,7 @@ class App
             return new Differ();
         };
 
-        if(file_exists(APP_ROOT . "/src/AppContainer.php")) {
+        if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
             require(APP_ROOT . "/src/AppContainer.php");
         }
         if (file_exists(APP_ROOT . "/src/AppContainerExtra.php")) {
@@ -217,7 +217,7 @@ class App
 
     public function loadAllRoutes()
     {
-        if(file_exists(APP_ROOT . "/src/Routes.php")) {
+        if (file_exists(APP_ROOT . "/src/Routes.php")) {
             require(APP_ROOT . "/src/Routes.php");
         }
         if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
