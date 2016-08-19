@@ -18,6 +18,7 @@ abstract class CrudController extends Controller
         return $this->jsonResponse(
             [
                 'Status'                        => 'OKAY',
+                'Action'                        => 'LIST',
                 $this->service->getTermPlural() => $objects,
             ],
             $request,
@@ -33,6 +34,7 @@ abstract class CrudController extends Controller
             return $this->jsonResponse(
                 [
                     'Status'                          => 'OKAY',
+                    'Action'                          => 'GET',
                     $this->service->getTermSingular() => $object,
                 ],
                 $request,
@@ -51,6 +53,7 @@ abstract class CrudController extends Controller
             return $this->jsonResponse(
                 [
                     'Status'                          => 'OKAY',
+                    'Action'                          => 'CREATE',
                     $this->service->getTermSingular() => $object->__toArray(),
                 ],
                 $request,
@@ -69,6 +72,7 @@ abstract class CrudController extends Controller
             return $this->jsonResponse(
                 [
                     'Status'                          => 'OKAY',
+                    'Action'                          => 'DELETE',
                     $this->service->getTermSingular() => $object,
                 ],
                 $request,
