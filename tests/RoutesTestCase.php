@@ -54,6 +54,8 @@ abstract class RoutesTestCase extends BaseTestCase
         $this->waypoint("After App Fetch");
         $calledClass = get_called_class();
 
+        $app = $this->getApp()->getApp();
+
         if (defined("$calledClass")) {
             $modelName = $calledClass::MODEL_NAME;
             require(APP_ROOT . "/src/Routes/{$modelName}Route.php");
@@ -85,7 +87,6 @@ abstract class RoutesTestCase extends BaseTestCase
             $body->write(json_encode($post));
             $body->rewind();
         }
-
 
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
         if ($isJsonRequest) {
