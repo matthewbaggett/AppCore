@@ -56,7 +56,9 @@ abstract class TableGateway extends ZendTableGateway
             return $updatedModel;
         } catch (InvalidQueryException $iqe) {
             throw new InvalidQueryException(
-                "While trying to call " . get_class() . "->save(): ... " . $iqe->getMessage(),
+                "While trying to call " . get_class() . "->save(): ... " .
+                    $iqe->getMessage() . "\n\n" .
+                    substr(var_export($model, true), 0, 1024) . "\n\n",
                 $iqe->getCode(),
                 $iqe
             );
