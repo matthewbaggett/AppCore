@@ -22,8 +22,14 @@ class ApiListController extends Controller
 
         foreach ($routes as $route) {
             /** @var $route Route */
+            if(json_decode($route->getName()) !== null){
+                $routeJson = json_decode($route->getName());
+                $name = $routeJson->name;
+            }else{
+                $name = $route->getName();
+            }
             $displayRoutes[] = [
-                'name'    => $route->getName(),
+                'name'    => $name,
                 'pattern' => $route->getPattern(),
                 'methods' => $route->getMethods()
             ];
