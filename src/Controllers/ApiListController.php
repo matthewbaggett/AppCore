@@ -37,11 +37,16 @@ class ApiListController extends Controller
 
         #!\Kint::dump($displayRoutes);exit;
 
-        $response = $response->getBody()->write($twig->render('api-list.html.twig', [
-            'page_name' => "API Endpoint List",
-            'routes'    => $displayRoutes,
-        ]));
-        
-        return $response;
+        if ($request->getContentType() == "application/json") {
+            return $this->jsonResponse([
+                'Status' => "Okay",
+                'Routes' => $displayRoutes
+            ], $request, $response);
+        } else {
+            return $response->getBody()->write($twig->render('api-list.html.twig', [
+                'page_name' => "API Endpoint List",
+                'routes'    => $displayRoutes,
+            ]));
+        }
     }
 }
