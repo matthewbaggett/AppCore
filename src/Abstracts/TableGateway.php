@@ -99,7 +99,7 @@ abstract class TableGateway extends ZendTableGateway
 
     /**
      * @param array $data
-     * @param null $id
+     * @param null  $id
      *
      * @return int
      */
@@ -109,8 +109,8 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * @param array $data
-     * @param null $where
+     * @param array       $data
+     * @param null        $where
      * @param array|Model $oldData
      *
      * @return int
@@ -123,8 +123,8 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * This method is only supposed to be used by getListAction.
      *
-     * @param null $limit Number to limit to
-     * @param null $order Column to order on
+     * @param null   $limit     Number to limit to
+     * @param null   $order     Column to order on
      * @param string $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
      *
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
@@ -183,7 +183,7 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param array|Select $where
      * @param array|string $order
-     * @param int $offset
+     * @param int          $offset
      *
      * @throws TableGatewayException
      *
@@ -240,7 +240,8 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * Returns an array of all primary keys on the table keyed by the column
+     * Returns an array of all primary keys on the table keyed by the column.
+     *
      * @return array
      */
     public function getHighestPrimaryKey()
@@ -254,14 +255,15 @@ abstract class TableGateway extends ZendTableGateway
                 ->execute()
                 ->current();
 
-            $highestPrimaryKey = !is_null($row) ? $row['max'] : 0;
+            $highestPrimaryKey               = !is_null($row) ? $row['max'] : 0;
             $highestPrimaryKeys[$primaryKey] = $highestPrimaryKey;
         }
         return $highestPrimaryKeys;
     }
 
     /**
-     * Returns an array of all autoincrement keys on the table keyed by the column
+     * Returns an array of all autoincrement keys on the table keyed by the column.
+     *
      * @return array
      */
     public function getHighestAutoincrementKey()
@@ -275,7 +277,7 @@ abstract class TableGateway extends ZendTableGateway
                 ->execute()
                 ->current();
 
-            $highestAutoIncrementKey = !is_null($row) ? $row['max'] : 0;
+            $highestAutoIncrementKey                     = !is_null($row) ? $row['max'] : 0;
             $highestAutoIncrementKeys[$autoIncrementKey] = $highestAutoIncrementKey;
         }
         return $highestAutoIncrementKeys;
@@ -349,7 +351,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getBySelect(Select $select)
     {
         $resultSet = $this->executeSelect($select);
-        $return = [];
+        $return    = [];
         foreach ($resultSet as $result) {
             $return[] = $result;
         }
@@ -364,7 +366,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getBySelectRaw(Select $select)
     {
         $resultSet = $this->executeSelect($select);
-        $return = [];
+        $return    = [];
         while ($result = $resultSet->getDataSource()->current()) {
             $return[] = $result;
             $resultSet->getDataSource()->next();

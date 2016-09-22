@@ -2,17 +2,17 @@
 namespace Segura\AppCore\Controllers;
 
 use Segura\AppCore\Abstracts\Controller;
+use Segura\AppCore\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Route;
-use Segura\AppCore\App;
 
 class ApiListController extends Controller
 {
     public function listAllRoutes(Request $request, Response $response, $args)
     {
         $loader = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
-        $twig = new \Twig_Environment($loader);
+        $twig   = new \Twig_Environment($loader);
 
 
         $router = App::Container()->get("router");
@@ -23,11 +23,11 @@ class ApiListController extends Controller
         foreach ($routes as $route) {
             /** @var $route Route */
             if (json_decode($route->getName()) !== null) {
-                $routeJson = json_decode($route->getName(), true);
+                $routeJson       = json_decode($route->getName(), true);
                 $displayRoutes[] = $routeJson;
             } else {
                 $displayRoutes[] = [
-                    'name' => $route->getName(),
+                    'name'    => $route->getName(),
                     'pattern' => $route->getPattern(),
                     'methods' => $route->getMethods()
                 ];
@@ -45,7 +45,7 @@ class ApiListController extends Controller
         } else {
             return $response->getBody()->write($twig->render('api-list.html.twig', [
                 'page_name' => "API Endpoint List",
-                'routes' => $displayRoutes,
+                'routes'    => $displayRoutes,
             ]));
         }
     }

@@ -12,13 +12,13 @@ abstract class RoutesTestCase extends BaseTestCase
 {
 
     private $defaultEnvironment = [];
-    private $defaultHeaders = [];
+    private $defaultHeaders     = [];
 
     public function setUp()
     {
         $this->defaultEnvironment = [
             'SCRIPT_NAME' => '/index.php',
-            'RAND' => rand(0, 100000000),
+            'RAND'        => rand(0, 100000000),
         ];
         $this->defaultHeaders = [];
         parent::setUp();
@@ -39,8 +39,8 @@ abstract class RoutesTestCase extends BaseTestCase
     /**
      * @param string $method
      * @param string $path
-     * @param array $post
-     * @param bool $isJsonRequest
+     * @param array  $post
+     * @param bool   $isJsonRequest
      *
      * @return Response
      */
@@ -67,17 +67,17 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
         $envArray = array_merge($envArray, [
-            'REQUEST_URI' => $path,
+            'REQUEST_URI'    => $path,
             'REQUEST_METHOD' => $method,
         ]);
 
-        $env = Environment::mock($envArray);
-        $uri = Uri::createFromEnvironment($env);
+        $env     = Environment::mock($envArray);
+        $uri     = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
 
-        $cookies = [];
+        $cookies      = [];
         $serverParams = $env->all();
-        $body = new RequestBody();
+        $body         = new RequestBody();
         if (!is_array($post) && $post != null) {
             $body->write($post);
             $body->rewind();

@@ -32,7 +32,7 @@ class App
     public static function Instance($doNotUseStaticInstance = false)
     {
         if (!self::$instance || $doNotUseStaticInstance === true) {
-            $calledClass = get_called_class();
+            $calledClass    = get_called_class();
             self::$instance = new $calledClass();
         }
         return self::$instance;
@@ -73,8 +73,8 @@ class App
         $this->app = new \Slim\App(
             [
                 'settings' => [
-                    'debug' => true,
-                    'displayErrorDetails' => true,
+                    'debug'                             => true,
+                    'displayErrorDetails'               => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
             ]
@@ -150,7 +150,7 @@ class App
             if (!isset($environment['REDIS_PORT'])) {
                 throw new \Exception("No REDIS_PORT defined in environment variables, cannot connect to Redis!");
             }
-            $redisConfig = parse_url($environment['REDIS_PORT']);
+            $redisConfig  = parse_url($environment['REDIS_PORT']);
             $redisOptions = [];
             if (isset($environment['REDIS_OVERRIDE_HOST'])) {
                 $redisConfig['host'] = $environment['REDIS_OVERRIDE_HOST'];

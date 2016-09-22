@@ -38,9 +38,9 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         if (!defined("APP_CORE_NAME")) {
             throw new \Exception("You must define AppCoreName in bootstrap.php. This must be the same as the core app container in /src");
         }
-        $coreAppName = APP_CORE_NAME;
-        $app = $coreAppName::Instance();
-        $this->container = $app->getContainer();
+        $coreAppName                        = APP_CORE_NAME;
+        $app                                = $coreAppName::Instance();
+        $this->container                    = $app->getContainer();
         $this->container['TestAppInstance'] = function (\Slim\Container $c) use ($app) {
             return $app;
         };
@@ -50,8 +50,8 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->singleTestTime = microtime(true);
-        $this->waypoint_count = 0;
+        $this->singleTestTime     = microtime(true);
+        $this->waypoint_count     = 0;
         $this->waypoint_last_time = $this->singleTestTime;
     }
 
@@ -104,7 +104,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     {
         if (self::DEBUG_MODE) {
             $time_since_last_waypoint = number_format((microtime(true) - $this->waypoint_last_time) * 1000, 2, '.', '');
-            $time_since_begin = number_format((microtime(true) - $this->singleTestTime) * 1000, 2, '.', '');
+            $time_since_begin         = number_format((microtime(true) - $this->singleTestTime) * 1000, 2, '.', '');
             $this->waypoint_count++;
             if ($this->waypoint_count == 1) {
                 echo "\n";

@@ -12,9 +12,9 @@ class Util
      */
     public static function getRecursiveFilesFromDir($path)
     {
-        $files = [];
+        $files             = [];
         $DirectoryIterator = new RecursiveDirectoryIterator($path);
-        $IteratorIterator = new RecursiveIteratorIterator($DirectoryIterator, RecursiveIteratorIterator::SELF_FIRST);
+        $IteratorIterator  = new RecursiveIteratorIterator($DirectoryIterator, RecursiveIteratorIterator::SELF_FIRST);
         foreach ($IteratorIterator as $file) {
             $path = $file->getRealPath();
             if ($file->isFile() && substr($file->getFilename(), 0, 1) !== '.') {
@@ -64,8 +64,8 @@ class Util
      *     )
      * ).
      *
-     * @param array $keys Array of keys to build
-     * @param string $val Value to add to the last nested array
+     * @param array  $keys Array of keys to build
+     * @param string $val  Value to add to the last nested array
      *
      * @return array Multidimensional array
      */
