@@ -7,7 +7,7 @@ class ArrayUniqueTwigExtension extends \Twig_Extension
     {
         return 'ArrayUnique Twig Extension';
     }
-    
+
     public function getFilters()
     {
         $filters = [];
@@ -17,7 +17,7 @@ class ArrayUniqueTwigExtension extends \Twig_Extension
         }
         return $filters;
     }
-    
+
     public function unique($array)
     {
         if (is_array($array)) {

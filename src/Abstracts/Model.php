@@ -44,7 +44,7 @@ abstract class Model implements ModelInterface
         $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
 
         foreach ($data as $key => $value) {
-            $method           = 'set' . $transformer->transform($key);
+            $method = 'set' . $transformer->transform($key);
             $originalProperty = $transformer->transform($key);
 
             // @todo Query $this->getListOfProperties() instead of methods list..
@@ -71,8 +71,8 @@ abstract class Model implements ModelInterface
         $transformer = new CaseTransformer(new Format\StudlyCaps(), new Format\StudlyCaps());
 
         foreach ($this->getListOfProperties() as $property) {
-            $getFunction                               = "get{$property}";
-            $currentValue                              = $this->$getFunction();
+            $getFunction = "get{$property}";
+            $currentValue = $this->$getFunction();
             $array[$transformer->transform($property)] = $currentValue;
         }
 
@@ -88,7 +88,7 @@ abstract class Model implements ModelInterface
     {
         $primaryKeyValues = [];
         foreach ($this->_primary_keys as $primary_key) {
-            $getFunction                    = "get{$primary_key}";
+            $getFunction = "get{$primary_key}";
             $primaryKeyValues[$primary_key] = $this->$getFunction();
         }
         return $primaryKeyValues;
@@ -103,7 +103,7 @@ abstract class Model implements ModelInterface
     {
         $autoIncrementKeyValues = [];
         foreach ($this->_autoincrement_keys as $autoincrement_key) {
-            $getFunction                    = "get{$autoincrement_key}";
+            $getFunction = "get{$autoincrement_key}";
             $autoIncrementKeyValues[$autoincrement_key] = $this->$getFunction();
         }
         return $autoIncrementKeyValues;
@@ -130,7 +130,7 @@ abstract class Model implements ModelInterface
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
     }
-    
+
     public function getListOfProperties()
     {
         throw new \Exception("getListOfProperties in Abstract Model should never be used.");
@@ -149,7 +149,7 @@ abstract class Model implements ModelInterface
      */
     public function getListOfDirtyProperties()
     {
-        $transformer     = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
+        $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
         $dirtyProperties = [];
         foreach ($this->getListOfProperties() as $property) {
             $originalProperty = $transformer->transform($property);
@@ -157,7 +157,7 @@ abstract class Model implements ModelInterface
             if ($this->$property != $this->_original[$originalProperty]) {
                 $dirtyProperties[$property] = [
                     'before' => $this->_original[$originalProperty],
-                    'after'  => $this->$property,
+                    'after' => $this->$property,
                 ];
             }
         }

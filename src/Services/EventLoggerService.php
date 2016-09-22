@@ -11,13 +11,13 @@ class EventLoggerService
     /**
      * These are a duplication of the Monolog levels.
      */
-    const DEBUG     = 100;
-    const INFO      = 200;
-    const NOTICE    = 250;
-    const WARNING   = 300;
-    const ERROR     = 400;
-    const CRITICAL  = 500;
-    const ALERT     = 550;
+    const DEBUG = 100;
+    const INFO = 200;
+    const NOTICE = 250;
+    const WARNING = 300;
+    const ERROR = 400;
+    const CRITICAL = 500;
+    const ALERT = 550;
     const EMERGENCY = 600;
 
     /** @var Logger */
@@ -33,11 +33,11 @@ class EventLoggerService
 
     public function __construct(Logger $logger, Client $redis, Session $session, \TimeAgo $timeAgo, Differ $differ)
     {
-        $this->logger  = $logger;
-        $this->redis   = $redis;
+        $this->logger = $logger;
+        $this->redis = $redis;
         $this->session = $session;
         $this->timeAgo = $timeAgo;
-        $this->differ  = $differ;
+        $this->differ = $differ;
     }
 
     public function log(int $type, string $message, $data = [])
@@ -48,13 +48,13 @@ class EventLoggerService
         $defaultData = [
             ':user' => $user->FirstName . " " . $user->LastName,
         ];
-        $data     = array_merge($defaultData, $data);
+        $data = array_merge($defaultData, $data);
         $jsonBlob = [
             'message' => $message,
-            'data'    => $data,
-            'type'    => $type,
-            'time'    => $time,
-            'host'    => gethostname(),
+            'data' => $data,
+            'type' => $type,
+            'time' => $time,
+            'host' => gethostname(),
             'referer' => $_SERVER['HTTP_REFERER'],
         ];
         $jsonBlob = json_encode($jsonBlob);
@@ -70,17 +70,17 @@ class EventLoggerService
         }
         return $message;
     }
-    
+
     public function getUserHistory()
     {
-        $user          = $this->session->_get("username");
+        $user = $this->session->_get("username");
         $actionHistory = [];
         foreach ($this->redis->lrange("EventsLog:{$user->Username}", 0, 1000) as $actionHistoryItem) {
-            $history                    = json_decode($actionHistoryItem, true);
-            $history['timeago']         = $this->timeAgo->inWords($history['time']);
+            $history = json_decode($actionHistoryItem, true);
+            $history['timeago'] = $this->timeAgo->inWords($history['time']);
             $history['hydratedMessage'] = $this->translate($history['message'], $history['data']);
-            $history['diff']            = $this->differ->diff($history['data'][':before'], $history['data'][':after']);
-            $actionHistory[]            = $history;
+            $history['diff'] = $this->differ->diff($history['data'][':before'], $history['data'][':after']);
+            $actionHistory[] = $history;
         }
         return $actionHistory;
     }

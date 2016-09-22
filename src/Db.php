@@ -11,7 +11,8 @@ class Db
 
     private $pool = null;
 
-    public function __construct(){
+    public function __construct()
+    {
         if ($this->pool == null) {
             $dbConfigs = include APP_ROOT . "/config/mysql.php";
             foreach ($dbConfigs as $name => $dbConfig) {
@@ -29,7 +30,7 @@ class Db
      */
     public function getDatabase($name)
     {
-        if(isset($this->pool[$name])) {
+        if (isset($this->pool[$name])) {
             return $this->pool[$name];
         }
         throw new DbException("No Database connected called {$name}.");
@@ -48,7 +49,7 @@ class Db
      */
     public static function getInstance()
     {
-        if(!self::$instance instanceof Db){
+        if (!self::$instance instanceof Db) {
             self::$instance = new Db();
         }
         return self::$instance;

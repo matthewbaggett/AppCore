@@ -19,11 +19,11 @@ class App
 
     static $instance;
 
-    /** @var \Slim\App  */
+    /** @var \Slim\App */
     protected $app;
     /** @var \Interop\Container\ContainerInterface */
     protected $container;
-    /** @var Logger*/
+    /** @var Logger */
     protected $monolog;
 
     /**
@@ -32,7 +32,7 @@ class App
     public static function Instance($doNotUseStaticInstance = false)
     {
         if (!self::$instance || $doNotUseStaticInstance === true) {
-            $calledClass    = get_called_class();
+            $calledClass = get_called_class();
             self::$instance = new $calledClass();
         }
         return self::$instance;
@@ -73,8 +73,8 @@ class App
         $this->app = new \Slim\App(
             [
                 'settings' => [
-                    'debug'                             => true,
-                    'displayErrorDetails'               => true,
+                    'debug' => true,
+                    'displayErrorDetails' => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
             ]
@@ -91,8 +91,8 @@ class App
             $view = new \Slim\Views\Twig(
                 '../views/',
                 [
-                'cache' => false,
-                'debug' => true
+                    'cache' => false,
+                    'debug' => true
                 ]
             );
 
@@ -103,7 +103,7 @@ class App
                     $c['request']->getUri()
                 )
             );
-            
+
             $view->addExtension(
                 new ArrayUniqueTwigExtension()
             );
@@ -150,7 +150,7 @@ class App
             if (!isset($environment['REDIS_PORT'])) {
                 throw new \Exception("No REDIS_PORT defined in environment variables, cannot connect to Redis!");
             }
-            $redisConfig  = parse_url($environment['REDIS_PORT']);
+            $redisConfig = parse_url($environment['REDIS_PORT']);
             $redisOptions = [];
             if (isset($environment['REDIS_OVERRIDE_HOST'])) {
                 $redisConfig['host'] = $environment['REDIS_OVERRIDE_HOST'];

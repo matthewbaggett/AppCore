@@ -56,8 +56,8 @@ abstract class TableGateway extends ZendTableGateway
         } catch (InvalidQueryException $iqe) {
             throw new InvalidQueryException(
                 "While trying to call " . get_class() . "->save(): ... " .
-                    $iqe->getMessage() . "\n\n" .
-                    substr(var_export($model, true), 0, 1024) . "\n\n",
+                $iqe->getMessage() . "\n\n" .
+                substr(var_export($model, true), 0, 1024) . "\n\n",
                 $iqe->getCode(),
                 $iqe
             );
@@ -99,7 +99,7 @@ abstract class TableGateway extends ZendTableGateway
 
     /**
      * @param array $data
-     * @param null  $id
+     * @param null $id
      *
      * @return int
      */
@@ -109,8 +109,8 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * @param array       $data
-     * @param null        $where
+     * @param array $data
+     * @param null $where
      * @param array|Model $oldData
      *
      * @return int
@@ -123,8 +123,8 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * This method is only supposed to be used by getListAction.
      *
-     * @param null   $limit     Number to limit to
-     * @param null   $order     Column to order on
+     * @param null $limit Number to limit to
+     * @param null $order Column to order on
      * @param string $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
      *
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
@@ -153,7 +153,7 @@ abstract class TableGateway extends ZendTableGateway
             ->columns(['total' => new Expression('COUNT(*)')]);
 
         /* execute the select and extract the total */
-        $row   = $this->getSql()
+        $row = $this->getSql()
             ->prepareStatementForSqlObject($quantifierSelect)
             ->execute()
             ->current();
@@ -183,7 +183,7 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param array|Select $where
      * @param array|string $order
-     * @param int          $offset
+     * @param int $offset
      *
      * @throws TableGatewayException
      *
@@ -195,7 +195,7 @@ abstract class TableGateway extends ZendTableGateway
             $resultSet = $this->selectWith($where);
         } else {
             $resultSet = $this->select(function (Select $select)
-                use ($where, $order, $offset) {
+            use ($where, $order, $offset) {
                 if (!is_null($where)) {
                     $select->where($where);
                 }
@@ -246,7 +246,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getHighestPrimaryKey()
     {
         $highestPrimaryKeys = [];
-        foreach($this->getPrimaryKeys() as $primaryKey) {
+        foreach ($this->getPrimaryKeys() as $primaryKey) {
             $Select = $this->getSql()->select();
             $Select->columns(['max' => new Expression("MAX({$primaryKey})")]);
             $row = $this->getSql()
@@ -267,7 +267,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getHighestAutoincrementKey()
     {
         $highestAutoIncrementKeys = [];
-        foreach($this->getPrimaryKeys() as $autoIncrementKey) {
+        foreach ($this->getPrimaryKeys() as $autoIncrementKey) {
             $Select = $this->getSql()->select();
             $Select->columns(['max' => new Expression("MAX({$autoIncrementKey})")]);
             $row = $this->getSql()
@@ -349,7 +349,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getBySelect(Select $select)
     {
         $resultSet = $this->executeSelect($select);
-        $return    = [];
+        $return = [];
         foreach ($resultSet as $result) {
             $return[] = $result;
         }
@@ -364,7 +364,7 @@ abstract class TableGateway extends ZendTableGateway
     public function getBySelectRaw(Select $select)
     {
         $resultSet = $this->executeSelect($select);
-        $return    = [];
+        $return = [];
         while ($result = $resultSet->getDataSource()->current()) {
             $return[] = $result;
             $resultSet->getDataSource()->next();
