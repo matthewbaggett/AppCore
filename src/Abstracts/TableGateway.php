@@ -11,7 +11,6 @@ use Zend\Db\TableGateway\TableGateway as ZendTableGateway;
 
 abstract class TableGateway extends ZendTableGateway
 {
-    
     protected $model;
 
     /**
@@ -56,7 +55,9 @@ abstract class TableGateway extends ZendTableGateway
             return $updatedModel;
         } catch (InvalidQueryException $iqe) {
             throw new InvalidQueryException(
-                "While trying to call " . get_class() . "->save(): ... " . $iqe->getMessage(),
+                "While trying to call " . get_class() . "->save(): ... " .
+                $iqe->getMessage() . "\n\n" .
+                substr(var_export($model, true), 0, 1024) . "\n\n",
                 $iqe->getCode(),
                 $iqe
             );
@@ -152,7 +153,7 @@ abstract class TableGateway extends ZendTableGateway
             ->columns(['total' => new Expression('COUNT(*)')]);
 
         /* execute the select and extract the total */
-        $row   = $this->getSql()
+        $row = $this->getSql()
             ->prepareStatementForSqlObject($quantifierSelect)
             ->execute()
             ->current();
@@ -194,7 +195,7 @@ abstract class TableGateway extends ZendTableGateway
             $resultSet = $this->selectWith($where);
         } else {
             $resultSet = $this->select(function (Select $select)
- use ($where, $order, $offset) {
+            use ($where, $order, $offset) {
                 if (!is_null($where)) {
                     $select->where($where);
                 }
@@ -222,6 +223,64 @@ abstract class TableGateway extends ZendTableGateway
             ->current();
 
         return !is_null($row) ? $row['total'] : 0;
+    }
+
+    public function getPrimaryKeys()
+    {
+        /** @var Model $oModel */
+        $oModel = $this->getNewMockModelInstance();
+        return array_keys($oModel->getPrimaryKeys());
+    }
+
+    public function getAutoIncrementKeys()
+    {
+        /** @var Model $oModel */
+        $oModel = $this->getNewMockModelInstance();
+        return array_keys($oModel->getAutoIncrementKeys());
+    }
+
+    /**
+     * Returns an array of all primary keys on the table keyed by the column.
+     *
+     * @return array
+     */
+    public function getHighestPrimaryKey()
+    {
+        $highestPrimaryKeys = [];
+        foreach ($this->getPrimaryKeys() as $primaryKey) {
+            $Select = $this->getSql()->select();
+            $Select->columns(['max' => new Expression("MAX({$primaryKey})")]);
+            $row = $this->getSql()
+                ->prepareStatementForSqlObject($Select)
+                ->execute()
+                ->current();
+
+            $highestPrimaryKey               = !is_null($row) ? $row['max'] : 0;
+            $highestPrimaryKeys[$primaryKey] = $highestPrimaryKey;
+        }
+        return $highestPrimaryKeys;
+    }
+
+    /**
+     * Returns an array of all autoincrement keys on the table keyed by the column.
+     *
+     * @return array
+     */
+    public function getHighestAutoincrementKey()
+    {
+        $highestAutoIncrementKeys = [];
+        foreach ($this->getPrimaryKeys() as $autoIncrementKey) {
+            $Select = $this->getSql()->select();
+            $Select->columns(['max' => new Expression("MAX({$autoIncrementKey})")]);
+            $row = $this->getSql()
+                ->prepareStatementForSqlObject($Select)
+                ->execute()
+                ->current();
+
+            $highestAutoIncrementKey                     = !is_null($row) ? $row['max'] : 0;
+            $highestAutoIncrementKeys[$autoIncrementKey] = $highestAutoIncrementKey;
+        }
+        return $highestAutoIncrementKeys;
     }
 
     /**

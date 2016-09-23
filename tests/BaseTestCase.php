@@ -73,7 +73,9 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         // If MySQL has been configured, begin transaction.
         $environment = array_merge($_ENV, $_SERVER);
         if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
-            Db::getInstance()->driver->getConnection()->beginTransaction();
+            foreach (Db::getInstance()->getDatabases() as $database) {
+                $database->driver->getConnection()->beginTransaction();
+            }
         }
 
         // Continue setup.
@@ -85,7 +87,9 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         // If MySQL has been configured, roll back transaction.
         $environment = array_merge($_ENV, $_SERVER);
         if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
-            Db::getInstance()->driver->getConnection()->rollback();
+            foreach (Db::getInstance()->getDatabases() as $database) {
+                $database->driver->getConnection()->rollback();
+            }
         }
 
         // Continue Teardown.

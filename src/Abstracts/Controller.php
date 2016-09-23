@@ -11,7 +11,7 @@ abstract class Controller
     protected $service;
     /** @var bool */
     protected $apiExplorerEnabled = true;
-    
+
     /**
      * @return Service
      */
@@ -61,7 +61,7 @@ abstract class Controller
             $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
             return $response;
         } else {
-            $loader   = new \Twig_Loader_Filesystem(APP_ROOT .  "/views");
+            $loader   = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
             $twig     = new \Twig_Environment($loader);
             $response = $response->getBody()->write($twig->render('api-explorer.html.twig', [
                 'page_name'                => "API Explorer",

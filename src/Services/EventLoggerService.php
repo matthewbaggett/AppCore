@@ -70,7 +70,7 @@ class EventLoggerService
         }
         return $message;
     }
-    
+
     public function getUserHistory()
     {
         $user          = $this->session->_get("username");

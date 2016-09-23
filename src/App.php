@@ -19,11 +19,11 @@ class App
 
     static $instance;
 
-    /** @var \Slim\App  */
+    /** @var \Slim\App */
     protected $app;
     /** @var \Interop\Container\ContainerInterface */
     protected $container;
-    /** @var Logger*/
+    /** @var Logger */
     protected $monolog;
 
     /**
@@ -66,6 +66,9 @@ class App
             throw new \Exception("APP_NAME must be defined in /bootstrap.php");
         }
 
+        // Set UTF-8 as the default encoding for mb_* functions
+        mb_internal_encoding("UTF-8");
+
         // Create Slim app
         $this->app = new \Slim\App(
             [
@@ -88,8 +91,8 @@ class App
             $view = new \Slim\Views\Twig(
                 '../views/',
                 [
-                'cache' => false,
-                'debug' => true
+                    'cache' => false,
+                    'debug' => true
                 ]
             );
 
@@ -100,7 +103,7 @@ class App
                     $c['request']->getUri()
                 )
             );
-            
+
             $view->addExtension(
                 new ArrayUniqueTwigExtension()
             );

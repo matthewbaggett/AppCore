@@ -17,8 +17,8 @@ abstract class RoutesTestCase extends BaseTestCase
     public function setUp()
     {
         $this->defaultEnvironment = [
-            'SCRIPT_NAME'    => '/index.php',
-            'RAND'           => rand(0, 100000000),
+            'SCRIPT_NAME' => '/index.php',
+            'RAND'        => rand(0, 100000000),
         ];
         $this->defaultHeaders = [];
         parent::setUp();

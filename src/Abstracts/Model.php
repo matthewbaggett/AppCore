@@ -8,7 +8,11 @@ use Segura\AppCore\Interfaces\ModelInterface;
 abstract class Model implements ModelInterface
 {
     protected $_primary_keys;
-    
+    protected $_autoincrement_keys;
+
+    protected $_original;
+
+
     public function __construct(array $data = [])
     {
         if ($data) {
@@ -41,7 +45,7 @@ abstract class Model implements ModelInterface
 
         foreach ($data as $key => $value) {
             $method           = 'set' . $transformer->transform($key);
-            $originalProperty = "original_" . $transformer->transform($key);
+            $originalProperty = $transformer->transform($key);
 
             // @todo Query $this->getListOfProperties() instead of methods list..
             if (method_exists($this, $method)) {
@@ -50,7 +54,7 @@ abstract class Model implements ModelInterface
                 }
                 $this->$method($value);
                 #echo "Writing into \$this->{$originalProperty}: exchangeArray\n";
-                $this->$originalProperty = $value;
+                $this->_original[$originalProperty] = $value;
             }
         }
 
@@ -91,6 +95,22 @@ abstract class Model implements ModelInterface
     }
 
     /**
+     * Return autoincrement key values in an associative array.
+     *
+     * @return array
+     */
+    public function getAutoIncrementKeys()
+    {
+        $autoIncrementKeyValues = [];
+        foreach ($this->_autoincrement_keys as $autoincrement_key) {
+            $getFunction                                = "get{$autoincrement_key}";
+            $autoIncrementKeyValues[$autoincrement_key] = $this->$getFunction();
+        }
+        return $autoIncrementKeyValues;
+    }
+
+
+    /**
      * Returns true if the primary key isn't null.
      *
      * @return bool
@@ -110,7 +130,7 @@ abstract class Model implements ModelInterface
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
     }
-    
+
     public function getListOfProperties()
     {
         throw new \Exception("getListOfProperties in Abstract Model should never be used.");
@@ -132,11 +152,11 @@ abstract class Model implements ModelInterface
         $transformer     = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
         $dirtyProperties = [];
         foreach ($this->getListOfProperties() as $property) {
-            $originalProperty = "original_" . $transformer->transform($property);
+            $originalProperty = $transformer->transform($property);
             #echo "Writing into \$this->{$originalProperty}: getListOfDirtyProperties\n";
-            if ($this->$property != $this->$originalProperty) {
+            if ($this->$property != $this->_original[$originalProperty]) {
                 $dirtyProperties[$property] = [
-                    'before' => $this->$originalProperty,
+                    'before' => $this->_original[$originalProperty],
                     'after'  => $this->$property,
                 ];
             }
