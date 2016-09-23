@@ -220,6 +220,7 @@ class App
 
     public function loadAllRoutes()
     {
+        $app = $this->getApp();
         if (file_exists(APP_ROOT . "/src/Routes.php")) {
             require(APP_ROOT . "/src/Routes.php");
         }

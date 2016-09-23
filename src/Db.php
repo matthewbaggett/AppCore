@@ -54,4 +54,8 @@ class Db
         }
         return self::$instance;
     }
+
+    public static function isMySQLConfigured(){
+        return file_exists(APP_ROOT . "/config/mysql.php");
+    }
 }

@@ -4,6 +4,7 @@ namespace Segura\AppCore\Test;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
+use Segura\AppCore\App;
 use Segura\AppCore\Db;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
@@ -36,14 +37,15 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
          * @var \Slim\App $app
          */
         if (!defined("APP_CORE_NAME")) {
-            throw new \Exception("You must define AppCoreName in bootstrap.php. This must be the same as the core app container in /src");
+            throw new \Exception("You must define APP_CORE_NAME in bootstrap.php. This must be the same as the core app container in /src");
         }
         $coreAppName                        = APP_CORE_NAME;
-        $app                                = $coreAppName::Instance();
+        $app                                = $coreAppName::Instance(true);
         $this->container                    = $app->getContainer();
         $this->container['TestAppInstance'] = function (\Slim\Container $c) use ($app) {
             return $app;
         };
+
         $this->app = $app;
     }
 
@@ -70,7 +72,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
         // If MySQL has been configured, begin transaction.
         $environment = array_merge($_ENV, $_SERVER);
-        if (isset($environment['MYSQL_PORT'])) {
+        if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
             foreach (Db::getInstance()->getDatabases() as $database) {
                 $database->driver->getConnection()->beginTransaction();
             }
@@ -84,7 +86,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     {
         // If MySQL has been configured, roll back transaction.
         $environment = array_merge($_ENV, $_SERVER);
-        if (isset($environment['MYSQL_PORT'])) {
+        if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
             foreach (Db::getInstance()->getDatabases() as $database) {
                 $database->driver->getConnection()->rollback();
             }
@@ -133,7 +135,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     /**
      * @return Generator
      */
-    public function getFaker()
+    public static function getFaker()
     {
         if (!self::$faker) {
             self::$faker = FakerFactory::create();

@@ -79,7 +79,9 @@ class EventLoggerService
             $history                    = json_decode($actionHistoryItem, true);
             $history['timeago']         = $this->timeAgo->inWords($history['time']);
             $history['hydratedMessage'] = $this->translate($history['message'], $history['data']);
-            $history['diff']            = $this->differ->diff($history['data'][':before'], $history['data'][':after']);
+            if(isset($history['data'][':before']) && isset($history['data'][':after'])){
+                $history['diff']        = $this->differ->diff($history['data'][':before'], $history['data'][':after']);
+            }
             $actionHistory[]            = $history;
         }
         return $actionHistory;
