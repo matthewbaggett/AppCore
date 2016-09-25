@@ -10,6 +10,7 @@ use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
+use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\Session\Session;
 use Slim;
 use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
@@ -19,11 +20,11 @@ class App
 
     static $instance;
 
-    /** @var \Slim\App */
+    /** @var \Slim\App  */
     protected $app;
     /** @var \Interop\Container\ContainerInterface */
     protected $container;
-    /** @var Logger */
+    /** @var Logger*/
     protected $monolog;
 
     /**
@@ -66,9 +67,6 @@ class App
             throw new \Exception("APP_NAME must be defined in /bootstrap.php");
         }
 
-        // Set UTF-8 as the default encoding for mb_* functions
-        mb_internal_encoding("UTF-8");
-
         // Create Slim app
         $this->app = new \Slim\App(
             [
@@ -91,8 +89,8 @@ class App
             $view = new \Slim\Views\Twig(
                 '../views/',
                 [
-                    'cache' => false,
-                    'debug' => true
+                'cache' => false,
+                'debug' => true
                 ]
             );
 
@@ -106,6 +104,10 @@ class App
 
             $view->addExtension(
                 new ArrayUniqueTwigExtension()
+            );
+
+            $view->addExtension(
+                new FilterAlphanumericOnlyTwigExtension()
             );
 
             // Added Twig_Extension_Debug to enable twig dump() etc.

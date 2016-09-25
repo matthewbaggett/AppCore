@@ -1,29 +1,25 @@
 <?php
 namespace Segura\AppCore\Twig\Extensions;
 
-class ArrayUniqueTwigExtension extends \Twig_Extension
+class FilterAlphanumericOnlyTwigExtension extends \Twig_Extension
 {
     public function getName()
     {
-        return 'ArrayUnique Twig Extension';
+        return 'Filter Alphanumeric Only Twig Extension';
     }
     
     public function getFilters()
     {
         $filters = [];
-        $methods = ['unique'];
+        $methods = ['filteralphaonly'];
         foreach ($methods as $method) {
             $filters[$method] = new \Twig_Filter_Method($this, $method);
         }
         return $filters;
     }
     
-    public function unique($array)
+    public function filteralphaonly($string)
     {
-        if (is_array($array)) {
-            return array_unique($array, SORT_REGULAR);
-        } else {
-            return $array;
-        }
+        return preg_replace("/[^a-z0-9_]+/i", "", $string);
     }
 }
