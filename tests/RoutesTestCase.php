@@ -47,14 +47,15 @@ abstract class RoutesTestCase extends BaseTestCase
     public function request(string $method, string $path, $post = null, $isJsonRequest = true)
     {
         /**
-         * @var \Slim\App $app
+         * @var \Slim\App           $app
+         * @var \Segura\AppCore\App $applicationInstance
          */
         $this->waypoint("Before App Fetch");
         $applicationInstance = $this->getApp();
         $this->waypoint("After App Fetch");
         $calledClass = get_called_class();
 
-        $app = $this->getApp()->getApp();
+        $app = $applicationInstance->getApp();
 
         if (defined("$calledClass")) {
             $modelName = $calledClass::MODEL_NAME;
