@@ -17,12 +17,20 @@ class ApiListController extends Controller
             $json['Status'] = "Okay";
             foreach(Router::Instance()->getRoutes() as $route){
                 $routeArray = [
-                    'name'     => $route->getName(),
-                    'class'    => $route->getClass(),
-                    'function' => $route->getFunction(),
-                    'endpoint' => $route->getHttpEndpoint(),
-                    'method'   => $route->getHttpMethod(),
+                    'name'       => $route->getName(),
+                    'class'      => $route->getClass(),
+                    'function'   => $route->getFunction(),
+                    'endpoint'   => $route->getHttpEndpoint(),
+                    'pattern'    => $route->getRouterPattern(),
+                    'method'     => $route->getHttpMethod(),
+                    'singular'   => $route->getSingular(),
+                    'plural'     => $route->getPlural(),
+                    'properties' => $route->getProperties(),
                 ];
+                if($route->hasExampleEntity()) {
+                    $routeArray['example'] = $route->getExampleEntity();
+                }
+
                 $json['Routes'][] = $routeArray;
             }
             return $this->jsonResponse($json, $request, $response);
