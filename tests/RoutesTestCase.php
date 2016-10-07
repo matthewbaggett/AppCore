@@ -1,6 +1,7 @@
 <?php
 namespace Segura\AppCore\Test;
 
+use Segura\AppCore\Router\Router;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
 use Slim\Http\Request;
@@ -66,6 +67,7 @@ abstract class RoutesTestCase extends BaseTestCase
         if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
             require(APP_ROOT . "/src/RoutesExtra.php");
         }
+        Router::Instance()->populateRoutes($app);
         $this->waypoint("Loaded Routes");
 
         $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);

@@ -22,6 +22,16 @@ class Route {
         return new Route();
     }
 
+    public function getUniqueIdentifier()
+    {
+        return implode(
+            "::",
+            [
+                $this->getHttpMethod(),
+                $this->getRouterPattern()
+            ]
+        );
+    }
     /**
      * @return mixed
      */
@@ -190,7 +200,7 @@ class Route {
     public function populateRoute(App $app){
         return $app->map(
             [$this->getHttpMethod()],
-            $this->getHttpEndpoint(),
+            $this->getRouterPattern(),
             $this->getCallback()
         );
     }
