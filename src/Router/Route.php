@@ -9,9 +9,10 @@ class Route {
     protected $callback;
     protected $class;
     protected $function;
+    protected $template = "callback";
     protected $routerPattern;
     protected $httpEndpoint;
-    protected $httpMethod;
+    protected $httpMethod = "GET";
     protected $singular;
     protected $plural;
     protected $properties;
@@ -20,6 +21,25 @@ class Route {
     public static function Factory()
     {
         return new Route();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @param string $template
+     *
+     * @return Route
+     */
+    public function setTemplate(string $template): Route
+    {
+        $this->template = $template;
+        return $this;
     }
 
     public function getUniqueIdentifier()
@@ -32,6 +52,26 @@ class Route {
             ]
         );
     }
+
+    /**
+     * @return mixed
+     */
+    public function getHttpMethod()
+    {
+        return $this->httpMethod;
+    }
+
+    /**
+     * @param mixed $httpMethod
+     *
+     * @return Route
+     */
+    public function setHttpMethod($httpMethod)
+    {
+        $this->httpMethod = $httpMethod;
+        return $this;
+    }
+
     /**
      * @return mixed
      */
@@ -49,14 +89,6 @@ class Route {
     {
         $this->routerPattern = $routerPattern;
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasExampleEntity()
-    {
-        return $this->exampleEntity != null ? true : false;
     }
 
     /**
@@ -208,19 +240,19 @@ class Route {
     /**
      * @return mixed
      */
-    public function getHttpMethod()
+    public function getCallback()
     {
-        return $this->httpMethod;
+        return $this->callback;
     }
 
     /**
-     * @param mixed $httpMethod
+     * @param mixed $callback
      *
      * @return Route
      */
-    public function setHttpMethod($httpMethod)
+    public function setCallback($callback)
     {
-        $this->httpMethod = $httpMethod;
+        $this->callback = $callback;
         return $this;
     }
 
@@ -240,25 +272,6 @@ class Route {
     public function setHttpEndpoint($httpEndpoint)
     {
         $this->httpEndpoint = $httpEndpoint;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCallback()
-    {
-        return $this->callback;
-    }
-
-    /**
-     * @param mixed $callback
-     *
-     * @return Route
-     */
-    public function setCallback($callback)
-    {
-        $this->callback = $callback;
         return $this;
     }
 

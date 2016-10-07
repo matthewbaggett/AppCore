@@ -19,6 +19,7 @@ class ApiListController extends Controller
                 $routeArray = [
                     'name'       => $route->getName(),
                     'class'      => $route->getClass(),
+                    'template'   => $route->getTemplate(),
                     'function'   => $route->getFunction(),
                     'endpoint'   => $route->getHttpEndpoint(),
                     'pattern'    => $route->getRouterPattern(),
@@ -26,12 +27,10 @@ class ApiListController extends Controller
                     'singular'   => $route->getSingular(),
                     'plural'     => $route->getPlural(),
                     'properties' => $route->getProperties(),
+                    'example'    => $route->getExampleEntity(),
                 ];
-                if($route->hasExampleEntity()) {
-                    $routeArray['example'] = $route->getExampleEntity();
-                }
 
-                $json['Routes'][] = $routeArray;
+                $json['Routes'][] = array_filter($routeArray);
             }
             return $this->jsonResponse($json, $request, $response);
         }else {
