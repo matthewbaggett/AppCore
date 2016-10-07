@@ -39,4 +39,12 @@ class Router {
         return $this;
     }
 
+    /**
+     * @return Route[]
+     */
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
+
 }
