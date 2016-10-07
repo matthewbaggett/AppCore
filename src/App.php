@@ -8,6 +8,7 @@ use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
+use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
@@ -229,6 +230,7 @@ class App
         if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
             require(APP_ROOT . "/src/RoutesExtra.php");
         }
+        Router::Instance()->populateRoutes($app);
         return $this;
     }
 }
