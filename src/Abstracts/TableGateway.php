@@ -303,7 +303,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param $field
      * @param $value
      *
-     * @throws TableGatewayException
+     * @throws TableGatewayRecordNotFoundException
      *
      * @return array|\ArrayObject|null
      */
