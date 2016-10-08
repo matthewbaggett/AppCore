@@ -27,8 +27,10 @@ class Router {
 
     public function populateRoutes(App $app)
     {
-        foreach($this->routes as $route){
-            $route->populateRoute($app);
+        if(count($this->routes) > 0) {
+            foreach ($this->routes as $route) {
+                $route->populateRoute($app);
+            }
         }
         return $app;
     }
