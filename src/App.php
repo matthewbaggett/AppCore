@@ -68,6 +68,10 @@ class App
             throw new \Exception("APP_NAME must be defined in /bootstrap.php");
         }
 
+        if (!defined("APP_START")){
+            define("APP_START", microtime(true));
+        }
+
         // Create Slim app
         $this->app = new \Slim\App(
             [
@@ -88,7 +92,7 @@ class App
         // Register Twig View helper
         $this->container['view'] = function ($c) {
             $view = new \Slim\Views\Twig(
-                '../views/',
+                APP_ROOT . '/views/',
                 [
                 'cache' => false,
                 'debug' => true
