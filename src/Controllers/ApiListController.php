@@ -12,7 +12,7 @@ class ApiListController extends Controller
 {
     public function listAllRoutes(Request $request, Response $response, $args)
     {
-        if ($request->getContentType() == "application/json") {
+        if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";
             foreach(Router::Instance()->getRoutes() as $route){
@@ -28,6 +28,7 @@ class ApiListController extends Controller
                     'plural'     => $route->getPlural(),
                     'properties' => $route->getProperties(),
                     'example'    => $route->getExampleEntity(),
+                    'callbackProperties' => $route->getCallbackProperties(),
                 ];
 
                 $json['Routes'][] = array_filter($routeArray);
@@ -36,7 +37,6 @@ class ApiListController extends Controller
         }else {
             $loader = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
             $twig   = new \Twig_Environment($loader);
-
 
             $router = App::Container()->get("router");
             $routes = $router->getRoutes();

@@ -57,7 +57,11 @@ abstract class Controller
             $json['Extra']['GitVersion'] = trim(file_get_contents(APP_ROOT . "/version.txt"));
         }
         $json['Extra']['TimeExec'] = microtime(true) - APP_START;
-        if (($request->hasHeader('Content-type') && $request->getHeader('Content-type')[0] == 'application/json') || $this->isApiExplorerEnabled() === false) {
+        if (
+            ($request->hasHeader('Content-type') && $request->getHeader('Content-type')[0] == 'application/json')  ||
+            ($request->hasHeader('Accept') && $request->getHeader('Accept')[0] == 'application/json')  ||
+            $this->isApiExplorerEnabled() === false
+        ) {
             $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
             return $response;
         } else {

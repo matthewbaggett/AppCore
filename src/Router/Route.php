@@ -3,7 +3,8 @@ namespace Segura\AppCore\Router;
 
 use Slim\App;
 
-class Route {
+class Route
+{
 
     protected $name;
     protected $callback;
@@ -17,10 +18,45 @@ class Route {
     protected $plural;
     protected $properties;
     protected $exampleEntity;
+    protected $callbackProperties = [];
 
     public static function Factory()
     {
         return new Route();
+    }
+
+    /**
+     * @return array
+     */
+    public function getCallbackProperties(): array
+    {
+        return $this->callbackProperties;
+    }
+
+    /**
+     * @param array $callbackProperties
+     * @return Route
+     */
+    public function setCallbackProperties(array $callbackProperties): Route
+    {
+        $this->callbackProperties = $callbackProperties;
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @param bool $mandatory
+     * @param null $default
+     * @return $this
+     */
+    public function addCallbackProperty($name, $mandatory = false, $default = null)
+    {
+        $this->callbackProperties[$name] = [
+            'name' => $name,
+            'isMandatory' => $mandatory,
+            'default' => $default,
+        ];
+        return $this;
     }
 
     /**
@@ -229,7 +265,8 @@ class Route {
      *
      * @return \Slim\Interfaces\RouteInterface
      */
-    public function populateRoute(App $app){
+    public function populateRoute(App $app)
+    {
         return $app->map(
             [$this->getHttpMethod()],
             $this->getRouterPattern(),
