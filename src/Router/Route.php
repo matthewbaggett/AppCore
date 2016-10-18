@@ -8,9 +8,9 @@ class Route
 
     protected $name;
     protected $callback;
-    protected $class;
-    protected $function;
-    protected $template = "callback";
+    protected $SDKClass;
+    protected $SDKFunction;
+    protected $SDKTemplate = "callback";
     protected $routerPattern;
     protected $httpEndpoint;
     protected $httpMethod = "GET";
@@ -35,6 +35,7 @@ class Route
 
     /**
      * @param array $callbackProperties
+     *
      * @return Route
      */
     public function setCallbackProperties(array $callbackProperties): Route
@@ -47,14 +48,15 @@ class Route
      * @param $name
      * @param bool $mandatory
      * @param null $default
+     *
      * @return $this
      */
     public function addCallbackProperty($name, $mandatory = false, $default = null)
     {
         $this->callbackProperties[$name] = [
-            'name' => $name,
+            'name'        => $name,
             'isMandatory' => $mandatory,
-            'default' => $default,
+            'default'     => $default,
         ];
         return $this;
     }
@@ -62,19 +64,19 @@ class Route
     /**
      * @return string
      */
-    public function getTemplate(): string
+    public function getSDKTemplate(): string
     {
-        return $this->template;
+        return $this->SDKTemplate;
     }
 
     /**
-     * @param string $template
+     * @param string $SDKTemplate
      *
      * @return Route
      */
-    public function setTemplate(string $template): Route
+    public function setSDKTemplate(string $SDKTemplate): Route
     {
-        $this->template = $template;
+        $this->SDKTemplate = $SDKTemplate;
         return $this;
     }
 
@@ -168,28 +170,28 @@ class Route
     /**
      * @return mixed
      */
-    public function getClass()
+    public function getSDKClass()
     {
-        return $this->class;
+        return $this->SDKClass;
     }
 
     /**
-     * @param mixed $class
+     * @param mixed $SDKClass
      *
      * @return Route
      */
-    public function setClass($class)
+    public function setSDKClass($SDKClass)
     {
-        $this->class = $class;
+        $this->SDKClass = $SDKClass;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getFunction()
+    public function getSDKFunction()
     {
-        return $this->function;
+        return $this->SDKFunction;
     }
 
     /**
@@ -197,9 +199,9 @@ class Route
      *
      * @return Route
      */
-    public function setFunction($function)
+    public function setSDKFunction($function)
     {
-        $this->function = $function;
+        $this->SDKFunction = $function;
         return $this;
     }
 
