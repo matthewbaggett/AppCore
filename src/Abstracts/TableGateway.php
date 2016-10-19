@@ -124,18 +124,22 @@ abstract class TableGateway extends ZendTableGateway
      * This method is only supposed to be used by getListAction.
      *
      * @param null   $limit     Number to limit to
+     * @param null   $offset    Offset of limit statement. Is ignored if limit not set.
      * @param null   $order     Column to order on
      * @param string $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
      *
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
      */
-    public function fetchAll($limit = null, $order = null, $direction = Select::ORDER_ASCENDING)
+    public function fetchAll($limit = null, $offset = null, $order = null, $direction = Select::ORDER_ASCENDING)
     {
         /** @var Select $select */
         $select = $this->getSql()->select();
 
         if ($limit !== null && is_numeric($limit)) {
             $select->limit(intval($limit));
+            if($offset !== null && is_numeric($offset)){
+                $select->offset($offset);
+            }
         }
 
         if ($order !== null) {

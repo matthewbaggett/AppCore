@@ -1,6 +1,8 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
+use Segura\AppCore\Exceptions\FilterDecodeException;
+use Segura\AppCore\Filters\Filter;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -86,5 +88,46 @@ abstract class Controller
             $request,
             $response
         );
+    }
+
+    /**
+     * Decide if a request has a filter attached to it.
+     *
+     * @param Request  $request
+     * @param Response $response
+     *
+     * @throws FilterDecodeException
+     *
+     * @return bool
+     */
+    protected function requestHasFilters(Request $request, Response $response)
+    {
+        if($request->hasHeader("filter")){
+            $filterText = $request->getHeader('filter')[0];
+            $decode     = json_decode($filterText);
+            if($decode !== null){
+                return true;
+            }else{
+                throw new FilterDecodeException("Could not decode given filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Parse filters header into filter objects.
+     *
+     * @param Request  $request
+     * @param Response $response
+     *
+     * @return Filter
+     */
+    protected function parseFilters(Request $request, Response $response)
+    {
+        $filter = new Filter();
+        foreach(json_decode($request->getHeader('filter')[0], true) as $property => $value){
+            $filter->$property = $value;
+        }
+        return $filter;
     }
 }

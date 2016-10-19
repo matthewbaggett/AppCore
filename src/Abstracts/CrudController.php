@@ -11,7 +11,17 @@ abstract class CrudController extends Controller
     public function listRequest(Request $request, Response $response, $args)
     {
         $objects = [];
-        foreach ($this->service->getAll() as $object) {
+        if($this->requestHasFilters($request, $response)) {
+            $filterBehaviours = $this->parseFilters($request, $response);
+            $foundObjects     = $this->getService()->getAll(
+                $filterBehaviours->limit,
+                $filterBehaviours->offset
+            );
+        }else{
+            $foundObjects = $this->getService()->getAll();
+        }
+
+        foreach ($foundObjects as $object) {
             $objects[] = $object->__toArray();
         }
 
@@ -29,7 +39,7 @@ abstract class CrudController extends Controller
     public function getRequest(Request $request, Response $response, $args)
     {
         try {
-            $object = $this->service->getById($args['id'])->__toArray();
+            $object = $this->getService()->getById($args['id'])->__toArray();
 
             return $this->jsonResponse(
                 [
@@ -49,7 +59,7 @@ abstract class CrudController extends Controller
     {
         $newObjectArray = $request->getParsedBody();
         try {
-            $object = $this->service->createFromArray($newObjectArray);
+            $object = $this->getService()->createFromArray($newObjectArray);
             return $this->jsonResponse(
                 [
                     'Status'                          => 'OKAY',
@@ -67,7 +77,7 @@ abstract class CrudController extends Controller
     public function deleteRequest(Request $request, Response $response, $args)
     {
         try {
-            $object = $this->service->getById($args['id'])->__toArray();
+            $object = $this->getService()->getById($args['id'])->__toArray();
             $this->service->deleteByID($args['id']);
             return $this->jsonResponse(
                 [
