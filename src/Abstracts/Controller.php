@@ -125,9 +125,8 @@ abstract class Controller
     protected function parseFilters(Request $request, Response $response)
     {
         $filter = new Filter();
-        foreach(json_decode($request->getHeader('Filter')[0], true) as $property => $value){
-            $filter->$property = $value;
-        }
+        $filter->parseFromHeader(json_decode($request->getHeader('Filter')[0], true));
+
         return $filter;
     }
 }

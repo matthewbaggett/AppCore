@@ -3,10 +3,12 @@ namespace Segura\AppCore\Abstracts;
 
 use Segura\AppCore\Exceptions\TableGatewayException;
 use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
+use Segura\AppCore\Filters\FilterCondition;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway as ZendTableGateway;
 
 abstract class TableGateway extends ZendTableGateway
@@ -123,14 +125,21 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * This method is only supposed to be used by getListAction.
      *
-     * @param null   $limit     Number to limit to
-     * @param null   $offset    Offset of limit statement. Is ignored if limit not set.
-     * @param null   $order     Column to order on
+     * @param int    $limit     Number to limit to
+     * @param int    $offset    Offset of limit statement. Is ignored if limit not set.
+     * @param array  $wheres    Array of conditions to filter by.
+     * @param string $order     Column to order on
      * @param string $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
      *
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
      */
-    public function fetchAll($limit = null, $offset = null, $order = null, $direction = Select::ORDER_ASCENDING)
+    public function fetchAll(
+        int $limit = null,
+        int $offset = null,
+        array $wheres = null,
+        string $order = null,
+        string $direction = Select::ORDER_ASCENDING
+    )
     {
         /** @var Select $select */
         $select = $this->getSql()->select();
@@ -139,6 +148,39 @@ abstract class TableGateway extends ZendTableGateway
             $select->limit(intval($limit));
             if($offset !== null && is_numeric($offset)){
                 $select->offset($offset);
+            }
+        }
+        #\Kint::dump($limit, $offset, $wheres, $order, $direction);
+        if($wheres != null) {
+            #var_dump($wheres);exit;
+            #exit;
+            foreach ($wheres as $conditional) {
+                $spec = function(Where $where) use ($conditional){
+                    switch($conditional['condition']){
+                        case FilterCondition::CONDITION_EQUAL:
+                            $where->equalTo($conditional['column'], $conditional['value']);
+                            break;
+                        case FilterCondition::CONDITION_GREATER_THAN:
+                            $where->greaterThan($conditional['column'], $conditional['value']);
+                            break;
+                        case FilterCondition::CONDITION_GREATER_THAN_OR_EQUAL:
+                            $where->greaterThanOrEqualTo($conditional['column'], $conditional['value']);
+                            break;
+                        case FilterCondition::CONDITION_LESS_THAN:
+                            $where->lessThan($conditional['column'], $conditional['value']);
+                            break;
+                        case FilterCondition::CONDITION_LESS_THAN_OR_EQUAL:
+                            $where->lessThanOrEqualTo($conditional['column'], $conditional['value']);
+                            break;#
+                        case FilterCondition::CONDITION_LIKE:
+                            $where->like($conditional['column'], $conditional['value']);
+                            break;
+                        default:
+                            // @todo better exception plz.
+                            throw new \Exception("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
+                    }
+                };
+                $select->where($spec);
             }
         }
 

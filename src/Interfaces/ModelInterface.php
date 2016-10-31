@@ -8,4 +8,6 @@ interface ModelInterface
     public function save();
 
     public function destroy();
+
+    public function getListOfProperties();
 }

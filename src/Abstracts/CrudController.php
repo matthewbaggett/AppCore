@@ -1,6 +1,7 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
+use Segura\Api\Services\UnityAppApiKeysService;
 use Segura\AppCore\Exceptions\TableGatewayException;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -11,14 +12,18 @@ abstract class CrudController extends Controller
     public function listRequest(Request $request, Response $response, $args)
     {
         $objects = [];
+        /** @var UnityAppApiKeysService $service */
+        $service = $this->getService();
         if($this->requestHasFilters($request, $response)) {
             $filterBehaviours = $this->parseFilters($request, $response);
-            $foundObjects     = $this->getService()->getAll(
-                $filterBehaviours->limit,
-                $filterBehaviours->offset
+            $foundObjects     = $service->getAll(
+                $filterBehaviours->getLimit(),
+                $filterBehaviours->getOffset(),
+                $filterBehaviours->getWheres(),
+                $filterBehaviours->getOrder()
             );
         }else{
-            $foundObjects = $this->getService()->getAll();
+            $foundObjects = $service->getAll();
         }
 
         foreach ($foundObjects as $object) {
