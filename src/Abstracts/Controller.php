@@ -102,13 +102,13 @@ abstract class Controller
      */
     protected function requestHasFilters(Request $request, Response $response)
     {
-        if($request->hasHeader("filter")){
-            $filterText = $request->getHeader('filter')[0];
+        if($request->hasHeader("Filter")){
+            $filterText = $request->getHeader('Filter')[0];
             $decode     = json_decode($filterText);
             if($decode !== null){
                 return true;
             }else{
-                throw new FilterDecodeException("Could not decode given filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
+                throw new FilterDecodeException("Could not decode given Filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
             }
         }
         return false;
@@ -125,7 +125,7 @@ abstract class Controller
     protected function parseFilters(Request $request, Response $response)
     {
         $filter = new Filter();
-        foreach(json_decode($request->getHeader('filter')[0], true) as $property => $value){
+        foreach(json_decode($request->getHeader('Filter')[0], true) as $property => $value){
             $filter->$property = $value;
         }
         return $filter;
