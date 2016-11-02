@@ -9,10 +9,38 @@ class Filter
     protected $offset;
     protected $wheres;
     protected $order;
+    protected $orderDirection;
 
-    public function parseFromHeader($header){
-        foreach($header as $key => $value){
-            switch($key){
+    /**
+     * @return mixed
+     */
+    public function getOrderDirection()
+    {
+        return $this->orderDirection;
+    }
+
+    /**
+     * @param mixed $orderDirection
+     * @return Filter
+     * @throws FilterDecodeException
+     */
+    public function setOrderDirection($orderDirection)
+    {
+        if(!in_array(strtoupper($orderDirection), ['ASC', 'DESC'])){
+            throw new FilterDecodeException("Failed to decode Filter Order, Direction unknown: {$orderDirection} must be ASC|DESC");
+        }
+        $this->orderDirection = strtoupper($orderDirection);
+        return $this;
+    }
+
+    /**
+     * @param $header
+     * @throws FilterDecodeException
+     */
+    public function parseFromHeader($header)
+    {
+        foreach ($header as $key => $value) {
+            switch ($key) {
                 case 'limit':
                     $this->setLimit($value);
                     break;
@@ -23,7 +51,7 @@ class Filter
                     $this->setWheres($value);
                     break;
                 case 'order':
-                    $this->setOrder($value);
+                    $this->parseOrder($value);
                     break;
                 default:
                     throw new FilterDecodeException("Failed to decode Filter, unknown key: {$key}");
@@ -105,6 +133,16 @@ class Filter
     {
         $this->order = $order;
         return $this;
+    }
+
+    public function parseOrder($orderArray){
+        if(isset($orderArray['column']) && isset($orderArray['direction'])){
+            $this
+                ->setOrder($orderArray['column'])
+                ->setOrderDirection($orderArray['direction']);
+        }else{
+            throw new FilterDecodeException("Could not find properties 'column' or 'direction' of the order array given.");
+        }
     }
 
 

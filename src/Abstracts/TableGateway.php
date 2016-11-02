@@ -150,7 +150,7 @@ abstract class TableGateway extends ZendTableGateway
                 $select->offset($offset);
             }
         }
-        #\Kint::dump($limit, $offset, $wheres, $order, $direction);
+        //\Kint::dump($limit, $offset, $wheres, $order, $direction);
         if($wheres != null) {
             #var_dump($wheres);exit;
             #exit;

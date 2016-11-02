@@ -20,7 +20,8 @@ abstract class CrudController extends Controller
                 $filterBehaviours->getLimit(),
                 $filterBehaviours->getOffset(),
                 $filterBehaviours->getWheres(),
-                $filterBehaviours->getOrder()
+                $filterBehaviours->getOrder(),
+                $filterBehaviours->getOrderDirection()
             );
         }else{
             $foundObjects = $service->getAll();
