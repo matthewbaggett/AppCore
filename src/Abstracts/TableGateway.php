@@ -361,6 +361,30 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
+     * @param $field
+     * @param $value
+     *
+     * @throws TableGatewayRecordNotFoundException
+     *
+     * @return array|\ArrayObject|null
+     */
+    public function getManyByField($field, $value)
+    {
+        $results = [];
+        $resultSet = $this->select([$field => $value]);
+        if($resultSet->count() == 0){
+                throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+        }else {
+            for ($i = 0; $i < $resultSet->count(); $i++) {
+                $row = $resultSet->current();
+                $results[] = $row;
+                $resultSet->next();
+            }
+        }
+        return $results;
+    }
+
+    /**
      * @param array $primaryKeys
      *
      * @throws TableGatewayException
