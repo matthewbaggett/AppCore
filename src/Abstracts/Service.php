@@ -3,10 +3,9 @@ namespace Segura\AppCore\Abstracts;
 
 abstract class Service
 {
+    abstract public function getNewModelInstance();
 
-    abstract function getNewModelInstance();
+    abstract public function getTermPlural() : string;
 
-    abstract function getTermPlural() : string;
-
-    abstract function getTermSingular() : string;
+    abstract public function getTermSingular() : string;
 }

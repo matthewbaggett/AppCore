@@ -102,12 +102,12 @@ abstract class Controller
      */
     protected function requestHasFilters(Request $request, Response $response)
     {
-        if($request->hasHeader("Filter")){
+        if ($request->hasHeader("Filter")) {
             $filterText = $request->getHeader('Filter')[0];
             $decode     = json_decode($filterText);
-            if($decode !== null){
+            if ($decode !== null) {
                 return true;
-            }else{
+            } else {
                 throw new FilterDecodeException("Could not decode given Filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
             }
         }

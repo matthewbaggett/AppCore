@@ -18,8 +18,7 @@ use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
 
 class App
 {
-
-    static $instance;
+    public static $instance;
 
     /** @var \Slim\App  */
     protected $app;
@@ -68,7 +67,7 @@ class App
             throw new \Exception("APP_NAME must be defined in /bootstrap.php");
         }
 
-        if (!defined("APP_START")){
+        if (!defined("APP_START")) {
             define("APP_START", microtime(true));
         }
 

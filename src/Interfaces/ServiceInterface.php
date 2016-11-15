@@ -23,5 +23,4 @@ interface ServiceInterface
     public function getByField(string $field, $value);
 
     public function getRandom();
-
 }

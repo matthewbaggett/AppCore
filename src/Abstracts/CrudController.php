@@ -14,7 +14,7 @@ abstract class CrudController extends Controller
         $objects = [];
         /** @var UnityAppApiKeysService $service */
         $service = $this->getService();
-        if($this->requestHasFilters($request, $response)) {
+        if ($this->requestHasFilters($request, $response)) {
             $filterBehaviours = $this->parseFilters($request, $response);
             $foundObjects     = $service->getAll(
                 $filterBehaviours->getLimit(),
@@ -23,7 +23,7 @@ abstract class CrudController extends Controller
                 $filterBehaviours->getOrder(),
                 $filterBehaviours->getOrderDirection()
             );
-        }else{
+        } else {
             $foundObjects = $service->getAll();
         }
 

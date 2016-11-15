@@ -5,7 +5,6 @@ use Slim\App;
 
 class Route
 {
-
     protected $name;
     protected $callback;
     protected $SDKClass;
@@ -313,5 +312,4 @@ class Route
         $this->httpEndpoint = $httpEndpoint;
         return $this;
     }
-
 }

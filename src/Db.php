@@ -7,7 +7,7 @@ use Zend\Db\Adapter\Adapter;
 
 class Db
 {
-    static private $instance;
+    private static $instance;
 
     private $pool = null;
 
@@ -55,7 +55,8 @@ class Db
         return self::$instance;
     }
 
-    public static function isMySQLConfigured(){
+    public static function isMySQLConfigured()
+    {
         return file_exists(APP_ROOT . "/config/mysql.php");
     }
 }

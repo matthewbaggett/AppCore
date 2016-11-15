@@ -15,7 +15,7 @@ class ApiListController extends Controller
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";
-            foreach(Router::Instance()->getRoutes() as $route){
+            foreach (Router::Instance()->getRoutes() as $route) {
                 $routeArray = [
                     'name'               => $route->getName(),
                     'class'              => $route->getSDKClass(),
@@ -34,7 +34,7 @@ class ApiListController extends Controller
                 $json['Routes'][] = array_filter($routeArray);
             }
             return $this->jsonResponse($json, $request, $response);
-        }else {
+        } else {
             $loader = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
             $twig   = new \Twig_Environment($loader);
 
@@ -57,7 +57,6 @@ class ApiListController extends Controller
                         'methods' => $route->getMethods()
                     ];
                 }
-
             }
 
             #!\Kint::dump($displayRoutes);exit;
@@ -66,7 +65,6 @@ class ApiListController extends Controller
                 'page_name' => "API Endpoint List",
                 'routes'    => $displayRoutes,
             ]));
-
         }
     }
 }

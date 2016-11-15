@@ -139,24 +139,23 @@ abstract class TableGateway extends ZendTableGateway
         array $wheres = null,
         string $order = null,
         string $direction = Select::ORDER_ASCENDING
-    )
-    {
+    ) {
         /** @var Select $select */
         $select = $this->getSql()->select();
 
         if ($limit !== null && is_numeric($limit)) {
             $select->limit(intval($limit));
-            if($offset !== null && is_numeric($offset)){
+            if ($offset !== null && is_numeric($offset)) {
                 $select->offset($offset);
             }
         }
         //\Kint::dump($limit, $offset, $wheres, $order, $direction);
-        if($wheres != null) {
+        if ($wheres != null) {
             #var_dump($wheres);exit;
             #exit;
             foreach ($wheres as $conditional) {
-                $spec = function(Where $where) use ($conditional){
-                    switch($conditional['condition']){
+                $spec = function (Where $where) use ($conditional) {
+                    switch ($conditional['condition']) {
                         case FilterCondition::CONDITION_EQUAL:
                             $where->equalTo($conditional['column'], $conditional['value']);
                             break;
@@ -240,8 +239,7 @@ abstract class TableGateway extends ZendTableGateway
         if ($where instanceof Select) {
             $resultSet = $this->selectWith($where);
         } else {
-            $resultSet = $this->select(function (Select $select)
-            use ($where, $order, $offset) {
+            $resultSet = $this->select(function (Select $select) use ($where, $order, $offset) {
                 if (!is_null($where)) {
                     $select->where($where);
                 }

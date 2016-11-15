@@ -3,9 +3,9 @@ namespace Segura\AppCore\Router;
 
 use Slim\App;
 
-class Router {
-
-    static protected $instance;
+class Router
+{
+    protected static $instance;
 
     /** @var Route[] */
     protected $routes;
@@ -19,7 +19,7 @@ class Router {
      */
     public static function Instance()
     {
-        if( ! self::$instance instanceof Router){
+        if (! self::$instance instanceof Router) {
             self::$instance = new Router;
         }
         return self::$instance;
@@ -27,7 +27,7 @@ class Router {
 
     public function populateRoutes(App $app)
     {
-        if(count($this->routes) > 0) {
+        if (count($this->routes) > 0) {
             foreach ($this->routes as $route) {
                 $route->populateRoute($app);
             }
@@ -48,5 +48,4 @@ class Router {
     {
         return $this->routes;
     }
-
 }

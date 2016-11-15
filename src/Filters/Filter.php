@@ -21,12 +21,14 @@ class Filter
 
     /**
      * @param mixed $orderDirection
-     * @return Filter
+     *
      * @throws FilterDecodeException
+     *
+     * @return Filter
      */
     public function setOrderDirection($orderDirection)
     {
-        if(!in_array(strtoupper($orderDirection), ['ASC', 'DESC'])){
+        if (!in_array(strtoupper($orderDirection), ['ASC', 'DESC'])) {
             throw new FilterDecodeException("Failed to decode Filter Order, Direction unknown: {$orderDirection} must be ASC|DESC");
         }
         $this->orderDirection = strtoupper($orderDirection);
@@ -35,6 +37,7 @@ class Filter
 
     /**
      * @param $header
+     *
      * @throws FilterDecodeException
      */
     public function parseFromHeader($header)
@@ -135,15 +138,14 @@ class Filter
         return $this;
     }
 
-    public function parseOrder($orderArray){
-        if(isset($orderArray['column']) && isset($orderArray['direction'])){
+    public function parseOrder($orderArray)
+    {
+        if (isset($orderArray['column']) && isset($orderArray['direction'])) {
             $this
                 ->setOrder($orderArray['column'])
                 ->setOrderDirection($orderArray['direction']);
-        }else{
+        } else {
             throw new FilterDecodeException("Could not find properties 'column' or 'direction' of the order array given.");
         }
     }
-
-
 }

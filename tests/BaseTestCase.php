@@ -20,7 +20,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 
     private $container;
 
-    static private $startTime;
+    private static $startTime;
 
     private $singleTestTime;
 
