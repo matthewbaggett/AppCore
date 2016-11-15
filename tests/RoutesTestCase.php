@@ -11,15 +11,14 @@ use Slim\Http\Uri;
 
 abstract class RoutesTestCase extends BaseTestCase
 {
-
     private $defaultEnvironment = [];
-    private $defaultHeaders     = [];
+    private $defaultHeaders = [];
 
     public function setUp()
     {
         $this->defaultEnvironment = [
             'SCRIPT_NAME' => '/index.php',
-            'RAND'        => rand(0, 100000000),
+            'RAND' => rand(0, 100000000),
         ];
         $this->defaultHeaders = [];
         parent::setUp();
@@ -60,9 +59,13 @@ abstract class RoutesTestCase extends BaseTestCase
 
         if (defined("$calledClass")) {
             $modelName = $calledClass::MODEL_NAME;
-            require(APP_ROOT . "/src/Routes/{$modelName}Route.php");
+            if(file_exists(APP_ROOT . "/src/Routes/{$modelName}Route.php")) {
+                require(APP_ROOT . "/src/Routes/{$modelName}Route.php");
+            }
         } else {
-            require(APP_ROOT . "/src/Routes.php");
+            if(file_exists(APP_ROOT . "/src/Routes.php")) {
+                require(APP_ROOT . "/src/Routes.php");
+            }
         }
         if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
             require(APP_ROOT . "/src/RoutesExtra.php");
@@ -72,17 +75,17 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
         $envArray = array_merge($envArray, [
-            'REQUEST_URI'    => $path,
+            'REQUEST_URI' => $path,
             'REQUEST_METHOD' => $method,
         ]);
 
-        $env     = Environment::mock($envArray);
-        $uri     = Uri::createFromEnvironment($env);
+        $env = Environment::mock($envArray);
+        $uri = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
 
-        $cookies      = [];
+        $cookies = [];
         $serverParams = $env->all();
-        $body         = new RequestBody();
+        $body = new RequestBody();
         if (!is_array($post) && $post != null) {
             $body->write($post);
             $body->rewind();
