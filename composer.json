@@ -20,7 +20,8 @@
         "predis/predis": "^1.0",
         "jimmiw/php-time-ago": "^0.4.11",
         "sebastian/diff": "^1.4",
-        "guzzlehttp/guzzle": "^6.2.1"
+        "guzzlehttp/guzzle": "^6.2.1",
+        "intouch/newrelic": "^1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "dev-master",
