@@ -346,14 +346,26 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param $field
      * @param $value
+     * @param $orderBy string Field to sort by
+     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @throws TableGatewayRecordNotFoundException
      *
      * @return array|\ArrayObject|null
      */
-    public function getByField($field, $value)
+    public function getByField($field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
-        $row = $this->select([$field => $value])->current();
+        $select = $this->sql->select();
+
+        $select->where([$field => $value]);
+        if($orderBy){
+            $select->order("{$orderBy} {$orderDirection}");
+        }
+        $select->limit(1);
+
+        $resultSet = $this->selectWith($select);
+
+        $row = $resultSet->current();
         if (!$row) {
             throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
         }
@@ -363,15 +375,25 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param $field
      * @param $value
+     * @param $orderBy string Field to sort by
+     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @throws TableGatewayRecordNotFoundException
      *
      * @return array|\ArrayObject|null
      */
-    public function getManyByField($field, $value)
+    public function getManyByField($field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
+        $select = $this->sql->select();
+
+        $select->where([$field => $value]);
+        if($orderBy){
+            $select->order("{$orderBy} {$orderDirection}");
+        }
+
+        $resultSet = $this->selectWith($select);
+
         $results = [];
-        $resultSet = $this->select([$field => $value]);
         if($resultSet->count() == 0){
                 throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
         }else {
