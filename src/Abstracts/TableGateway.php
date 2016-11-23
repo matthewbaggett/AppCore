@@ -358,7 +358,7 @@ abstract class TableGateway extends ZendTableGateway
         $select = $this->sql->select();
 
         $select->where([$field => $value]);
-        if($orderBy){
+        if ($orderBy) {
             $select->order("{$orderBy} {$orderDirection}");
         }
         $select->limit(1);
@@ -387,18 +387,18 @@ abstract class TableGateway extends ZendTableGateway
         $select = $this->sql->select();
 
         $select->where([$field => $value]);
-        if($orderBy){
+        if ($orderBy) {
             $select->order("{$orderBy} {$orderDirection}");
         }
 
         $resultSet = $this->selectWith($select);
 
         $results = [];
-        if($resultSet->count() == 0){
-                throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
-        }else {
+        if ($resultSet->count() == 0) {
+            throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+        } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
-                $row = $resultSet->current();
+                $row       = $resultSet->current();
                 $results[] = $row;
                 $resultSet->next();
             }
