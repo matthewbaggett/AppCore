@@ -157,9 +157,9 @@ class App
             // Determine where Redis is.
             if (isset($environment['REDIS_PORT'])) {
                 $redisConfig = parse_url($environment['REDIS_PORT']);
-            }elseif(isset($environment['REDIS_HOST'])){
+            } elseif (isset($environment['REDIS_HOST'])) {
                 $redisConfig = parse_url($environment['REDIS_HOST']);
-            }else{
+            } else {
                 throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
             }
 
@@ -224,7 +224,6 @@ class App
         }
 
         $this->monolog = $this->getContainer()->get('MonoLog');
-
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)
