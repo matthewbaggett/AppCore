@@ -51,6 +51,7 @@ class EnvironmentHeadersOnResponse{
                     'json'                     => $json,
                     'json_pretty_printed_rows' => explode("\n", json_encode($json, JSON_PRETTY_PRINT)),
                 ]));
+                $response = $response->withHeader("Content-type", "text/html");
             }
         }
 
