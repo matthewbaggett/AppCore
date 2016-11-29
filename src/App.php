@@ -8,6 +8,7 @@ use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
+use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
 use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
@@ -82,8 +83,9 @@ class App
             ]
         );
 
-        // Add whoops to slim because its helps debuggin' and is pretty.
+        // Middlewares
         $this->app->add(new WhoopsMiddleware());
+        $this->app->add(new EnvironmentHeadersOnResponse());
 
         // Fetch DI Container
         $this->container = $this->app->getContainer();
@@ -222,6 +224,7 @@ class App
         }
 
         $this->monolog = $this->getContainer()->get('MonoLog');
+
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)
