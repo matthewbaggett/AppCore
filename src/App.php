@@ -152,11 +152,16 @@ class App
             // Get environment variables.
             $environment = $this->getContainer()->get('Environment');
 
-            // Set up Redis.
-            if (!isset($environment['REDIS_PORT'])) {
-                throw new \Exception("No REDIS_PORT defined in environment variables, cannot connect to Redis!");
+            // Determine where Redis is.
+            if (isset($environment['REDIS_PORT'])) {
+                $redisConfig = parse_url($environment['REDIS_PORT']);
+            }elseif(isset($environment['REDIS_HOST'])){
+                $redisConfig = parse_url($environment['REDIS_HOST']);
+            }else{
+                throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
             }
-            $redisConfig  = parse_url($environment['REDIS_PORT']);
+
+            // Create Redis options array.
             $redisOptions = [];
             if (isset($environment['REDIS_OVERRIDE_HOST'])) {
                 $redisConfig['host'] = $environment['REDIS_OVERRIDE_HOST'];
