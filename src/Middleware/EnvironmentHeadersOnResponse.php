@@ -9,7 +9,6 @@ class EnvironmentHeadersOnResponse
 {
     protected $apiExplorerEnabled = true;
 
-
     public function __invoke(Request $request, Response $response, $next)
     {
         /** @var Response $response */
@@ -29,10 +28,12 @@ class EnvironmentHeadersOnResponse
                 ]
             ]);
 
-            if (strtolower($json['Status']) != "okay") {
-                $response = $response->withStatus(400);
-            } else {
-                $response = $response->withStatus(200);
+            if(isset($json['Status'])) {
+                if (strtolower($json['Status']) != "okay") {
+                    $response = $response->withStatus(400);
+                } else {
+                    $response = $response->withStatus(200);
+                }
             }
 
             if (
