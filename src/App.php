@@ -9,6 +9,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
+use Segura\AppCore\Monolog\LumberjackHandler;
 use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
@@ -21,11 +22,11 @@ class App
 {
     public static $instance;
 
-    /** @var \Slim\App  */
+    /** @var \Slim\App */
     protected $app;
     /** @var \Interop\Container\ContainerInterface */
     protected $container;
-    /** @var Logger*/
+    /** @var Logger */
     protected $monolog;
 
     /**
@@ -34,7 +35,7 @@ class App
     public static function Instance($doNotUseStaticInstance = false)
     {
         if (!self::$instance || $doNotUseStaticInstance === true) {
-            $calledClass    = get_called_class();
+            $calledClass = get_called_class();
             self::$instance = new $calledClass();
         }
         return self::$instance;
@@ -76,8 +77,8 @@ class App
         $this->app = new \Slim\App(
             [
                 'settings' => [
-                    'debug'                             => true,
-                    'displayErrorDetails'               => true,
+                    'debug' => true,
+                    'displayErrorDetails' => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
             ]
@@ -95,8 +96,8 @@ class App
             $view = new \Slim\Views\Twig(
                 APP_ROOT . '/views/',
                 [
-                'cache' => false,
-                'debug' => true
+                    'cache' => false,
+                    'debug' => true
                 ]
             );
 
@@ -179,10 +180,14 @@ class App
 
         $this->container['MonoLog'] = function (Slim\Container $c) {
             $environment = $this->getContainer()->get('Environment');
+
             // Set up Monolog
             $monolog = new Logger(APP_NAME);
             $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . APP_NAME . "." . date("Y-m-d") . ".log", Logger::WARNING));
             $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", Logger::DEBUG));
+            if (isset($environment['LUMBERJACK_HOST'])) {
+                $monolog->pushHandler(new LumberjackHandler(rtrim($environment['LUMBERJACK_HOST'], "/") . "/v1/log", $environment['LUMBERJACK_API_KEY']));
+            }
             if (isset($environment['SLACK_TOKEN']) && isset($environment['SLACK_CHANNEL'])) {
                 $monolog->pushHandler(
                     new SlackHandler(
