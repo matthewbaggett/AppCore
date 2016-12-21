@@ -35,7 +35,7 @@ class App
     public static function Instance($doNotUseStaticInstance = false)
     {
         if (!self::$instance || $doNotUseStaticInstance === true) {
-            $calledClass = get_called_class();
+            $calledClass    = get_called_class();
             self::$instance = new $calledClass();
         }
         return self::$instance;
@@ -77,8 +77,8 @@ class App
         $this->app = new \Slim\App(
             [
                 'settings' => [
-                    'debug' => true,
-                    'displayErrorDetails' => true,
+                    'debug'                             => true,
+                    'displayErrorDetails'               => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
             ]
