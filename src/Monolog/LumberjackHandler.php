@@ -2,11 +2,11 @@
 
 namespace Segura\AppCore\Monolog;
 
-use Monolog\Logger;
-use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Formatter\JsonFormatter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Monolog\Formatter\JsonFormatter;
+use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Logger;
 
 class LumberjackHandler extends AbstractProcessingHandler
 {
@@ -47,7 +47,7 @@ class LumberjackHandler extends AbstractProcessingHandler
                 'PUT',
                 $this->url,
                 [
-                    'Accept' => 'application/json',
+                    'Accept'       => 'application/json',
                     'Content-Type' => 'application/json'
                 ],
                 json_encode($json)
