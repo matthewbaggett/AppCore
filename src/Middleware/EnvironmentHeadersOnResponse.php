@@ -28,7 +28,7 @@ class EnvironmentHeadersOnResponse
                 ]
             ]);
 
-            if(isset($json['Status'])) {
+            if (isset($json['Status'])) {
                 if (strtolower($json['Status']) != "okay") {
                     $response = $response->withStatus(400);
                 } else {
