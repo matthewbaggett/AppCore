@@ -12,7 +12,6 @@ abstract class CrudController extends Controller
     public function listRequest(Request $request, Response $response, $args)
     {
         $objects = [];
-        /** @var UnityAppApiKeysService $service */
         $service = $this->getService();
         if ($this->requestHasFilters($request, $response)) {
             $filterBehaviours = $this->parseFilters($request, $response);
