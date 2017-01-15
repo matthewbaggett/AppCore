@@ -234,7 +234,7 @@ class App
                 $redisConfig['port'] = $environment->get('REDIS_OVERRIDE_PORT');
             }
             if ($environment->isSet('REDIS_PREFIX')) {
-                $redisOptions['prefix'] = $environment->get('REDIS_PREFIX');
+                $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
             }
             return new \Predis\Client($redisConfig, $redisOptions);
         };

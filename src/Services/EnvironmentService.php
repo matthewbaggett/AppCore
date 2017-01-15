@@ -31,7 +31,6 @@ class EnvironmentService{
 
         ksort($this->environmentVariables);
 
-        die("arse");
     }
 
     /**
