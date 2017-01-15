@@ -1,10 +1,8 @@
 <?php
 namespace Segura\AppCore\Services;
 
-use Monolog\Logger;
-use Predis\Client;
-use SebastianBergmann\Diff\Differ;
-use Segura\Session\Session;
+use Predis\Client as RedisClient;
+use Symfony\Component\Yaml\Yaml;
 
 class EnvironmentService{
 
@@ -14,21 +12,25 @@ class EnvironmentService{
     /** @var AutoConfigurationService */
     protected $autoConfigurationService;
 
-    public function __construct(AutoConfigurationService $autoConfigurationService)
+    protected $cacheFile = "/tmp/.configcache.yml";
+
+    public function __construct(
+        AutoConfigurationService $autoConfigurationService
+    )
     {
+        if(file_exists($this->cacheFile)){
+            $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
+        }else {
+            $this->autoConfigurationService = $autoConfigurationService;
+            $this->autoConfigurationService->setEnvironmentService($this);
 
-        $this->autoConfigurationService = $autoConfigurationService;
-        $this->autoConfigurationService->setEnvironmentService($this);
-
-        foreach(array_merge($_SERVER, $_ENV) as $key => $value){
-            $this->environmentVariables[$key] = $value;
+            foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
+                $this->environmentVariables[$key] = $value;
+            }
+            $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+            $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
+            file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
-        ksort($this->environmentVariables);
-
-        $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-
-        $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
-
         ksort($this->environmentVariables);
 
     }
