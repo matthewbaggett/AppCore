@@ -152,13 +152,13 @@ class App
                 }
 
                 $databaseConfiguration['Default'] = [
-                    'driver' => 'Pdo_Mysql',
+                    'driver'   => 'Pdo_Mysql',
                     'hostname' => $databaseConfigurationHost['host'],
-                    'port' => $databaseConfigurationHost['port'],
+                    'port'     => $databaseConfigurationHost['port'],
                     'username' => $environment->isSet('MYSQL_USERNAME') ? $environment->get('MYSQL_USERNAME') : $environment->get('MYSQL_ENV_MYSQL_USER'),
                     'password' => $environment->isSet('MYSQL_PASSWORD') ? $environment->get('MYSQL_PASSWORD') : $environment->get('MYSQL_ENV_MYSQL_PASSWORD'),
                     'database' => $environment->isSet('MYSQL_DATABASE') ? $environment->get('MYSQL_DATABASE') : $environment->get('MYSQL_ENV_MYSQL_DATABASE'),
-                    'charset' => "UTF8"
+                    'charset'  => "UTF8"
                 ];
 
                 return $databaseConfiguration;
