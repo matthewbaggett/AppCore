@@ -167,7 +167,9 @@ class App
         };
 
         $this->container['DatabaseInstance'] = function (Slim\Container $c) {
-            return Db::getInstance();
+            return Db::getInstance(
+                $c->get('DatabaseConfig')
+            );
         };
 
         $this->container['Faker'] = function (Slim\Container $c) {

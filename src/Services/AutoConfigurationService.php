@@ -1,9 +1,11 @@
 <?php
 namespace Segura\AppCore\Services;
 
+use GuzzleHttp\Exception\ClientException;
 use Monolog\Logger;
 use Predis\Client;
 use SebastianBergmann\Diff\Differ;
+use Segura\AppCore\Exceptions\AutoConfigurationException;
 use Segura\Session\Session;
 
 class AutoConfigurationService
@@ -39,12 +41,28 @@ class AutoConfigurationService
     public function getConfiguration()
     {
         $getConfigurationUrl = $this->environmentService->get("GONDALEZ_HOST") . "/v1/whoami/" . $this->environmentService->get("GONDALEZ_API_KEY");
-        $response = $this->guzzleClient->get($getConfigurationUrl);
-        \Kint::dump(
-            $getConfigurationUrl,
-            $response->getStatusCode(),
-            $response->getBody()->getContents()
-        );
-        exit;
+        try {
+            $response = $this->guzzleClient->get(
+                $getConfigurationUrl,
+                [
+                    "headers" => [
+                        "Accept" => "application/json"
+                    ]
+                ]
+            );
+        }catch(ClientException $clientException){
+            throw new AutoConfigurationException("Cannot connect to Gondalez. Got status code \"{$clientException->getResponse()->getStatusCode()}\" . Got guzzle client exception: {$clientException->getMessage()}");
+        }
+        if($response->getStatusCode() !== 200){
+            throw new AutoConfigurationException("Cannot connect to Gondalez. Got status code \"{$response->getStatusCode()}\"");
+        }
+        $responseBody = $response->getBody()->getContents();
+        return $this->parseConfiguration($responseBody);
+    }
+
+    private function parseConfiguration($responseBody)
+    {
+        $json = json_decode($responseBody, true);
+        return $json['Service']['Config'];
     }
 }

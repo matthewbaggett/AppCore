@@ -3,6 +3,7 @@
 namespace Segura\AppCore;
 
 use Segura\AppCore\Exceptions\DbException;
+use Segura\AppCore\Services\EnvironmentService;
 use Zend\Db\Adapter\Adapter;
 
 class Db
@@ -11,10 +12,9 @@ class Db
 
     private $pool = null;
 
-    public function __construct()
+    public function __construct(array $dbConfigs)
     {
         if ($this->pool == null) {
-            $dbConfigs = include APP_ROOT . "/config/mysql.php";
             foreach ($dbConfigs as $name => $dbConfig) {
                 $this->pool[$name] = new Adapter($dbConfig);
             }
@@ -47,10 +47,10 @@ class Db
     /**
      * @return Db
      */
-    public static function getInstance()
+    public static function getInstance(array $dbConfigs)
     {
         if (!self::$instance instanceof Db) {
-            self::$instance = new Db();
+            self::$instance = new Db($dbConfigs);
         }
         return self::$instance;
     }
