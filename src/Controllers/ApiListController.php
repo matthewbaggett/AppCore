@@ -7,11 +7,13 @@ use Segura\AppCore\Router\Router;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Route;
+use Slim\Views\Twig;
 
 class ApiListController extends Controller
 {
     public function listAllRoutes(Request $request, Response $response, $args)
     {
+
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";
@@ -35,9 +37,6 @@ class ApiListController extends Controller
             }
             return $this->jsonResponse($json, $request, $response);
         } else {
-            $loader = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
-            $twig   = new \Twig_Environment($loader);
-
             $router = App::Container()->get("router");
             $routes = $router->getRoutes();
 
@@ -61,10 +60,13 @@ class ApiListController extends Controller
 
             #!\Kint::dump($displayRoutes);exit;
 
-            return $response->getBody()->write($twig->render('api-list.html.twig', [
+            /** @var Twig $twig */
+            $twig = App::Instance()->getContainer()->get("view");
+
+            return $twig->render($response, 'api-list.html.twig', [
                 'page_name' => "API Endpoint List",
                 'routes'    => $displayRoutes,
-            ]));
+            ]);
         }
     }
 }

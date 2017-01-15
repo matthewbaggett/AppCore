@@ -3,14 +3,18 @@ namespace Segura\AppCore;
 
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
+use GuzzleHttp\Client as HttpClient;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use SebastianBergmann\Diff\Differ;
+use Segura\AppCore\Exceptions\DbConfigException;
 use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
 use Segura\AppCore\Monolog\LumberjackHandler;
 use Segura\AppCore\Router\Router;
+use Segura\AppCore\Services\AutoConfigurationService;
+use Segura\AppCore\Services\EnvironmentService;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
@@ -73,6 +77,11 @@ class App
             define("APP_START", microtime(true));
         }
 
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        date_default_timezone_set("UTC");
+
         // Create Slim app
         $this->app = new \Slim\App(
             [
@@ -124,7 +133,37 @@ class App
 
             $view->addExtension(new \Twig_Extensions_Extension_Text());
 
+            $view->offsetSet("app_name", APP_NAME);
+            $view->offsetSet("year", date("Y"));
+
             return $view;
+        };
+
+        $this->container['DatabaseConfig'] = function (Slim\Container $c){
+            /** @var EnvironmentService $environment */
+            $environment = $c->get(EnvironmentService::class);
+            $databaseConfiguration = [];
+            // Lets connect to a database
+            if($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
+                if ($environment->isSet('MYSQL_PORT')) {
+                    $databaseConfigurationHost = parse_url($environment->get('MYSQL_PORT'));
+                } else {
+                    $databaseConfigurationHost = parse_url($environment->get('MYSQL_HOST'));
+                }
+
+                $databaseConfiguration['Default'] = [
+                    'driver' => 'Pdo_Mysql',
+                    'hostname' => $databaseConfigurationHost['host'],
+                    'port' => $databaseConfigurationHost['port'],
+                    'username' => $environment->isSet('MYSQL_USERNAME') ? $environment->get('MYSQL_USERNAME') : $environment->get('MYSQL_ENV_MYSQL_USER'),
+                    'password' => $environment->isSet('MYSQL_PASSWORD') ? $environment->get('MYSQL_PASSWORD') : $environment->get('MYSQL_ENV_MYSQL_PASSWORD'),
+                    'database' => $environment->isSet('MYSQL_DATABASE') ? $environment->get('MYSQL_DATABASE') : $environment->get('MYSQL_ENV_MYSQL_DATABASE'),
+                    'charset' => "UTF8"
+                ];
+
+                return $databaseConfiguration;
+            }
+            throw new DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
         };
 
         $this->container['DatabaseInstance'] = function (Slim\Container $c) {
@@ -145,54 +184,77 @@ class App
             return $faker;
         };
 
+        $this->container['HttpClient'] = function (Slim\Container $c){
+            $client = new HttpClient([
+                // You can set any number of default request options.
+                'timeout'  => 2.0,
+            ]);
+            return $client;
+        };
+
+        $this->container[AutoConfigurationService::class] = function (Slim\Container $c){
+            return new AutoConfigurationService(
+                $c->get('HttpClient')
+            );
+        };
+
+        $this->container[EnvironmentService::class] = function (Slim\Container $c) {
+            $environment = new EnvironmentService(
+                $c->get(AutoConfigurationService::class)
+            );
+            return $environment;
+        };
+
         $this->container['Environment'] = function (Slim\Container $c) {
-            $environment = array_merge($_ENV, $_SERVER);
-            ksort($environment);
+            $environment = $c->get(EnvironmentService::class)->__toArray();
+            trigger_error("Please don't use the \"Environment\" DI object any more. Ta.", E_USER_NOTICE);
             return $environment;
         };
 
         $this->container['Redis'] = function (Slim\Container $c) {
             // Get environment variables.
-            $environment = $this->getContainer()->get('Environment');
+            /** @var EnvironmentService $environment */
+            $environment = $this->getContainer()->get(EnvironmentService::class);
 
             // Determine where Redis is.
-            if (isset($environment['REDIS_PORT'])) {
-                $redisConfig = parse_url($environment['REDIS_PORT']);
-            } elseif (isset($environment['REDIS_HOST'])) {
-                $redisConfig = parse_url($environment['REDIS_HOST']);
+            if ($environment->isSet('REDIS_PORT')) {
+                $redisConfig = parse_url($environment->get('REDIS_PORT'));
+            } elseif ($environment->isSet('REDIS_HOST')) {
+                $redisConfig = parse_url($environment->get('REDIS_HOST'));
             } else {
                 throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
             }
 
             // Create Redis options array.
             $redisOptions = [];
-            if (isset($environment['REDIS_OVERRIDE_HOST'])) {
-                $redisConfig['host'] = $environment['REDIS_OVERRIDE_HOST'];
+            if ($environment->isSet('REDIS_OVERRIDE_HOST')) {
+                $redisConfig['host'] = $environment->get('REDIS_OVERRIDE_HOST');
             }
-            if (isset($environment['REDIS_OVERRIDE_PORT'])) {
-                $redisConfig['port'] = $environment['REDIS_OVERRIDE_PORT'];
+            if ($environment->isSet('REDIS_OVERRIDE_PORT')) {
+                $redisConfig['port'] = $environment->get('REDIS_OVERRIDE_PORT');
             }
-            if (isset($environment['REDIS_PREFIX'])) {
-                $redisOptions['prefix'] = $environment['REDIS_PREFIX'];
+            if ($environment->isSet('REDIS_PREFIX')) {
+                $redisOptions['prefix'] = $environment->get('REDIS_PREFIX');
             }
             return new \Predis\Client($redisConfig, $redisOptions);
         };
 
         $this->container['MonoLog'] = function (Slim\Container $c) {
-            $environment = $this->getContainer()->get('Environment');
+            /** @var EnvironmentService $environment */
+            $environment = $this->getContainer()->get(EnvironmentService::class);
 
             // Set up Monolog
             $monolog = new Logger(APP_NAME);
             $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . APP_NAME . "." . date("Y-m-d") . ".log", Logger::WARNING));
             $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", Logger::DEBUG));
-            if (isset($environment['LUMBERJACK_HOST'])) {
-                $monolog->pushHandler(new LumberjackHandler(rtrim($environment['LUMBERJACK_HOST'], "/") . "/v1/log", $environment['LUMBERJACK_API_KEY']));
+            if ($environment->isSet('LUMBERJACK_HOST')) {
+                $monolog->pushHandler(new LumberjackHandler(rtrim($environment->get('LUMBERJACK_HOST'), "/") . "/v1/log", $environment->get('LUMBERJACK_API_KEY')));
             }
-            if (isset($environment['SLACK_TOKEN']) && isset($environment['SLACK_CHANNEL'])) {
+            if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
                 $monolog->pushHandler(
                     new SlackHandler(
-                        $environment['SLACK_TOKEN'],
-                        $environment['SLACK_CHANNEL'],
+                        $environment->get('SLACK_TOKEN'),
+                        $environment->get('SLACK_CHANNEL'),
                         APP_NAME,
                         true,
                         null,
