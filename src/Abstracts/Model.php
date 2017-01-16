@@ -163,4 +163,14 @@ abstract class Model implements ModelInterface
         }
         return $dirtyProperties;
     }
+
+    public function __pre_save()
+    {
+        // Stub function to be overridden.
+    }
+
+    public function __post_save()
+    {
+        // Stub function to be overridden.
+    }
 }

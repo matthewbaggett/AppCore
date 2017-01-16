@@ -24,6 +24,8 @@ abstract class TableGateway extends ZendTableGateway
      */
     public function save(Model $model)
     {
+        $model->__pre_save();
+
         $pk = $model->getPrimaryKeys();
 
         $pkIsBlank = true;
@@ -53,6 +55,8 @@ abstract class TableGateway extends ZendTableGateway
                 $getter = "get{$key}";
                 $model->$setter($updatedModel->$getter());
             }
+
+            $model->__post_save();
 
             return $updatedModel;
         } catch (InvalidQueryException $iqe) {
@@ -463,4 +467,5 @@ abstract class TableGateway extends ZendTableGateway
         }
         return $return;
     }
+
 }
