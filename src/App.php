@@ -139,12 +139,12 @@ class App
             return $view;
         };
 
-        $this->container['DatabaseConfig'] = function (Slim\Container $c){
+        $this->container['DatabaseConfig'] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
-            $environment = $c->get(EnvironmentService::class);
+            $environment           = $c->get(EnvironmentService::class);
             $databaseConfiguration = [];
             // Lets connect to a database
-            if($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
+            if ($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
                 if ($environment->isSet('MYSQL_PORT')) {
                     $databaseConfigurationHost = parse_url($environment->get('MYSQL_PORT'));
                 } else {
@@ -186,7 +186,7 @@ class App
             return $faker;
         };
 
-        $this->container['HttpClient'] = function (Slim\Container $c){
+        $this->container['HttpClient'] = function (Slim\Container $c) {
             $client = new HttpClient([
                 // You can set any number of default request options.
                 'timeout'  => 2.0,
@@ -194,7 +194,7 @@ class App
             return $client;
         };
 
-        $this->container[AutoConfigurationService::class] = function (Slim\Container $c){
+        $this->container[AutoConfigurationService::class] = function (Slim\Container $c) {
             return new AutoConfigurationService(
                 $c->get('HttpClient')
             );

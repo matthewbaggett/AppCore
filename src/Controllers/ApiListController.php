@@ -13,7 +13,6 @@ class ApiListController extends Controller
 {
     public function listAllRoutes(Request $request, Response $response, $args)
     {
-
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";

@@ -1,10 +1,10 @@
 <?php
 namespace Segura\AppCore\Services;
 
-use Predis\Client as RedisClient;
 use Symfony\Component\Yaml\Yaml;
 
-class EnvironmentService{
+class EnvironmentService
+{
 
     /** @var array */
     protected $environmentVariables;
@@ -16,27 +16,26 @@ class EnvironmentService{
 
     public function __construct(
         AutoConfigurationService $autoConfigurationService
-    )
-    {
-        if(file_exists($this->cacheFile)){
+    ) {
+        if (file_exists($this->cacheFile)) {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
-        }else {
+        } else {
             $this->autoConfigurationService = $autoConfigurationService;
             $this->autoConfigurationService->setEnvironmentService($this);
 
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
-            $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+            $autoConfiguration          = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
             $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
             file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
         ksort($this->environmentVariables);
-
     }
 
     /**
      * @param string $var
+     *
      * @return bool
      */
     public function isSet(string $var)
@@ -46,6 +45,7 @@ class EnvironmentService{
 
     /**
      * @param string $var
+     *
      * @return bool
      */
     public function get(string $var)
@@ -57,5 +57,4 @@ class EnvironmentService{
     {
         return $this->environmentVariables;
     }
-
 }
