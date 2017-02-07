@@ -46,7 +46,7 @@ class Db
     /**
      * @return Db
      */
-    public static function getInstance(array $dbConfigs)
+    public static function getInstance(array $dbConfigs = null)
     {
         if (!self::$instance instanceof Db) {
             self::$instance = new Db($dbConfigs);

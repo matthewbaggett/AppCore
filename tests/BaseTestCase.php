@@ -6,6 +6,8 @@ use Faker\Generator;
 use Faker\Provider;
 use Segura\AppCore\App;
 use Segura\AppCore\Db;
+use Segura\AppCore\Services\EnvironmentService;
+use Slim\Container;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -39,15 +41,15 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         if (!defined("APP_CORE_NAME")) {
             throw new \Exception("You must define APP_CORE_NAME in bootstrap.php. This must be the same as the core app container in /src");
         }
-        $coreAppName                        = APP_CORE_NAME;
-        $app                                = $coreAppName::Instance(true);
-        $this->container                    = $app->getContainer();
+        $app                                = self::getAppObject();
+        $this->container                    = self::getAppContainer();
         $this->container['TestAppInstance'] = function (\Slim\Container $c) use ($app) {
             return $app;
         };
 
         $this->app = $app;
     }
+
 
     public function setUp()
     {
@@ -66,13 +68,38 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @return App
+     */
+    private static function getAppObject()
+    {
+        $coreAppName = APP_CORE_NAME;
+        return $coreAppName::Instance(true);
+    }
+
+    /**
+     * @return Container
+     */
+    private static function getAppContainer()
+    {
+        return self::getAppObject()->getContainer();
+    }
+
     public static function setUpBeforeClass()
     {
         self::$startTime = microtime(true);
 
+
+        /** @var EnvironmentService $environment */
+        $environment = self::getAppContainer()->get(EnvironmentService::class);
+
+        // Force DatabaseInstance to load if MySQL is configured.
+        if (Db::isMySQLConfigured()) {
+            self::getAppContainer()->get("DatabaseInstance");
+        }
+
         // If MySQL has been configured, begin transaction.
-        $environment = array_merge($_ENV, $_SERVER);
-        if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
+        if (Db::isMySQLConfigured() && $environment->isSet("MYSQL_HOST")) {
             foreach (Db::getInstance()->getDatabases() as $database) {
                 $database->driver->getConnection()->beginTransaction();
             }
@@ -85,8 +112,10 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         // If MySQL has been configured, roll back transaction.
-        $environment = array_merge($_ENV, $_SERVER);
-        if (Db::isMySQLConfigured() && isset($environment['MYSQL_PORT'])) {
+        /** @var EnvironmentService $environment */
+        $environment = self::getAppContainer()->get(EnvironmentService::class);
+
+        if (Db::isMySQLConfigured() && $environment->isSet("MYSQL_HOST")) {
             foreach (Db::getInstance()->getDatabases() as $database) {
                 $database->driver->getConnection()->rollback();
             }
