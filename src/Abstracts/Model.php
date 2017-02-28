@@ -7,8 +7,8 @@ use Segura\AppCore\Interfaces\ModelInterface;
 
 abstract class Model implements ModelInterface
 {
-    protected $_primary_keys;
-    protected $_autoincrement_keys;
+    protected $_primary_keys = [];
+    protected $_autoincrement_keys = [];
 
     protected $_original;
 
