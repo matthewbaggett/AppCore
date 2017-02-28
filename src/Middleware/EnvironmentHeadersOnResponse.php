@@ -25,7 +25,12 @@ class EnvironmentHeadersOnResponse
                 'GitVersion' => file_exists(APP_ROOT . "/version.txt") ? trim(file_get_contents(APP_ROOT . "/version.txt")) : null,
                 'Time'       => [
                     'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
-                ]
+                ],
+                'Memory'     => [
+                    'Used'       => number_format(memory_get_usage(false)/1024/1024,2) . "MB",
+                    'Allocated'  => number_format(memory_get_usage(true)/1024/1024,2) . "MB",
+                    'Limit'      => ini_get('memory_limit'),
+                ],
             ]);
 
             if (isset($json['Status'])) {
