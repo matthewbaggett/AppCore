@@ -20,10 +20,10 @@ abstract class Model implements ModelInterface
         }
     }
 
-    public static function factory()
+    public static function factory(array $data = [])
     {
         $class = get_called_class();
-        return new $class();
+        return new $class($data);
     }
 
     /**
