@@ -5,12 +5,13 @@ use Zend\Db\Sql\PreparableSqlInterface;
 
 class Sql
 {
-    static private $instance;
+    private static $instance;
 
     private $database;
 
     /**
      * Sql constructor.
+     *
      * @param $database
      */
     public function __construct($database)
@@ -21,37 +22,39 @@ class Sql
     /**
      * @return Sql
      */
-    static public function getInstance(string $database = "Default")
+    public static function getInstance(string $database = "Default")
     {
-        if(!self::$instance){
+        if (!self::$instance) {
             self::$instance = new self($database);
         }
         return self::$instance;
     }
 
-    public function getSql(){
+    public function getSql()
+    {
         $sql = new \Zend\Db\Sql\Sql($this->database);
         return $sql;
     }
 
     /**
      * @param PreparableSqlInterface $query
+     *
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
-    public function execute(PreparableSqlInterface $query){
+    public function execute(PreparableSqlInterface $query)
+    {
         $statement = $this->getSql()->prepareStatementForSqlObject($query);
-        $results = $statement->execute();
+        $results   = $statement->execute();
         return $results;
     }
 
-    public function executeArray(PreparableSqlInterface $query){
-        $output = [];
+    public function executeArray(PreparableSqlInterface $query)
+    {
+        $output  = [];
         $results = $this->execute($query);
-        foreach($results as $result){
+        foreach ($results as $result) {
             $output[] = $result;
         }
         return $output;
     }
-
-
 }
