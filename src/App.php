@@ -77,6 +77,8 @@ class App
             define("APP_START", microtime(true));
         }
 
+        define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
+
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
@@ -102,8 +104,20 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
+
+            $viewLocations = [
+                APP_ROOT . "/views/",
+                APPCORE_ROOT . "/views",
+            ];
+
+            foreach($viewLocations as $i => $viewLocation){
+                if(!file_exists($viewLocation) || !is_dir($viewLocation)){
+                    unset($viewLocations[$i]);
+                }
+            }
+
             $view = new \Slim\Views\Twig(
-                APP_ROOT . '/views/',
+                $viewLocations,
                 [
                     'cache' => false,
                     'debug' => true

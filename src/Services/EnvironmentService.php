@@ -28,6 +28,7 @@ class EnvironmentService
             }
             $autoConfiguration          = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
             $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
+            $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
             file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
         ksort($this->environmentVariables);

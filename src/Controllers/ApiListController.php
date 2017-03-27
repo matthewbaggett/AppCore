@@ -57,12 +57,10 @@ class ApiListController extends Controller
                 }
             }
 
-            #!\Kint::dump($displayRoutes);exit;
-
             /** @var Twig $twig */
             $twig = App::Instance()->getContainer()->get("view");
 
-            return $twig->render($response, 'api-list.html.twig', [
+            return $twig->render($response, 'api/list.html.twig', [
                 'page_name' => "API Endpoint List",
                 'routes'    => $displayRoutes,
             ]);

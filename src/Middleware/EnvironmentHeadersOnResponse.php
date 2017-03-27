@@ -51,7 +51,7 @@ class EnvironmentHeadersOnResponse
                 $loader   = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
                 $twig     = new \Twig_Environment($loader);
                 $response->getBody()->rewind();
-                $response->getBody()->write($twig->render('api-explorer.html.twig', [
+                $response->getBody()->write($twig->render('api/explorer.html.twig', [
                     'page_name'                => "API Explorer",
                     'json'                     => $json,
                     'json_pretty_printed_rows' => explode("\n", json_encode($json, JSON_PRETTY_PRINT)),

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ page_name }}</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/api-explorer.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/api-list.css"/>
+</head>
+
+<body>
+    <h1>Api Endpoint List</h1>
+
+    <ul>
+        {% for route in routes %}
+        <li>
+            <div class="name">
+                {{ route.name }}
+            </div>
+            <div class="method">
+                {% for method in route.methods %}
+                    {{ method }}
+                {% endfor %}
+            </div>
+            <div class="pattern">
+                <a href="{{ route.pattern }}">{{ route.pattern }}</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
