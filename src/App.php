@@ -38,6 +38,11 @@ class App
         APP_ROOT . "/src/RoutesExtra.php",
     ];
 
+    protected $viewPaths = [
+        APP_ROOT . "/views/",
+        APPCORE_ROOT . "/views",
+    ];
+
     /**
      * @return App
      */
@@ -71,8 +76,15 @@ class App
         return $this->app;
     }
 
-    public function addRoutePath($path){
+    public function addRoutePath($path)
+    {
         $this->routePaths[] = $path;
+        return $this;
+    }
+
+    public function addViewPath($path)
+    {
+        $this->viewPaths[] = $path;
         return $this;
     }
 
@@ -114,19 +126,16 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
-            $viewLocations = [
-                APP_ROOT . "/views/",
-                APPCORE_ROOT . "/views",
-            ];
 
-            foreach ($viewLocations as $i => $viewLocation) {
+
+            foreach ($this->viewPaths as $i => $viewLocation) {
                 if (!file_exists($viewLocation) || !is_dir($viewLocation)) {
-                    unset($viewLocations[$i]);
+                    unset($this->viewPaths[$i]);
                 }
             }
 
             $view = new \Slim\Views\Twig(
-                $viewLocations,
+                $this->viewPaths,
                 [
                     'cache' => false,
                     'debug' => true
