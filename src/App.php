@@ -33,6 +33,11 @@ class App
     /** @var Logger */
     protected $monolog;
 
+    protected $routePaths = [
+        APP_ROOT . "/src/Routes.php",
+        APP_ROOT . "/src/RoutesExtra.php",
+    ];
+
     /**
      * @return App
      */
@@ -64,6 +69,11 @@ class App
     public function getApp()
     {
         return $this->app;
+    }
+
+    public function addRoutePath($path){
+        $this->routePaths[] = $path;
+        return $this;
     }
 
     public function __construct()
@@ -104,14 +114,13 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
-
             $viewLocations = [
                 APP_ROOT . "/views/",
                 APPCORE_ROOT . "/views",
             ];
 
-            foreach($viewLocations as $i => $viewLocation){
-                if(!file_exists($viewLocation) || !is_dir($viewLocation)){
+            foreach ($viewLocations as $i => $viewLocation) {
+                if (!file_exists($viewLocation) || !is_dir($viewLocation)) {
                     unset($viewLocations[$i]);
                 }
             }
@@ -317,11 +326,10 @@ class App
     public function loadAllRoutes()
     {
         $app = $this->getApp();
-        if (file_exists(APP_ROOT . "/src/Routes.php")) {
-            require(APP_ROOT . "/src/Routes.php");
-        }
-        if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
-            require(APP_ROOT . "/src/RoutesExtra.php");
+        foreach($this->routePaths as $path){
+            if (file_exists($path)){
+                require($path);
+            }
         }
         Router::Instance()->populateRoutes($app);
         return $this;
