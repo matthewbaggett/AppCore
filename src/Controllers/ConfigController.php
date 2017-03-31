@@ -14,13 +14,12 @@ class ConfigController extends Controller
     {
         /** @var EnvironmentService $environmentService */
         $environmentService = App::Container()->get(EnvironmentService::class);
-        $envvars = $environmentService->__toArray();
+        $envvars            = $environmentService->__toArray();
         ksort($envvars);
 
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
-
             $json = [
-                'Status' => 'Okay',
+                'Status'      => 'Okay',
                 'Environment' => $envvars,
             ];
             return $this->jsonResponse($json, $request, $response);
@@ -30,7 +29,7 @@ class ConfigController extends Controller
             $twig = App::Instance()->getContainer()->get("view");
 
             return $twig->render($response, 'config/environment.html.twig', [
-                'page_name' => "Environment Variables List",
+                'page_name'  => "Environment Variables List",
                 'envvars'    => $envvars,
             ]);
         }

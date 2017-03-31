@@ -26,8 +26,8 @@ class EnvironmentService
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
-            $autoConfiguration          = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-            $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
+            $autoConfiguration                              = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+            $this->environmentVariables                     = array_merge($this->environmentVariables, $autoConfiguration);
             $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
             file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
