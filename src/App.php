@@ -38,10 +38,7 @@ class App
         APP_ROOT . "/src/RoutesExtra.php",
     ];
 
-    protected $viewPaths = [
-        APP_ROOT . "/views/",
-        APPCORE_ROOT . "/views",
-    ];
+    protected $viewPaths = [];
 
     /**
      * @return App
@@ -78,13 +75,17 @@ class App
 
     public function addRoutePath($path)
     {
-        $this->routePaths[] = $path;
+        if(file_exists($path)) {
+            $this->routePaths[] = $path;
+        }
         return $this;
     }
 
     public function addViewPath($path)
     {
-        $this->viewPaths[] = $path;
+        if(file_exists($path)) {
+            $this->viewPaths[] = $path;
+        }
         return $this;
     }
 
@@ -106,6 +107,9 @@ class App
         ini_set('display_startup_errors', 1);
         date_default_timezone_set("UTC");
 
+        $this->addViewPath(APP_ROOT . "/views/");
+        $this->addViewPath(APPCORE_ROOT . "/views");
+
         // Create Slim app
         $this->app = new \Slim\App(
             [
@@ -126,7 +130,6 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
-
 
             foreach ($this->viewPaths as $i => $viewLocation) {
                 if (!file_exists($viewLocation) || !is_dir($viewLocation)) {

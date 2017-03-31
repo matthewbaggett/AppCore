@@ -2,6 +2,7 @@
 
 namespace Segura\AppCore\Middleware;
 
+use Segura\AppCore\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -48,14 +49,14 @@ class EnvironmentHeadersOnResponse
             ) {
                 $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
             } else {
-                $loader   = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
-                $twig     = new \Twig_Environment($loader);
+                /** @var Twig $twig */
+                $twig = App::Container()->get("view");
                 $response->getBody()->rewind();
-                $response->getBody()->write($twig->render('api/explorer.html.twig', [
+                $response = $twig->render($response, 'api/explorer.html.twig', [
                     'page_name'                => "API Explorer",
                     'json'                     => $json,
                     'json_pretty_printed_rows' => explode("\n", json_encode($json, JSON_PRETTY_PRINT)),
-                ]));
+                ]);
                 $response = $response->withHeader("Content-type", "text/html");
             }
         }
