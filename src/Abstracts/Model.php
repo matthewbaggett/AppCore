@@ -164,6 +164,17 @@ abstract class Model implements ModelInterface
         return $dirtyProperties;
     }
 
+    /**
+     * @return array
+     */
+    public function __toPublicArray(){
+        $publicArray = [];
+        foreach($this->getListOfProperties() as $property){
+            $publicArray[$property] = $this->$property;
+        }
+        return $publicArray;
+    }
+
     public function __pre_save()
     {
         // Stub function to be overridden.
