@@ -75,7 +75,7 @@ class App
 
     public function addRoutePath($path)
     {
-        if(file_exists($path)) {
+        if (file_exists($path)) {
             $this->routePaths[] = $path;
         }
         return $this;
@@ -83,7 +83,7 @@ class App
 
     public function addViewPath($path)
     {
-        if(file_exists($path)) {
+        if (file_exists($path)) {
             $this->viewPaths[] = $path;
         }
         return $this;
@@ -106,7 +106,7 @@ class App
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         date_default_timezone_set("UTC");
-        setlocale(LC_ALL,'en_US.UTF-8');
+        setlocale(LC_ALL, 'en_US.UTF-8');
 
         $this->addViewPath(APP_ROOT . "/views/");
         $this->addViewPath(APPCORE_ROOT . "/views");
@@ -131,7 +131,6 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
-
             foreach ($this->viewPaths as $i => $viewLocation) {
                 if (!file_exists($viewLocation) || !is_dir($viewLocation)) {
                     unset($this->viewPaths[$i]);
@@ -339,8 +338,8 @@ class App
     public function loadAllRoutes()
     {
         $app = $this->getApp();
-        foreach($this->routePaths as $path){
-            if (file_exists($path)){
+        foreach ($this->routePaths as $path) {
+            if (file_exists($path)) {
                 require($path);
             }
         }
