@@ -167,9 +167,10 @@ abstract class Model implements ModelInterface
     /**
      * @return array
      */
-    public function __toPublicArray(){
+    public function __toPublicArray()
+    {
         $publicArray = [];
-        foreach($this->getListOfProperties() as $property){
+        foreach ($this->getListOfProperties() as $property) {
             $publicArray[$property] = $this->$property;
         }
         return $publicArray;
