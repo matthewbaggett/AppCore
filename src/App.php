@@ -99,8 +99,9 @@ class App
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
         }
-
-        define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
+        if(!defined("APPCORE_ROOT")) {
+            define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
+        }
 
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
