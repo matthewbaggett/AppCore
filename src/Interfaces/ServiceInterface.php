@@ -8,6 +8,7 @@ interface ServiceInterface
      * @param int|null    $offset
      * @param array|null  $wheres
      * @param string|null $order
+     * @param string|null $orderDirection
      *
      * @return ModelInterface[]
      */
@@ -15,7 +16,8 @@ interface ServiceInterface
         int $limit = null,
         int $offset = null,
         array $wheres = null,
-        string $order = null
+        string $order = null,
+        string $orderDirection = null
     );
 
     public function getById(int $id);
