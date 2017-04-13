@@ -171,7 +171,7 @@ abstract class Model implements ModelInterface
     {
         $publicArray = [];
         foreach ($this->getListOfProperties() as $property) {
-            $publicArray[$property] = $this->$property;
+            $publicArray[ucfirst($property)] = $this->$property;
         }
         return $publicArray;
     }
