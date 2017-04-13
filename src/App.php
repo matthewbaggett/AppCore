@@ -99,7 +99,7 @@ class App
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
         }
-        if(!defined("APPCORE_ROOT")) {
+        if (!defined("APPCORE_ROOT")) {
             define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
         }
 
