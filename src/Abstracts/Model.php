@@ -139,7 +139,7 @@ abstract class Model implements ModelInterface
     /**
      * Returns whether or not the data has been modified inside this model.
      */
-    public function hasDirtyProperties()
+    public function hasDirtyProperties() : bool
     {
         return count($this->getListOfDirtyProperties()) > 0;
     }
@@ -147,7 +147,7 @@ abstract class Model implements ModelInterface
     /**
      * Returns an array of dirty properties.
      */
-    public function getListOfDirtyProperties()
+    public function getListOfDirtyProperties() : array
     {
         $transformer     = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
         $dirtyProperties = [];
@@ -167,7 +167,7 @@ abstract class Model implements ModelInterface
     /**
      * @return array
      */
-    public function __toPublicArray()
+    public function __toPublicArray() : array
     {
         $publicArray = [];
         foreach ($this->getListOfProperties() as $property) {
