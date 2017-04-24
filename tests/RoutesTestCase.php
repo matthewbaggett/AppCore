@@ -97,6 +97,7 @@ abstract class RoutesTestCase extends BaseTestCase
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
         if ($isJsonRequest) {
             $request = $request->withHeader("Content-type", "application/json");
+            $request = $request->withHeader("Accept", "application/json");
         }
         $this->waypoint("Before Response");
         $response = new Response();
