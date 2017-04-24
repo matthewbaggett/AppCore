@@ -9,5 +9,7 @@ interface ModelInterface
 
     public function destroy();
 
+    public function destroyThoroughly();
+
     public function getListOfProperties();
 }

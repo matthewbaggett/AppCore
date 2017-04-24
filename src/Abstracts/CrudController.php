@@ -1,7 +1,6 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
-use Segura\Api\Services\UnityAppApiKeysService;
 use Segura\AppCore\Exceptions\TableGatewayException;
 use Slim\Http\Request;
 use Slim\Http\Response;

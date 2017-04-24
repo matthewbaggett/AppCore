@@ -13,7 +13,7 @@ class FilterAlphanumericOnlyTwigExtension extends \Twig_Extension
         $filters = [];
         $methods = ['filteralphaonly'];
         foreach ($methods as $method) {
-            $filters[$method] = new \Twig_Filter_Method($this, $method);
+            $filters[$method] = new \Twig_Filter($method, [$this, $method]);
         }
         return $filters;
     }

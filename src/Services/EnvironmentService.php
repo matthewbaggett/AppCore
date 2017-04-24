@@ -1,12 +1,10 @@
 <?php
 namespace Segura\AppCore\Services;
 
-use Monolog\Logger;
-use Predis\Client;
-use SebastianBergmann\Diff\Differ;
-use Segura\Session\Session;
+use Symfony\Component\Yaml\Yaml;
 
-class EnvironmentService{
+class EnvironmentService
+{
 
     /** @var array */
     protected $environmentVariables;
@@ -14,27 +12,31 @@ class EnvironmentService{
     /** @var AutoConfigurationService */
     protected $autoConfigurationService;
 
-    public function __construct(AutoConfigurationService $autoConfigurationService)
-    {
+    protected $cacheFile = "/tmp/.configcache.yml";
 
-        $this->autoConfigurationService = $autoConfigurationService;
-        $this->autoConfigurationService->setEnvironmentService($this);
+    public function __construct(
+        AutoConfigurationService $autoConfigurationService
+    ) {
+        if (file_exists($this->cacheFile)) {
+            $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
+        } else {
+            $this->autoConfigurationService = $autoConfigurationService;
+            $this->autoConfigurationService->setEnvironmentService($this);
 
-        foreach(array_merge($_SERVER, $_ENV) as $key => $value){
-            $this->environmentVariables[$key] = $value;
+            foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
+                $this->environmentVariables[$key] = $value;
+            }
+            $autoConfiguration                              = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+            $this->environmentVariables                     = array_merge($this->environmentVariables, $autoConfiguration);
+            $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
+            file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
         ksort($this->environmentVariables);
-
-        $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-
-        $this->environmentVariables = array_merge($this->environmentVariables, $autoConfiguration);
-
-        ksort($this->environmentVariables);
-
     }
 
     /**
      * @param string $var
+     *
      * @return bool
      */
     public function isSet(string $var)
@@ -44,6 +46,7 @@ class EnvironmentService{
 
     /**
      * @param string $var
+     *
      * @return bool
      */
     public function get(string $var)
@@ -55,5 +58,4 @@ class EnvironmentService{
     {
         return $this->environmentVariables;
     }
-
 }

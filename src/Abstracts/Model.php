@@ -7,8 +7,8 @@ use Segura\AppCore\Interfaces\ModelInterface;
 
 abstract class Model implements ModelInterface
 {
-    protected $_primary_keys;
-    protected $_autoincrement_keys;
+    protected $_primary_keys       = [];
+    protected $_autoincrement_keys = [];
 
     protected $_original;
 
@@ -20,10 +20,10 @@ abstract class Model implements ModelInterface
         }
     }
 
-    public static function factory()
+    public static function factory(array $data = [])
     {
         $class = get_called_class();
-        return new $class();
+        return new $class($data);
     }
 
     /**
@@ -139,7 +139,7 @@ abstract class Model implements ModelInterface
     /**
      * Returns whether or not the data has been modified inside this model.
      */
-    public function hasDirtyProperties()
+    public function hasDirtyProperties() : bool
     {
         return count($this->getListOfDirtyProperties()) > 0;
     }
@@ -147,7 +147,7 @@ abstract class Model implements ModelInterface
     /**
      * Returns an array of dirty properties.
      */
-    public function getListOfDirtyProperties()
+    public function getListOfDirtyProperties() : array
     {
         $transformer     = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
         $dirtyProperties = [];
@@ -162,5 +162,27 @@ abstract class Model implements ModelInterface
             }
         }
         return $dirtyProperties;
+    }
+
+    /**
+     * @return array
+     */
+    public function __toPublicArray() : array
+    {
+        $publicArray = [];
+        foreach ($this->getListOfProperties() as $property) {
+            $publicArray[ucfirst($property)] = $this->$property;
+        }
+        return $publicArray;
+    }
+
+    public function __pre_save()
+    {
+        // Stub function to be overridden.
+    }
+
+    public function __post_save()
+    {
+        // Stub function to be overridden.
     }
 }

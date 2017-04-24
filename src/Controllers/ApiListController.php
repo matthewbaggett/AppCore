@@ -13,7 +13,6 @@ class ApiListController extends Controller
 {
     public function listAllRoutes(Request $request, Response $response, $args)
     {
-
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";
@@ -58,12 +57,10 @@ class ApiListController extends Controller
                 }
             }
 
-            #!\Kint::dump($displayRoutes);exit;
-
             /** @var Twig $twig */
             $twig = App::Instance()->getContainer()->get("view");
 
-            return $twig->render($response, 'api-list.html.twig', [
+            return $twig->render($response, 'api/list.html.twig', [
                 'page_name' => "API Endpoint List",
                 'routes'    => $displayRoutes,
             ]);

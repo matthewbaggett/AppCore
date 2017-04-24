@@ -33,6 +33,13 @@ class App
     /** @var Logger */
     protected $monolog;
 
+    protected $routePaths = [
+        APP_ROOT . "/src/Routes.php",
+        APP_ROOT . "/src/RoutesExtra.php",
+    ];
+
+    protected $viewPaths = [];
+
     /**
      * @return App
      */
@@ -66,6 +73,22 @@ class App
         return $this->app;
     }
 
+    public function addRoutePath($path)
+    {
+        if (file_exists($path)) {
+            $this->routePaths[] = $path;
+        }
+        return $this;
+    }
+
+    public function addViewPath($path)
+    {
+        if (file_exists($path)) {
+            $this->viewPaths[] = $path;
+        }
+        return $this;
+    }
+
     public function __construct()
     {
         // Check defined config
@@ -76,11 +99,18 @@ class App
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
         }
+        if (!defined("APPCORE_ROOT")) {
+            define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
+        }
 
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         date_default_timezone_set("UTC");
+        setlocale(LC_ALL, 'en_US.UTF-8');
+
+        $this->addViewPath(APP_ROOT . "/views/");
+        $this->addViewPath(APPCORE_ROOT . "/views");
 
         // Create Slim app
         $this->app = new \Slim\App(
@@ -102,8 +132,14 @@ class App
 
         // Register Twig View helper
         $this->container['view'] = function ($c) {
+            foreach ($this->viewPaths as $i => $viewLocation) {
+                if (!file_exists($viewLocation) || !is_dir($viewLocation)) {
+                    unset($this->viewPaths[$i]);
+                }
+            }
+
             $view = new \Slim\Views\Twig(
-                APP_ROOT . '/views/',
+                $this->viewPaths,
                 [
                     'cache' => false,
                     'debug' => true
@@ -139,12 +175,12 @@ class App
             return $view;
         };
 
-        $this->container['DatabaseConfig'] = function (Slim\Container $c){
+        $this->container['DatabaseConfig'] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
-            $environment = $c->get(EnvironmentService::class);
+            $environment           = $c->get(EnvironmentService::class);
             $databaseConfiguration = [];
             // Lets connect to a database
-            if($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
+            if ($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
                 if ($environment->isSet('MYSQL_PORT')) {
                     $databaseConfigurationHost = parse_url($environment->get('MYSQL_PORT'));
                 } else {
@@ -152,13 +188,13 @@ class App
                 }
 
                 $databaseConfiguration['Default'] = [
-                    'driver' => 'Pdo_Mysql',
+                    'driver'   => 'Pdo_Mysql',
                     'hostname' => $databaseConfigurationHost['host'],
-                    'port' => $databaseConfigurationHost['port'],
+                    'port'     => $databaseConfigurationHost['port'],
                     'username' => $environment->isSet('MYSQL_USERNAME') ? $environment->get('MYSQL_USERNAME') : $environment->get('MYSQL_ENV_MYSQL_USER'),
                     'password' => $environment->isSet('MYSQL_PASSWORD') ? $environment->get('MYSQL_PASSWORD') : $environment->get('MYSQL_ENV_MYSQL_PASSWORD'),
                     'database' => $environment->isSet('MYSQL_DATABASE') ? $environment->get('MYSQL_DATABASE') : $environment->get('MYSQL_ENV_MYSQL_DATABASE'),
-                    'charset' => "UTF8"
+                    'charset'  => "UTF8"
                 ];
 
                 return $databaseConfiguration;
@@ -167,7 +203,9 @@ class App
         };
 
         $this->container['DatabaseInstance'] = function (Slim\Container $c) {
-            return Db::getInstance();
+            return Db::getInstance(
+                $c->get('DatabaseConfig')
+            );
         };
 
         $this->container['Faker'] = function (Slim\Container $c) {
@@ -184,7 +222,7 @@ class App
             return $faker;
         };
 
-        $this->container['HttpClient'] = function (Slim\Container $c){
+        $this->container['HttpClient'] = function (Slim\Container $c) {
             $client = new HttpClient([
                 // You can set any number of default request options.
                 'timeout'  => 2.0,
@@ -192,7 +230,7 @@ class App
             return $client;
         };
 
-        $this->container[AutoConfigurationService::class] = function (Slim\Container $c){
+        $this->container[AutoConfigurationService::class] = function (Slim\Container $c) {
             return new AutoConfigurationService(
                 $c->get('HttpClient')
             );
@@ -301,11 +339,10 @@ class App
     public function loadAllRoutes()
     {
         $app = $this->getApp();
-        if (file_exists(APP_ROOT . "/src/Routes.php")) {
-            require(APP_ROOT . "/src/Routes.php");
-        }
-        if (file_exists(APP_ROOT . "/src/RoutesExtra.php")) {
-            require(APP_ROOT . "/src/RoutesExtra.php");
+        foreach ($this->routePaths as $path) {
+            if (file_exists($path)) {
+                require($path);
+            }
         }
         Router::Instance()->populateRoutes($app);
         return $this;

@@ -2,6 +2,7 @@
 
 namespace Segura\AppCore\Middleware;
 
+use Segura\AppCore\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -25,7 +26,12 @@ class EnvironmentHeadersOnResponse
                 'GitVersion' => file_exists(APP_ROOT . "/version.txt") ? trim(file_get_contents(APP_ROOT . "/version.txt")) : null,
                 'Time'       => [
                     'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
-                ]
+                ],
+                'Memory'     => [
+                    'Used'       => number_format(memory_get_usage(false)/1024/1024, 2) . "MB",
+                    'Allocated'  => number_format(memory_get_usage(true)/1024/1024, 2) . "MB",
+                    'Limit'      => ini_get('memory_limit'),
+                ],
             ]);
 
             if (isset($json['Status'])) {
@@ -43,14 +49,14 @@ class EnvironmentHeadersOnResponse
             ) {
                 $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
             } else {
-                $loader   = new \Twig_Loader_Filesystem(APP_ROOT . "/views");
-                $twig     = new \Twig_Environment($loader);
+                /** @var Twig $twig */
+                $twig = App::Container()->get("view");
                 $response->getBody()->rewind();
-                $response->getBody()->write($twig->render('api-explorer.html.twig', [
+                $response = $twig->render($response, 'api/explorer.html.twig', [
                     'page_name'                => "API Explorer",
                     'json'                     => $json,
                     'json_pretty_printed_rows' => explode("\n", json_encode($json, JSON_PRETTY_PRINT)),
-                ]));
+                ]);
                 $response = $response->withHeader("Content-type", "text/html");
             }
         }
