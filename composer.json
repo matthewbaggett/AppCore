@@ -28,7 +28,8 @@
         "squizlabs/php_codesniffer": "dev-master",
         "friendsofphp/php-cs-fixer": "^2.0@dev",
         "fzaninotto/Faker": "dev-master",
-        "phpunit/phpunit": "5.*"
+        "phpunit/phpunit": "5.*",
+        "facebook/webdriver": "^1.2"
     },
     "autoload": {
         "psr-4": {
