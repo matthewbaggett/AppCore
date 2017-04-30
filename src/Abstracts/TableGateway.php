@@ -381,6 +381,7 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param $field
      * @param $value
+     * @param $limit int
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
@@ -388,13 +389,17 @@ abstract class TableGateway extends ZendTableGateway
      *
      * @return array|\ArrayObject|null
      */
-    public function getManyByField($field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
+    public function getManyByField($field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         $select = $this->sql->select();
 
         $select->where([$field => $value]);
         if ($orderBy) {
             $select->order("{$orderBy} {$orderDirection}");
+        }
+
+        if ($limit) {
+            $select->limit($limit);
         }
 
         $resultSet = $this->selectWith($select);
