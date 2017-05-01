@@ -2,9 +2,9 @@
 
 namespace Segura\AppCore;
 
+use Segura\AppCore\Zend\Profiler as AppCoreProfiler;
 use Zend\Db\Adapter\Platform;
 use Zend\Db\Adapter\Profiler;
-use Segura\AppCore\Zend\Profiler as AppCoreProfiler;
 use Zend\Db\ResultSet;
 
 class Adapter extends \Zend\Db\Adapter\Adapter
@@ -14,5 +14,4 @@ class Adapter extends \Zend\Db\Adapter\Adapter
         parent::__construct($driver, $platform, $queryResultPrototype, $profiler);
         $this->setProfiler(new AppCoreProfiler());
     }
-
 }
