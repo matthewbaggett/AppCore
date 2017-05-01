@@ -3,7 +3,6 @@
 namespace Segura\AppCore;
 
 use Segura\AppCore\Exceptions\DbException;
-use Zend\Db\Adapter\Adapter;
 
 class Db
 {

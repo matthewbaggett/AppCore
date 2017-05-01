@@ -4,6 +4,8 @@ namespace Segura\AppCore\Abstracts;
 use Segura\AppCore\Exceptions\TableGatewayException;
 use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
 use Segura\AppCore\Filters\FilterCondition;
+use Segura\AppCore\ZendSql;
+use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
@@ -13,6 +15,17 @@ use Zend\Db\TableGateway\TableGateway as ZendTableGateway;
 
 abstract class TableGateway extends ZendTableGateway
 {
+    public function __construct($table, AdapterInterface $adapter, $features = null, $resultSetPrototype = null, $sql = null)
+    {
+        $this->adapter = $adapter;
+        $this->table   = $table;
+
+        if (!$sql) {
+            $sql = new ZendSql($this->adapter, $this->table);
+        }
+        parent::__construct($table, $adapter, $features, $resultSetPrototype, $sql);
+    }
+
     protected $model;
 
     /**
