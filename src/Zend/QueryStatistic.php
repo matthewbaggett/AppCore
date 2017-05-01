@@ -6,7 +6,7 @@ namespace Segura\AppCore\Zend;
 class QueryStatistic{
     /** @var  string */
     private  $sql;
-    /** @var  integer */
+    /** @var  float */
     private $time;
 
     /**
@@ -28,18 +28,18 @@ class QueryStatistic{
     }
 
     /**
-     * @return int
+     * @return float
      */
-    public function getTime(): int
+    public function getTime(): float
     {
         return $this->time;
     }
 
     /**
-     * @param int $time
+     * @param float $time
      * @return QueryStatistic
      */
-    public function setTime(int $time): QueryStatistic
+    public function setTime(float $time): QueryStatistic
     {
         $this->time = $time;
         return $this;
