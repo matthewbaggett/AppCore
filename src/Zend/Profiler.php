@@ -24,11 +24,15 @@ class Profiler implements ProfilerInterface
 
     public function profilerStart($target)
     {
-        $this->sql = $target->getSql();
-        /** @var ParameterContainer $parameterContainer */
-        $parameterContainer = $target->getParameterContainer();
-        foreach ($parameterContainer->getNamedArray() as $key => $value) {
-            $this->sql =  str_replace(":{$key}", "'{$value}'", $this->sql);
+        if(is_string($target)){
+            $this->sql = $target;
+        }else {
+            $this->sql = $target->getSql();
+            /** @var ParameterContainer $parameterContainer */
+            $parameterContainer = $target->getParameterContainer();
+            foreach ($parameterContainer->getNamedArray() as $key => $value) {
+                $this->sql = str_replace(":{$key}", "'{$value}'", $this->sql);
+            }
         }
 
         $this->timer = microtime(true);
