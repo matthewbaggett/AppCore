@@ -24,9 +24,9 @@ class Profiler implements ProfilerInterface
 
     public function profilerStart($target)
     {
-        if(is_string($target)){
+        if (is_string($target)) {
             $this->sql = $target;
-        }else {
+        } else {
             $this->sql = $target->getSql();
             /** @var ParameterContainer $parameterContainer */
             $parameterContainer = $target->getParameterContainer();
