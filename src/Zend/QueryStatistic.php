@@ -8,6 +8,26 @@ class QueryStatistic
     private $sql;
     /** @var  float */
     private $time;
+    /** @var  array */
+    private $callPointss;
+
+    /**
+     * @return array
+     */
+    public function getCallPoints(): array
+    {
+        return $this->callPoints;
+    }
+
+    /**
+     * @param array $callPoints
+     * @return QueryStatistic
+     */
+    public function setCallPoints(array $callPoints): QueryStatistic
+    {
+        $this->callPoints = $callPoints;
+        return $this;
+    }
 
     /**
      * @return string

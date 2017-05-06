@@ -42,7 +42,7 @@ class Profiler implements ProfilerInterface
     {
         $uuid                    = UUID::v4();
         $this->queryTimes[$uuid] = microtime(true) - $this->timer;
-        $this->queries[$uuid]    = $this->sql;
+        $this->queries[$uuid]    = [$this->sql, debug_backtrace()];
         $this->sql               = null;
         $this->timer             = null;
     }
@@ -50,10 +50,29 @@ class Profiler implements ProfilerInterface
     public function getQueries()
     {
         $stats = [];
-        foreach ($this->queries as $uuid => $query) {
+        foreach ($this->queries as $uuid => list($query, $callStack)) {
             $stat = new QueryStatistic();
             $stat->setSql($query);
             $stat->setTime($this->queryTimes[$uuid] * 1000);
+            $callPoints = [];
+            foreach($callStack as $call){
+                if(isset($call['file']) && stripos($call['file'], "vendor/") !== false){
+                    $callPoints[] = '...';
+                }else {
+                    $callPoints[] = (isset($call['file']) ? $call['file'] : '') . ":" . (isset($call['line']) ? $call['line'] : '') . " " . (isset($call['class']) ? $call['class'] . "::" . $call['function'] : "");
+                }
+            }
+            $lastCallPoints = [];
+            while($callPoints != $lastCallPoints) {
+                $lastCallPoints = $callPoints;
+                foreach ($callPoints as $i => $call) {
+                    if (isset($callPoints[$i - 1]) && $callPoints[$i] == '...' && $callPoints[$i - 1] == '...') {
+                        unset($callPoints[$i]);
+                    }
+                }
+                $callPoints = array_values($callPoints);
+            }
+            $stat->setCallPoints($callPoints);
             $stats[] = $stat;
         }
         return $stats;
