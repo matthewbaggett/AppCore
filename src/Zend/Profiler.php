@@ -2,6 +2,7 @@
 
 namespace Segura\AppCore\Zend;
 
+use Segura\AppCore\Interfaces\QueryStatisticInterface;
 use Thru\UUID\UUID;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
@@ -13,12 +14,12 @@ class Profiler implements ProfilerInterface
     private $queries    = [];
     private $queryTimes = [];
 
-    public function getQueryStats()
+    public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null)
     {
         return [
             'TotalQueries' => count($this->queryTimes),
             'TotalTime'    => array_sum($this->queryTimes),
-            'Diagnostic'   => $this->getQueries(),
+            'Diagnostic'   => $this->getQueries($queryStatisticClass),
         ];
     }
 
@@ -47,32 +48,21 @@ class Profiler implements ProfilerInterface
         $this->timer             = null;
     }
 
-    public function getQueries()
+    public function getQueries(QueryStatisticInterface $queryStatisticClass = null)
     {
         $stats = [];
-        foreach ($this->queries as $uuid => list($query, $callStack)) {
-            $stat = new QueryStatistic();
+        foreach ($this->queries as $uuid => list($query, $backTrace)) {
+            if($queryStatisticClass){
+                if(is_object($queryStatisticClass)) {
+                    $queryStatisticClass = get_class($queryStatisticClass);
+                }
+                $stat = new $queryStatisticClass();
+            }else{
+                $stat = new QueryStatistic();
+            }
             $stat->setSql($query);
             $stat->setTime($this->queryTimes[$uuid] * 1000);
-            $callPoints = [];
-            foreach($callStack as $call){
-                if(isset($call['file']) && stripos($call['file'], "vendor/") !== false){
-                    $callPoints[] = '...';
-                }else {
-                    $callPoints[] = (isset($call['file']) ? $call['file'] : '') . ":" . (isset($call['line']) ? $call['line'] : '') . " " . (isset($call['class']) ? $call['class'] . "::" . $call['function'] : "");
-                }
-            }
-            $lastCallPoints = [];
-            while($callPoints != $lastCallPoints) {
-                $lastCallPoints = $callPoints;
-                foreach ($callPoints as $i => $call) {
-                    if (isset($callPoints[$i - 1]) && $callPoints[$i] == '...' && $callPoints[$i - 1] == '...') {
-                        unset($callPoints[$i]);
-                    }
-                }
-                $callPoints = array_values($callPoints);
-            }
-            $stat->setCallPoints($callPoints);
+            $stat->setCallPoints($backTrace);
             $stats[] = $stat;
         }
         return $stats;

@@ -2,14 +2,16 @@
 
 namespace Segura\AppCore\Zend;
 
-class QueryStatistic
+use Segura\AppCore\Interfaces\QueryStatisticInterface;
+
+class QueryStatistic implements QueryStatisticInterface
 {
     /** @var  string */
     private $sql;
     /** @var  float */
     private $time;
     /** @var  array */
-    private $callPointss;
+    private $callPoints;
 
     /**
      * @return array
