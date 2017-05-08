@@ -14,5 +14,4 @@ interface QueryStatisticInterface
     public function getTime(): float;
 
     public function setTime(float $time);
-
 }

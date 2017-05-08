@@ -23,6 +23,7 @@ class QueryStatistic implements QueryStatisticInterface
 
     /**
      * @param array $callPoints
+     *
      * @return QueryStatistic
      */
     public function setCallPoints(array $callPoints): QueryStatistic

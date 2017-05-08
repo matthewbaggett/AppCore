@@ -52,12 +52,12 @@ class Profiler implements ProfilerInterface
     {
         $stats = [];
         foreach ($this->queries as $uuid => list($query, $backTrace)) {
-            if($queryStatisticClass){
-                if(is_object($queryStatisticClass)) {
+            if ($queryStatisticClass) {
+                if (is_object($queryStatisticClass)) {
                     $queryStatisticClass = get_class($queryStatisticClass);
                 }
                 $stat = new $queryStatisticClass();
-            }else{
+            } else {
                 $stat = new QueryStatistic();
             }
             $stat->setSql($query);
