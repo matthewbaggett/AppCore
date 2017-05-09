@@ -15,7 +15,7 @@ class EnvironmentHeadersOnResponse
         /** @var Response $response */
         $response = $next($request, $response);
 
-        if (stripos($response->getHeader('Content-Type')[0], 'application/json') !== false) {
+        if (isset($response->getHeader('Content-Type')[0]) && stripos($response->getHeader('Content-Type')[0], 'application/json') !== false) {
             $body = $response->getBody();
             $body->rewind();
 
