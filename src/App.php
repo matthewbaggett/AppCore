@@ -97,10 +97,6 @@ class App
     public function __construct()
     {
         // Check defined config
-        if (!$this->getAppName()) {
-            throw new \Exception("APP_NAME must be defined in /bootstrap.php");
-        }
-
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
         }
