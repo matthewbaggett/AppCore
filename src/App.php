@@ -89,10 +89,15 @@ class App
         return $this;
     }
 
+    public function getAppName()
+    {
+        return APP_NAME;
+    }
+
     public function __construct()
     {
         // Check defined config
-        if (!defined("APP_NAME")) {
+        if (!$this->getAppName()) {
             throw new \Exception("APP_NAME must be defined in /bootstrap.php");
         }
 
@@ -169,7 +174,7 @@ class App
 
             $view->addExtension(new \Twig_Extensions_Extension_Text());
 
-            $view->offsetSet("app_name", APP_NAME);
+            $view->offsetSet("app_name", $this->getAppName());
             $view->offsetSet("year", date("Y"));
 
             return $view;
@@ -282,8 +287,8 @@ class App
             $environment = $this->getContainer()->get(EnvironmentService::class);
 
             // Set up Monolog
-            $monolog = new Logger(APP_NAME);
-            $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . APP_NAME . "." . date("Y-m-d") . ".log", Logger::WARNING));
+            $monolog = new Logger($this->getAppName());
+            $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", Logger::WARNING));
             $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", Logger::DEBUG));
             if ($environment->isSet('LUMBERJACK_HOST')) {
                 $monolog->pushHandler(new LumberjackHandler(rtrim($environment->get('LUMBERJACK_HOST'), "/") . "/v1/log", $environment->get('LUMBERJACK_API_KEY')));
