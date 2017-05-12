@@ -330,13 +330,13 @@ class App
             return new AutoImporterService($container->get(UpdaterService::class));
         };
 
-        $this->container[UpdaterService::class] = function (Slim\Container $container){
+        $this->container[UpdaterService::class] = function (Slim\Container $container) {
             return new UpdaterService(
                 $container->get(UpdaterTableGateway::class)
             );
         };
 
-        $this->container[UpdaterTableGateway::class] = function (Slim\Container $c){
+        $this->container[UpdaterTableGateway::class] = function (Slim\Container $c) {
             return new UpdaterTableGateway(
                 $c->get('Faker'),
                 $c->get('DatabaseInstance')

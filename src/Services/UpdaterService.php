@@ -1,16 +1,16 @@
 <?php
 namespace Segura\AppCore\Services;
 
-use Segura\AppCore\Models;
-use Segura\AppCore\TableGateways;
-use Segura\AppCore\Models\UpdaterModel;
-use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
 use Segura\AppCore\Abstracts\Service as AbstractService;
+use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
 use Segura\AppCore\Interfaces\ServiceInterface as ServiceInterface;
+use Segura\AppCore\Models;
+use Segura\AppCore\Models\UpdaterModel;
+use Segura\AppCore\TableGateways;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Select;
 
-class UpdaterService extends  AbstractService implements ServiceInterface
+class UpdaterService extends AbstractService implements ServiceInterface
 {
     public function updateAlreadyApplied($file)
     {

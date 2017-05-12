@@ -20,11 +20,12 @@ class AutoImporterService
         $this->updaterService = $updaterService;
     }
 
-    public function addSqlPath($sqlPath){
-        if(file_exists($sqlPath)){
+    public function addSqlPath($sqlPath)
+    {
+        if (file_exists($sqlPath)) {
             $this->sqlPaths[] = $sqlPath;
             return $this;
-        }else{
+        } else {
             throw new AutoImporterException("Cannot find path {$sqlPath}");
         }
     }
@@ -47,22 +48,22 @@ class AutoImporterService
 
     public function applyScripts($sqlFiles)
     {
-        if(is_array($sqlFiles)) {
+        if (is_array($sqlFiles)) {
             foreach ($sqlFiles as $sqlFile) {
                 $this->applyScript($sqlFile);
             }
-        }else{
+        } else {
             $this->applyScript($sqlFiles);
         }
     }
-    public function applyScript($sqlFile){
-
+    public function applyScript($sqlFile)
+    {
         echo " > Running {$sqlFile}...";
         try {
             $alreadyApplied = $this->updaterService->updateAlreadyApplied($sqlFile);
         } catch (\Exception $exception) {
             $alreadyApplied = false;
-            if(stripos($exception->getMessage(), "42S02") !== false){
+            if (stripos($exception->getMessage(), "42S02") !== false) {
                 $this->runFile(APPCORE_ROOT . "/src/SQL/create_updates_table.sql");
             }
         }
@@ -113,7 +114,7 @@ class AutoImporterService
     {
         $this->waitForMySQL();
         echo "Checking for SQL to run:\n";
-        foreach($this->sqlPaths as $sqlPath) {
+        foreach ($this->sqlPaths as $sqlPath) {
             foreach ($this->scanForSql($sqlPath) as $file) {
                 $this->applyScripts($file);
             }
@@ -126,8 +127,8 @@ class AutoImporterService
         $db = App::Container()->get('DatabaseInstance');
         /** @var Adapter $database */
         $databases = $db->getDatabases();
-        $database = reset($databases);
-        $sqlDoer = $database->driver->getConnection();
+        $database  = reset($databases);
+        $sqlDoer   = $database->driver->getConnection();
 
         /** @var Result $tables */
         $tablesResult = $sqlDoer->execute("SHOW TABLES");
