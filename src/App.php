@@ -343,8 +343,10 @@ class App
             );
         };
 
-        $this->getContainer()->get(AutoImporterService::class)
-            ->addSqlPath(APP_ROOT . "/sql");
+        if(file_exists(APP_ROOT . "/sql")) {
+            $this->getContainer()->get(AutoImporterService::class)
+                ->addSqlPath(APP_ROOT . "/sql");
+        }
 
         if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
             require(APP_ROOT . "/src/AppContainer.php");
@@ -352,6 +354,8 @@ class App
         if (file_exists(APP_ROOT . "/src/AppContainerExtra.php")) {
             require(APP_ROOT . "/src/AppContainerExtra.php");
         }
+
+
 
         $this->monolog = $this->getContainer()->get('MonoLog');
     }
