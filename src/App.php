@@ -343,6 +343,9 @@ class App
             );
         };
 
+        $this->getContainer()->get(AutoImporterService::class)
+            ->addSqlPath(APP_ROOT . "/sql");
+
         if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
             require(APP_ROOT . "/src/AppContainer.php");
         }

@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+require_once(__DIR__ . "/../../../../bootstrap.php");
+
+/** @var \Segura\AppCore\Services\AutoImporterService $autoImporter */
+$autoImporter = \Segura\AppCore\App::Container()->get(\Segura\AppCore\Services\AutoImporterService::class);
+$autoImporter->purge();

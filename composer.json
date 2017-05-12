@@ -36,5 +36,9 @@
             "Segura\\AppCore\\": "src",
             "Segura\\AppCore\\Test\\": "tests/"
         }
-    }
+    },
+    "bin": [
+        "bin/data-importer",
+        "bin/data-purge"
+    ]
 }
