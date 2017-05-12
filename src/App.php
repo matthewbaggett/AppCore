@@ -14,8 +14,11 @@ use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
 use Segura\AppCore\Monolog\LumberjackHandler;
 use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\AutoConfigurationService;
+use Segura\AppCore\Services\AutoImporterService;
 use Segura\AppCore\Services\EnvironmentService;
 use Segura\AppCore\Services\EventLoggerService;
+use Segura\AppCore\Services\UpdaterService;
+use Segura\AppCore\TableGateways\UpdaterTableGateway;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\Session\Session;
@@ -96,6 +99,7 @@ class App
 
     public function __construct()
     {
+
         // Check defined config
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
@@ -320,6 +324,23 @@ class App
 
         $this->container["Differ"] = function (Slim\Container $container) {
             return new Differ();
+        };
+
+        $this->container[AutoImporterService::class] = function (Slim\Container $container) {
+            return new AutoImporterService($container->get(UpdaterService::class));
+        };
+
+        $this->container[UpdaterService::class] = function (Slim\Container $container){
+            return new UpdaterService(
+                $container->get(UpdaterTableGateway::class)
+            );
+        };
+
+        $this->container[UpdaterTableGateway::class] = function (Slim\Container $c){
+            return new UpdaterTableGateway(
+                $c->get('Faker'),
+                $c->get('DatabaseInstance')
+            );
         };
 
         if (file_exists(APP_ROOT . "/src/AppContainer.php")) {

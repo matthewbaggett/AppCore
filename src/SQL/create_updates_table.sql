@@ -1,0 +1,7 @@
+
+CREATE TABLE IF NOT EXISTS updater
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  file TEXT,
+  dateApplied DATETIME NOT NULL
+);
