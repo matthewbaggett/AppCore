@@ -7,8 +7,8 @@ use Zenderator\Automize;
 
 class DataRevertCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
 {
-    public function action() : bool{
-
+    public function action() : bool
+    {
         $autoImporter = App::Container()->get(AutoImporterService::class);
         $autoImporter->purge();
         echo "\n\n";
@@ -17,5 +17,4 @@ class DataRevertCommand extends Automize\AutomizeCommand implements Automize\Aut
         $this->getZenderator()->waitForKeypress();
         return true;
     }
-
 }
