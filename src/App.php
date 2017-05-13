@@ -376,4 +376,23 @@ class App
         Router::Instance()->populateRoutes($app);
         return $this;
     }
+
+    public static function waitForMySQLToBeReady()
+    {
+        $connection = App::Container()->get("DatabaseConfig")['Default'];
+
+        $ready = false;
+        echo "Waiting for MySQL to come up...";
+        while ($ready == false) {
+            $conn = @fsockopen($connection['hostname'], $connection['port']);
+            if (is_resource($conn)) {
+                fclose($conn);
+                $ready = true;
+            } else {
+                echo ".";
+                usleep(500000);
+            }
+        }
+        echo " [DONE]\n";
+    }
 }

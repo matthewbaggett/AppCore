@@ -91,28 +91,9 @@ class AutoImporterService
         ob_end_clean();
     }
 
-    public function waitForMySQL()
-    {
-        $connection = App::Container()->get("DatabaseConfig")['Default'];
-
-        $ready = false;
-        echo "Waiting for MySQL to come up...";
-        while ($ready == false) {
-            $conn = @fsockopen($connection['hostname'], $connection['port']);
-            if (is_resource($conn)) {
-                fclose($conn);
-                $ready = true;
-            } else {
-                echo ".";
-                usleep(500000);
-            }
-        }
-        echo " [DONE]\n";
-    }
-
     public function run()
     {
-        $this->waitForMySQL();
+        App::waitForMySQLToBeReady();
         echo "Checking for SQL to run:\n";
         foreach ($this->sqlPaths as $sqlPath) {
             foreach ($this->scanForSql($sqlPath) as $file) {
