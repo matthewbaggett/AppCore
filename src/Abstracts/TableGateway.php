@@ -278,14 +278,15 @@ abstract class TableGateway extends ZendTableGateway
 
     /**
      * @param Where[]|PredicateInterface[] $wheres
+     *
      * @return int
      */
     public function getCount($wheres = [])
     {
         $select = $this->getSql()->select();
         $select->columns(['total' => new Expression('IFNULL(COUNT(*),0)')]);
-        if(count($wheres) > 0){
-            foreach($wheres as $where) {
+        if (count($wheres) > 0) {
+            foreach ($wheres as $where) {
                 $select->where($where);
             }
         }
@@ -299,16 +300,17 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * @param string $field
+     * @param string                       $field
      * @param Where[]|PredicateInterface[] $wheres
+     *
      * @return int
      */
     public function getCountUnique(string $field, $wheres = [])
     {
         $select = $this->getSql()->select();
         $select->columns(['total' => new Expression('DISTINCT ' . $field)]);
-        if(count($wheres) > 0){
-            foreach($wheres as $where) {
+        if (count($wheres) > 0) {
+            foreach ($wheres as $where) {
                 $select->where($where);
             }
         }

@@ -94,7 +94,7 @@ class App
 
     public function getAppName()
     {
-        return APP_NAME;
+        return defined("APP_NAME") ? APP_NAME : null;
     }
 
     public function __construct()
