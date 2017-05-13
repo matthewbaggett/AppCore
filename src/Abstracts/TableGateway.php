@@ -9,6 +9,7 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\TableGateway\TableGateway as ZendTableGateway;
@@ -275,13 +276,45 @@ abstract class TableGateway extends ZendTableGateway
         return (count($resultSet) > 0) ? $resultSet->current() : null;
     }
 
-    public function getCount($where = [])
+    /**
+     * @param Where[]|PredicateInterface[] $wheres
+     * @return int
+     */
+    public function getCount($wheres = [])
     {
-        $Select = $this->getSql()->select();
-        $Select->columns(['total' => new Expression('IFNULL(COUNT(*),0)')])->where($where);
+        $select = $this->getSql()->select();
+        $select->columns(['total' => new Expression('IFNULL(COUNT(*),0)')]);
+        if(count($wheres) > 0){
+            foreach($wheres as $where) {
+                $select->where($where);
+            }
+        }
 
         $row = $this->getSql()
-            ->prepareStatementForSqlObject($Select)
+            ->prepareStatementForSqlObject($select)
+            ->execute()
+            ->current();
+
+        return !is_null($row) ? $row['total'] : 0;
+    }
+
+    /**
+     * @param string $field
+     * @param Where[]|PredicateInterface[] $wheres
+     * @return int
+     */
+    public function getCountUnique(string $field, $wheres = [])
+    {
+        $select = $this->getSql()->select();
+        $select->columns(['total' => new Expression('DISTINCT ' . $field)]);
+        if(count($wheres) > 0){
+            foreach($wheres as $where) {
+                $select->where($where);
+            }
+        }
+
+        $row = $this->getSql()
+            ->prepareStatementForSqlObject($select)
             ->execute()
             ->current();
 
