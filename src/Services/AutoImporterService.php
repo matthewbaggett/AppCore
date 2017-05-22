@@ -96,6 +96,9 @@ class AutoImporterService
         App::waitForMySQLToBeReady();
         echo "Checking for SQL to run:\n";
         foreach ($this->sqlPaths as $sqlPath) {
+            echo " > Looking in {$sqlPath}\n";
+        }
+        foreach ($this->sqlPaths as $sqlPath) {
             foreach ($this->scanForSql($sqlPath) as $file) {
                 $this->applyScripts($file);
             }

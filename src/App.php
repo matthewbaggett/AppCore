@@ -345,6 +345,7 @@ class App
 
         if (file_exists(APP_ROOT . "/sql")) {
             $this->getContainer()->get(AutoImporterService::class)
+                ->addSqlPath(APPCORE_ROOT . "/src/SQL")
                 ->addSqlPath(APP_ROOT . "/sql");
         }
 
