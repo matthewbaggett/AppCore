@@ -56,6 +56,7 @@ class EnvironmentService
 
     public function __toArray()
     {
+        ksort($this->environmentVariables);
         return $this->environmentVariables;
     }
 }
