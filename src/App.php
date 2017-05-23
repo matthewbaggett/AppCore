@@ -312,6 +312,10 @@ class App
             return new \TimeAgo();
         };
 
+        $this->container[Session::class] = function (Slim\Container $container) {
+            return Session::start($container->get("Redis"));
+        };
+
         $this->container[EventLoggerService::class] = function (Slim\Container $container) {
             return new EventLoggerService(
                 $container->get("MonoLog"),
@@ -356,9 +360,9 @@ class App
             require(APP_ROOT . "/src/AppContainerExtra.php");
         }
 
-
-
         $this->monolog = $this->getContainer()->get('MonoLog');
+
+        $session = $this->getContainer()->get(Session::class);
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)
