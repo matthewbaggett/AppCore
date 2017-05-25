@@ -3,7 +3,7 @@
 namespace Segura\AppCore\Zend;
 
 use Segura\AppCore\Interfaces\QueryStatisticInterface;
-use Thru\UUID\UUID;
+use Gone\UUID\UUID;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
 
