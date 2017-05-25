@@ -2,8 +2,8 @@
 
 namespace Segura\AppCore\Zend;
 
-use Segura\AppCore\Interfaces\QueryStatisticInterface;
 use Gone\UUID\UUID;
+use Segura\AppCore\Interfaces\QueryStatisticInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
 
