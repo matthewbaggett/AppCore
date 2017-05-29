@@ -28,14 +28,14 @@ class Router
     public function weighRoutes() : Router
     {
         $allocatedRoutes = [];
-        uasort($this->routes, function(Route $a, Route $b){
+        uasort($this->routes, function (Route $a, Route $b) {
             return $a->getWeight() > $b->getWeight();
         });
 
-        foreach($this->routes as $index => $route){
-            if(!isset($allocatedRoutes[$route->getHttpMethod() . $route->getRouterPattern()])){
+        foreach ($this->routes as $index => $route) {
+            if (!isset($allocatedRoutes[$route->getHttpMethod() . $route->getRouterPattern()])) {
                 $allocatedRoutes[$route->getHttpMethod() . $route->getRouterPattern()] = true;
-            }else{
+            } else {
                 unset($this->routes[$index]);
             }
         }

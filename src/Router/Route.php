@@ -13,7 +13,7 @@ class Route
     protected $routerPattern;
     protected $httpEndpoint;
     protected $httpMethod = "GET";
-    protected $weight = 0;
+    protected $weight     = 0;
     protected $singular;
     protected $plural;
     protected $properties;
