@@ -86,7 +86,8 @@ class Route
             "::",
             [
                 $this->getHttpMethod(),
-                $this->getRouterPattern()
+                $this->getRouterPattern(),
+                "Weight={$this->getWeight()}",
             ]
         );
     }
