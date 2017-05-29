@@ -25,8 +25,17 @@ class Router
         return self::$instance;
     }
 
+    public function weighRoutes() : Router
+    {
+        uasort($this->routes, function(Route $a, Route $b){
+            return $a->getWeight() > $b->getWeight();
+        });
+        return $this;
+    }
+
     public function populateRoutes(App $app)
     {
+        $this->weighRoutes();
         if (count($this->routes) > 0) {
             foreach ($this->routes as $route) {
                 $route->populateRoute($app);

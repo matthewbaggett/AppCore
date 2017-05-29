@@ -13,6 +13,7 @@ class Route
     protected $routerPattern;
     protected $httpEndpoint;
     protected $httpMethod = "GET";
+    protected $weight = 0;
     protected $singular;
     protected $plural;
     protected $properties;
@@ -106,6 +107,17 @@ class Route
     public function setHttpMethod($httpMethod)
     {
         $this->httpMethod = $httpMethod;
+        return $this;
+    }
+
+    public function getWeight() : int
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(int $weight) : Route
+    {
+        $this->weight = $weight;
         return $this;
     }
 
