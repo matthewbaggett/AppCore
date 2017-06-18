@@ -8,7 +8,7 @@ class Router
     protected static $instance;
 
     /** @var Route[] */
-    protected $routes;
+    protected $routes = [];
 
     public function __construct()
     {
