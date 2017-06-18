@@ -9,7 +9,7 @@
     "require": {
         "php": "^7.0",
         "slim/slim": "^3.2",
-        "kint-php/kint": "^1.0",
+        "kint-php/kint": "^2.0",
         "zendframework/zend-db": "^2.7",
         "zeuxisoo/slim-whoops": "^0.5.0",
         "symfony/var-dumper": "^3.0",
