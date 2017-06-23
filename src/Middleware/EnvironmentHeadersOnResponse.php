@@ -24,9 +24,9 @@ class EnvironmentHeadersOnResponse
             $json = json_decode($body->getContents(), true);
 
             $gitVersion = null;
-            if(file_exists(APP_ROOT . "/version.txt")){
+            if (file_exists(APP_ROOT . "/version.txt")) {
                 $gitVersion = trim(file_get_contents(APP_ROOT . "/version.txt"));
-                $gitVersion = explode(" ", $gitVersion,2);
+                $gitVersion = explode(" ", $gitVersion, 2);
                 $gitVersion = reset($gitVersion);
             }
 
