@@ -91,7 +91,7 @@ abstract class TableGateway extends ZendTableGateway
      */
     public function saveInsert(Model $model)
     {
-        $data = $model->__toArray();
+        $data = $model->__toRawArray();
         $this->insert($data);
 
         if ($model->hasPrimaryKey()) {
@@ -111,9 +111,9 @@ abstract class TableGateway extends ZendTableGateway
     public function saveUpdate(Model $model, Model $oldModel)
     {
         return $this->update(
-            $model->__toArray(),
+            $model->__toRawArray(),
             $model->getPrimaryKeys(),
-            $oldModel->__toArray()
+            $oldModel->__toRawArray()
         );
     }
 
@@ -137,6 +137,7 @@ abstract class TableGateway extends ZendTableGateway
      */
     public function update($data, $where = null, $oldData = [])
     {
+        #!\Kint::dump($data);exit;
         return parent::update($data, $where);
     }
 

@@ -80,6 +80,23 @@ abstract class Model implements ModelInterface
     }
 
     /**
+     * @return array
+     */
+    public function __toRawArray()
+    {
+        $array = [];
+
+        $transformer = new CaseTransformer(new Format\StudlyCaps(), new Format\StudlyCaps());
+
+        foreach ($this->getListOfProperties() as $property) {
+            $currentValue                              = $this->$property;
+            $array[$transformer->transform($property)] = $currentValue;
+        }
+
+        return array_merge($array);
+    }
+
+    /**
      * Return primary key values in an associative array.
      *
      * @return array
