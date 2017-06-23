@@ -23,9 +23,16 @@ class EnvironmentHeadersOnResponse
 
             $json = json_decode($body->getContents(), true);
 
+            $gitVersion = null;
+            if(file_exists(APP_ROOT . "/version.txt")){
+                $gitVersion = trim(file_get_contents(APP_ROOT . "/version.txt"));
+                $gitVersion = explode(" ", $gitVersion,2);
+                $gitVersion = reset($gitVersion);
+            }
+
             $json['Extra'] = array_filter([
                 'Hostname'   => gethostname(),
-                'GitVersion' => file_exists(APP_ROOT . "/version.txt") ? trim(file_get_contents(APP_ROOT . "/version.txt")) : null,
+                'GitVersion' => $gitVersion,
                 'Time'       => [
                     'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
                 ],
