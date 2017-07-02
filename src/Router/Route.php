@@ -277,15 +277,17 @@ class Route
     /**
      * @param App $app
      *
-     * @return \Slim\Interfaces\RouteInterface
+     * @return \Slim\App
      */
     public function populateRoute(App $app)
     {
-        return $app->map(
+        #echo "Populating: {$this->getHttpMethod()} {$this->getRouterPattern()}\n";
+        $app->map(
             [$this->getHttpMethod()],
             $this->getRouterPattern(),
             $this->getCallback()
         );
+        return $app;
     }
 
     /**

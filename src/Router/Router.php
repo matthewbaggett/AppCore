@@ -47,7 +47,7 @@ class Router
         $this->weighRoutes();
         if (count($this->routes) > 0) {
             foreach ($this->routes as $route) {
-                $route->populateRoute($app);
+                $app = $route->populateRoute($app);
             }
         }
         return $app;

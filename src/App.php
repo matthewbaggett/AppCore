@@ -81,7 +81,28 @@ class App
         if (file_exists($path)) {
             $this->routePaths[] = $path;
         }
+
         return $this;
+    }
+
+    /**
+     * @param $directory
+     * @return int Number of Paths added.
+     */
+    public function addRoutePathsRecursively($directory){
+        $count = 0;
+        foreach (new \DirectoryIterator($directory) as $file) {
+            if(!$file->isDot()) {
+                if ($file->isFile() && $file->getExtension() == 'php') {
+                    $this->addRoutePath($file->getRealPath());
+                    $count++;
+                }elseif($file->isDir()){
+                    $count+= $this->addRoutePathsRecursively($file->getRealPath());
+                }
+            }
+        }
+
+        return $count;
     }
 
     public function addViewPath($path)
@@ -362,7 +383,11 @@ class App
 
         $this->monolog = $this->getContainer()->get('MonoLog');
 
-        $session = $this->getContainer()->get(Session::class);
+        $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
+
+        if(php_sapi_name() != 'cli') {
+            $session = $this->getContainer()->get(Session::class);
+        }
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)
@@ -375,7 +400,7 @@ class App
         $app = $this->getApp();
         foreach ($this->routePaths as $path) {
             if (file_exists($path)) {
-                require($path);
+                include($path);
             }
         }
         Router::Instance()->populateRoutes($app);
