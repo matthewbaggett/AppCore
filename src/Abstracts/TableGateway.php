@@ -9,6 +9,7 @@ use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;
+use Zend\Db\Sql\Predicate;
 use Zend\Db\Sql\Predicate\PredicateInterface;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
@@ -478,6 +479,37 @@ abstract class TableGateway extends ZendTableGateway
         $row = $this->select($primaryKeys)->current();
         if (!$row) {
             throw new TableGatewayRecordNotFoundException("Could not find record by primary keys: " . var_export($primaryKeys, true) . ".");
+        }
+        return $row;
+    }
+
+    /**
+     * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
+     * @param null                                                     $orderBy
+     * @param string                                                   $orderDirection
+     *
+     * @throws TableGatewayRecordNotFoundException
+     *
+     * @return array|\ArrayObject|null
+     */
+    public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
+    {
+        $select = $this->sql->select();
+        $select->where($keyValue);
+        if ($orderBy) {
+            $select->order("{$orderBy} {$orderDirection}");
+        }
+        $select->limit(1);
+
+        $resultSet = $this->selectWith($select);
+
+        $row = $resultSet->current();
+        if (!$row) {
+            $matchString = [];
+            foreach ($keyValue as $field => $value) {
+                $matchString[] = "'{$field}' => '{$value}'";
+            }
+            throw new TableGatewayRecordNotFoundException("Could not find record by [" . implode(", ", $matchString) . "]");
         }
         return $row;
     }
