@@ -87,11 +87,13 @@ class App
 
     /**
      * @param $directory
+     *
      * @return int Number of Paths added.
      */
-    public function addRoutePathsRecursively($directory){
+    public function addRoutePathsRecursively($directory)
+    {
         $count = 0;
-        if(file_exists($directory)) {
+        if (file_exists($directory)) {
             foreach (new \DirectoryIterator($directory) as $file) {
                 if (!$file->isDot()) {
                     if ($file->isFile() && $file->getExtension() == 'php') {
@@ -386,7 +388,7 @@ class App
 
         $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
 
-        if(php_sapi_name() != 'cli') {
+        if (php_sapi_name() != 'cli') {
             $session = $this->getContainer()->get(Session::class);
         }
     }
