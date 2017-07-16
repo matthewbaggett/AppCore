@@ -515,6 +515,37 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
+     * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
+     * @param null                                                     $orderBy
+     * @param string                                                   $orderDirection
+     *
+     * @throws TableGatewayRecordNotFoundException
+     *
+     * @return array|\ArrayObject|null
+     */
+    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
+    {
+        $select = $this->sql->select();
+        $select->where($keyValue);
+        if ($orderBy) {
+            $select->order("{$orderBy} {$orderDirection}");
+        }
+        $resultSet = $this->selectWith($select);
+
+        $results = [];
+        if ($resultSet->count() == 0) {
+            throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+        } else {
+            for ($i = 0; $i < $resultSet->count(); $i++) {
+                $row       = $resultSet->current();
+                $results[] = $row;
+                $resultSet->next();
+            }
+        }
+        return $results;
+    }
+
+    /**
      * @param array $data
      *
      * @return Model
