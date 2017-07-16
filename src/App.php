@@ -91,17 +91,18 @@ class App
      */
     public function addRoutePathsRecursively($directory){
         $count = 0;
-        foreach (new \DirectoryIterator($directory) as $file) {
-            if(!$file->isDot()) {
-                if ($file->isFile() && $file->getExtension() == 'php') {
-                    $this->addRoutePath($file->getRealPath());
-                    $count++;
-                }elseif($file->isDir()){
-                    $count+= $this->addRoutePathsRecursively($file->getRealPath());
+        if(file_exists($directory)) {
+            foreach (new \DirectoryIterator($directory) as $file) {
+                if (!$file->isDot()) {
+                    if ($file->isFile() && $file->getExtension() == 'php') {
+                        $this->addRoutePath($file->getRealPath());
+                        $count++;
+                    } elseif ($file->isDir()) {
+                        $count += $this->addRoutePathsRecursively($file->getRealPath());
+                    }
                 }
             }
         }
-
         return $count;
     }
 
