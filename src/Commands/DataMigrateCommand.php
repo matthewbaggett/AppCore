@@ -5,14 +5,12 @@ use Segura\AppCore\App;
 use Segura\AppCore\Services\AutoImporterService;
 use Zenderator\Automize;
 
-class DataRevertCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
+class DataMigrateCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
 {
     public function action() : bool
     {
         /** @var AutoImporterService $autoImporter */
         $autoImporter = App::Container()->get(AutoImporterService::class);
-        $autoImporter->purge();
-        echo "\n\n";
         $autoImporter->run();
         echo "\n\n";
         $this->getZenderator()->waitForKeypress();
