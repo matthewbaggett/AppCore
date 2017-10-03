@@ -32,6 +32,13 @@ class EnvironmentService
             file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
         }
         ksort($this->environmentVariables);
+
+        // Generate some convenience envvars that will help us.
+        $this->environmentVariables['HTTP_FQDN'] =
+            ($this->environmentVariables['SERVER_PORT'] == 443 ? 'https://' : 'http://') .
+                $this->environmentVariables['HTTP_HOST'] .
+                (!in_array($this->environmentVariables['SERVER_PORT'], [80,443]) ? ':' . $this->environmentVariables['SERVER_PORT'] : '') .
+                "/";
     }
 
     /**
