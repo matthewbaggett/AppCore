@@ -98,6 +98,7 @@ class AutoImporterService
         foreach ($this->sqlPaths as $sqlPath) {
             echo " > Looking in {$sqlPath}\n";
         }
+        echo "Running found scripts:\n";
         foreach ($this->sqlPaths as $sqlPath) {
             foreach ($this->scanForSql($sqlPath) as $file) {
                 $this->applyScripts($file);
