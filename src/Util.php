@@ -79,12 +79,14 @@ class Util
     }
 
     /**
-     * Companion function to match parse_url
+     * Companion function to match parse_url.
      *
      * @param $parsed_url
+     *
      * @return string
      */
-    public static function unparse_url($parsed_url) {
+    public static function unparse_url($parsed_url)
+    {
         $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
         $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';

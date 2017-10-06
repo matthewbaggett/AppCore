@@ -13,10 +13,10 @@ class DataRevertCommand extends Automize\AutomizeCommand implements Automize\Aut
         $rootOfApp = '/app';
         /** @var AutoImporterService $autoImporter */
         $autoImporter = App::Container()->get(AutoImporterService::class);
-        $config = Zenderator::getConfig($rootOfApp);
+        $config       = Zenderator::getConfig($rootOfApp);
         $autoImporter->addSqlPath($rootOfApp . "/vendor/segura/appcore/src/SQL");
-        if(isset($config['sql'])){
-            foreach($config['sql'] as $location){
+        if (isset($config['sql'])) {
+            foreach ($config['sql'] as $location) {
                 $autoImporter->addSqlPath($rootOfApp . "/" . $location);
             }
         }
