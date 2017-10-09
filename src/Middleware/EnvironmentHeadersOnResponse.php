@@ -34,6 +34,11 @@ class EnvironmentHeadersOnResponse
                 'Hostname'   => gethostname(),
                 'GitVersion' => $gitVersion,
                 'Time'       => [
+                    'TimeZone' => date_default_timezone_get(),
+                    'CurrentTime' => [
+                        'Human' => date("Y-m-d H:i:s"),
+                        'Epoch' => time(),
+                    ],
                     'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
                 ],
                 'Memory'     => [

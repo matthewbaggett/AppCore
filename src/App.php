@@ -27,6 +27,8 @@ use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
 
 class App
 {
+    const DEFAULT_TIMEZONE = 'Europe/London';
+
     public static $instance;
 
     /** @var \Slim\App */
@@ -370,6 +372,14 @@ class App
                 $c->get('DatabaseInstance')
             );
         };
+
+        /** @var EnvironmentService $environmentService */
+        $environmentService = $this->getContainer()->get(EnvironmentService::class);
+        if($environmentService->isSet('TIMEZONE')){
+            date_default_timezone_set($environmentService->get('TIMEZONE'));
+        }else{
+            date_default_timezone_set(self::DEFAULT_TIMEZONE);
+        }
 
         if (file_exists(APP_ROOT . "/sql")) {
             $this->getContainer()->get(AutoImporterService::class)
