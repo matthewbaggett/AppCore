@@ -16,7 +16,8 @@ class EnvironmentService
 
     public function __construct(
         AutoConfigurationService $autoConfigurationService
-    ) {
+    )
+    {
         if (file_exists($this->cacheFile)) {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
         } else {
@@ -40,6 +41,9 @@ class EnvironmentService
                 $this->environmentVariables['HTTP_HOST'] .
                 (!in_array($this->environmentVariables['SERVER_PORT'], [80, 443]) ? ':' . $this->environmentVariables['SERVER_PORT'] : '') .
                 "/";
+        }
+        foreach (['argv', 'argc'] as $unsettable) {
+            unset($this->environmentVariables[$unsettable]);
         }
     }
 
