@@ -395,7 +395,7 @@ abstract class TableGateway extends ZendTableGateway
         try {
             return $this->getByField('id', $id);
         } catch (TableGatewayException $tge) {
-            throw new TableGatewayException("Cannot find record by ID '{$id}'");
+            throw new TableGatewayException("Cannot find {$this->getTable()} record by ID '{$id}'");
         }
     }
 
@@ -423,7 +423,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $row = $resultSet->current();
         if (!$row) {
-            throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by ['{$field}' => '{$value}']");
         }
         return $row;
     }
@@ -456,7 +456,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by ['{$field}' => '{$value}']");
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
@@ -478,7 +478,7 @@ abstract class TableGateway extends ZendTableGateway
     {
         $row = $this->select($primaryKeys)->current();
         if (!$row) {
-            throw new TableGatewayRecordNotFoundException("Could not find record by primary keys: " . var_export($primaryKeys, true) . ".");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by primary keys: " . var_export($primaryKeys, true) . ".");
         }
         return $row;
     }
@@ -509,7 +509,7 @@ abstract class TableGateway extends ZendTableGateway
             foreach ($keyValue as $field => $value) {
                 $matchString[] = "'{$field}' => '{$value}'";
             }
-            throw new TableGatewayRecordNotFoundException("Could not find record by [" . implode(", ", $matchString) . "]");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [" . implode(", ", $matchString) . "]");
         }
         return $row;
     }
@@ -534,7 +534,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            throw new TableGatewayRecordNotFoundException("Could not find record by ['{$field}' => '{$value}']");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [".var_export($keyValue,true)."]");
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
