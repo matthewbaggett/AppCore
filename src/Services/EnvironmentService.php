@@ -47,6 +47,13 @@ class EnvironmentService
         }
     }
 
+    public function clearCache(){
+        if(file_exists($this->cacheFile)){
+            unlink($this->cacheFile);
+        }
+        return $this;
+    }
+
     /**
      * @param string $var
      *

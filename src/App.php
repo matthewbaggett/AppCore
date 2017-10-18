@@ -291,6 +291,7 @@ class App
             } elseif ($environment->isSet('REDIS_HOST')) {
                 $redisConfig = parse_url($environment->get('REDIS_HOST'));
             } else {
+                $environment->clearCache();
                 throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
             }
 
