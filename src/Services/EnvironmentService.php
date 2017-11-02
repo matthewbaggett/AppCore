@@ -16,8 +16,7 @@ class EnvironmentService
 
     public function __construct(
         AutoConfigurationService $autoConfigurationService
-    )
-    {
+    ) {
         if (file_exists($this->cacheFile)) {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
         } else {
@@ -47,8 +46,9 @@ class EnvironmentService
         }
     }
 
-    public function clearCache(){
-        if(file_exists($this->cacheFile)){
+    public function clearCache()
+    {
+        if (file_exists($this->cacheFile)) {
             unlink($this->cacheFile);
         }
         return $this;

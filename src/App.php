@@ -212,15 +212,14 @@ class App
             $databaseConfiguration = [];
             // Lets connect to a database
             if ($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
-
                 if ($environment->isSet('MYSQL_PORT')) {
                     $databaseConfigurationHost = $environment->get('MYSQL_PORT');
                 } else {
                     $databaseConfigurationHost = $environment->get('MYSQL_HOST');
                 }
-                if(isset(parse_url($databaseConfigurationHost)['host'])){
+                if (isset(parse_url($databaseConfigurationHost)['host'])) {
                     $databaseConfigurationHost = parse_url($databaseConfigurationHost);
-                }else{
+                } else {
                     $databaseConfigurationHost = [
                         'host' => $databaseConfigurationHost,
                         'port' => 3306,
@@ -385,9 +384,9 @@ class App
 
         /** @var EnvironmentService $environmentService */
         $environmentService = $this->getContainer()->get(EnvironmentService::class);
-        if($environmentService->isSet('TIMEZONE')){
+        if ($environmentService->isSet('TIMEZONE')) {
             date_default_timezone_set($environmentService->get('TIMEZONE'));
-        }else{
+        } else {
             date_default_timezone_set(self::DEFAULT_TIMEZONE);
         }
 

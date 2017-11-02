@@ -475,7 +475,7 @@ abstract class TableGateway extends ZendTableGateway
             new Expression('COUNT(*) as count')
         ]);
         $statement = $this->sql->prepareStatementForSqlObject($select);
-        $result = $statement->execute();
+        $result    = $statement->execute();
 
         $data = $result->current();
 
@@ -549,7 +549,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [".var_export($keyValue,true)."]");
+            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [".var_export($keyValue, true)."]");
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
