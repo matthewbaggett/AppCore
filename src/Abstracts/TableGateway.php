@@ -429,7 +429,7 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @param $value
      * @param $limit int
      * @param $orderBy string Field to sort by
@@ -439,7 +439,7 @@ abstract class TableGateway extends ZendTableGateway
      *
      * @return array|\ArrayObject|null
      */
-    public function getManyByField($field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
+    public function getManyByField(string $field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         $select = $this->sql->select();
 
@@ -465,6 +465,21 @@ abstract class TableGateway extends ZendTableGateway
             }
         }
         return $results;
+    }
+
+    public function countByField(string $field, $value)
+    {
+        $select = $this->sql->select();
+        $select->where([$field => $value]);
+        $select->columns([
+            new Expression('COUNT(*) as count')
+        ]);
+        $statement = $this->sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
+
+        $data = $result->current();
+
+        return $data['count'];
     }
 
     /**
