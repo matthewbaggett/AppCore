@@ -26,7 +26,7 @@ abstract class CrudController extends Controller
         }
 
         foreach ($foundObjects as $object) {
-            $objects[] = $object->__toArray();
+            $objects[] = $object->__toPublicArray();
         }
 
         return $this->jsonResponse(
