@@ -14,8 +14,7 @@ class EnvironmentHeadersOnResponse
     {
         /** @var Response $response */
         $response = $next($request, $response);
-        if (
-            isset($response->getHeader('Content-Type')[0])
+        if (isset($response->getHeader('Content-Type')[0])
             and stripos($response->getHeader('Content-Type')[0], 'application/json') !== false
         ) {
             $body = $response->getBody();
@@ -56,8 +55,7 @@ class EnvironmentHeadersOnResponse
                 }
             }
 
-            if (
-                ($request->hasHeader('Content-type') && stripos($request->getHeader('Content-type')[0], 'application/json') !== false)  ||
+            if (($request->hasHeader('Content-type') && stripos($request->getHeader('Content-type')[0], 'application/json') !== false)  ||
                 ($request->hasHeader('Accept') && stripos($request->getHeader('Accept')[0], 'application/json') !== false)  ||
                 $this->apiExplorerEnabled === false
             ) {

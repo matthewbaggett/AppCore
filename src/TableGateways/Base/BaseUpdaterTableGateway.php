@@ -56,7 +56,7 @@ abstract class BaseUpdaterTableGateway extends AbstractTableGateway
         'file' => substr($this->faker->text(500 >= 5 ? 500 : 5), 0, 500),
         // id. Type = int. PHPType = int. Has no related objects.
         'id' => null,
-      ];
+        ];
         $newUpdater = $this->getNewModelInstance($newUpdaterData);
         return $newUpdater;
     }

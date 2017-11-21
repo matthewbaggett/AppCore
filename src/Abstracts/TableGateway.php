@@ -395,7 +395,6 @@ abstract class TableGateway extends ZendTableGateway
         try {
             return $this->getByField('id', $id);
         } catch (TableGatewayException $tge) {
-
             throw new TableGatewayException("Cannot find {$this->getModelName()} record by ID '{$id}'");
         }
     }
@@ -610,7 +609,7 @@ abstract class TableGateway extends ZendTableGateway
     {
         $modelName = explode("\\", $this->model);
         $modelName = end($modelName);
-        $modelName = str_replace("Model","", $modelName);
+        $modelName = str_replace("Model", "", $modelName);
         return $modelName;
     }
 }
