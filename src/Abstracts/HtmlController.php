@@ -2,6 +2,7 @@
 namespace Segura\AppCore\Abstracts;
 
 use Segura\AppCore\App;
+use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
@@ -32,15 +33,16 @@ abstract class HtmlController extends Controller
         return $this;
     }
 
-    protected function getParameters(){
+    protected function getParameters(Request $request){
         return [
+            "path" => $request->getUri()->getPath(),
             'extraJs' => $this->extraJs,
             'extraCss' => $this->extraCss,
         ];
     }
 
-    protected function renderHtml(Response $response, string $template, array $parameters = []){
-        $parameters = array_merge($this->getParameters(), $parameters);
+    protected function renderHtml(Request $request, Response $response, string $template, array $parameters = []){
+        $parameters = array_merge($this->getParameters($request), $parameters);
         return $this->twig->render(
             $response,
             $template,
