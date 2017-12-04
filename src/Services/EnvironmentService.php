@@ -65,7 +65,7 @@ class EnvironmentService
     }
 
     /**
-     * @param string|array $var
+     * @param string|array    $var
      * @param string|int|bool $default
      *
      * @return string|int|bool

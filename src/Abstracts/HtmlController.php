@@ -11,37 +11,42 @@ abstract class HtmlController extends Controller
     /** @var Twig */
     private $twig;
     private $extraCss = [];
-    private $extraJs = [];
+    private $extraJs  = [];
 
     public function __construct()
     {
         $this->twig = App::Container()->get("view");
     }
 
-    protected function addCss($path){
+    protected function addCss($path)
+    {
         $this->extraCss[] = $path;
         return $this;
     }
 
-    protected function addJs($path){
+    protected function addJs($path)
+    {
         $this->extraJs = $path;
         return $this;
     }
 
-    protected function addViews($path){
+    protected function addViews($path)
+    {
         App::Instance()->addViewPath($path);
         return $this;
     }
 
-    protected function getParameters(Request $request){
+    protected function getParameters(Request $request)
+    {
         return [
-            "path" => $request->getUri()->getPath(),
-            'extraJs' => $this->extraJs,
+            "path"     => $request->getUri()->getPath(),
+            'extraJs'  => $this->extraJs,
             'extraCss' => $this->extraCss,
         ];
     }
 
-    protected function renderHtml(Request $request, Response $response, string $template, array $parameters = []){
+    protected function renderHtml(Request $request, Response $response, string $template, array $parameters = [])
+    {
         $parameters = array_merge($this->getParameters($request), $parameters);
         return $this->twig->render(
             $response,
