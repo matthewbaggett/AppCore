@@ -317,6 +317,47 @@ class App
             return new \Predis\Client($redisConfig, $redisOptions);
         };
 
+        $this->container['ReactLoop'] = function(Slim\Container $c){
+            $loop = \React\EventLoop\Factory::create();
+            return $loop;
+        };
+
+        $this->container['ReactRedis'] = function (Slim\Container $c) {
+            /** @var EnvironmentService $environment */
+            $environment = $this->getContainer()->get(EnvironmentService::class);
+
+            // Determine where Redis is.
+            if ($environment->isSet('REDIS_PORT')) {
+                $redisConfig = parse_url($environment->get('REDIS_PORT'));
+            } elseif ($environment->isSet('REDIS_HOST')) {
+                $redisConfig = parse_url($environment->get('REDIS_HOST'));
+            } else {
+                $environment->clearCache();
+                throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
+            }
+
+            // Create Redis options array.
+            $redisOptions = [];
+            if ($environment->isSet('REDIS_OVERRIDE_HOST')) {
+                $redisConfig['host'] = $environment->get('REDIS_OVERRIDE_HOST');
+            }
+            if ($environment->isSet('REDIS_OVERRIDE_PORT')) {
+                $redisConfig['port'] = $environment->get('REDIS_OVERRIDE_PORT');
+            }
+            if ($environment->isSet('REDIS_PREFIX')) {
+                $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
+            }
+
+            $loop = $c->get('ReactLoop');
+
+            $reactRedisFactory = new \Clue\React\Redis\Factory($loop);
+
+            return [
+                $reactRedisFactory->createClient("{$redisConfig['host']}:{$redisConfig['port']}"),
+                $loop
+            ];
+        };
+
         $this->container['MonoLog'] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
             $environment = $this->getContainer()->get(EnvironmentService::class);
