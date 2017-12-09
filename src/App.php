@@ -289,7 +289,7 @@ class App
         };
 
 
-        $this->container['RedisConfig'] = function (Slim\Container $c){
+        $this->container['RedisConfig'] = function (Slim\Container $c) {
             // Get environment variables.
             /** @var EnvironmentService $environment */
             $environment = $this->getContainer()->get(EnvironmentService::class);
@@ -314,8 +314,8 @@ class App
 
         $this->container['Redis'] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
-            $environment = $this->getContainer()->get(EnvironmentService::class);
-            $redisConfig = $c->get("RedisConfig");
+            $environment  = $this->getContainer()->get(EnvironmentService::class);
+            $redisConfig  = $c->get("RedisConfig");
             $redisOptions = [];
             if ($environment->isSet('REDIS_PREFIX')) {
                 $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
