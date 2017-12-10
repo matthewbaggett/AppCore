@@ -14,6 +14,10 @@ abstract class Controller
     /** @var bool */
     protected $apiExplorerEnabled = true;
 
+    public function __construct()
+    {
+    }
+
     /**
      * @return Service
      */
