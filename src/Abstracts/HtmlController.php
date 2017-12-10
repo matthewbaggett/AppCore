@@ -42,6 +42,7 @@ abstract class HtmlController extends Controller
             "path"     => $request->getUri()->getPath(),
             'extraJs'  => $this->extraJs,
             'extraCss' => $this->extraCss,
+            'hostname' => gethostname(),
         ];
     }
 
