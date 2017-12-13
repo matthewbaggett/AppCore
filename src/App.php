@@ -3,12 +3,12 @@ namespace Segura\AppCore;
 
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
-use Predis\Client as PredisClient;
 use GuzzleHttp\Client as HttpClient;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Exceptions\DbConfigException;
 use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
@@ -66,7 +66,8 @@ class App
         return self::Instance()->getContainer();
     }
 
-    public static function Debug($message){
+    public static function Debug($message)
+    {
         /** @var PredisClient $redis */
         $redis = self::Container()->get("Redis");
         $redis->publish("debug", $message);
