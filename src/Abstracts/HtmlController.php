@@ -2,9 +2,11 @@
 namespace Segura\AppCore\Abstracts;
 
 use Segura\AppCore\App;
+use Segura\Session\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
+use VPN\Models\UsersModel;
 
 abstract class HtmlController extends Controller
 {
@@ -38,11 +40,14 @@ abstract class HtmlController extends Controller
 
     protected function getParameters(Request $request)
     {
+        /** @var UsersModel $user */
+        $user = Session::get("User");
         return [
             "path"     => $request->getUri()->getPath(),
             'extraJs'  => $this->extraJs,
             'extraCss' => $this->extraCss,
             'hostname' => gethostname(),
+            'isAdmin' => $user ? $user->getAccountType() == UsersModel::ACCOUNTTYPE_ADMIN : false,
         ];
     }
 
