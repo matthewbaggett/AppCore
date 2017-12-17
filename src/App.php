@@ -70,8 +70,13 @@ class App
     {
         /** @var PredisClient $redis */
         $redis = self::Container()->get("Redis");
-        $redis->publish("debug", $message);
-        $redis->hset("debug_log", microtime(true), $message);
+        if ($message instanceof \Exception) {
+            $message = "EXCEPTION (" . get_class($message) . "): {$message->getMessage()}";
+        }
+        if (is_string($message)) {
+            $redis->publish("debug", $message);
+            $redis->hset("debug_log", microtime(true), $message);
+        }
     }
 
     /**
