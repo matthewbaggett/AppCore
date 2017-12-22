@@ -455,7 +455,7 @@ class App
         $connection = App::Container()->get("DatabaseConfig")['Default'];
 
         $ready = false;
-        echo "Waiting for MySQL to come up...";
+        echo "Waiting for MySQL ({$connection['hostname']}:{$connection['port']}) to come up...";
         while ($ready == false) {
             $conn = @fsockopen($connection['hostname'], $connection['port']);
             if (is_resource($conn)) {
