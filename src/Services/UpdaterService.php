@@ -13,9 +13,9 @@ class UpdaterService extends AbstractService implements ServiceInterface
 {
     public function updateAlreadyApplied($file)
     {
-        if($this->getByField(UpdaterModel::FIELD_FILE, $file)) {
+        if ($this->getByField(UpdaterModel::FIELD_FILE, $file)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
