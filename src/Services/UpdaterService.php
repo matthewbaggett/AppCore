@@ -106,9 +106,9 @@ class UpdaterService extends AbstractService implements ServiceInterface
      *
      * @throws \Segura\AppCore\Exceptions\TableGatewayException
      *
-     * @return Models\UpdaterModel
+     * @return Models\UpdaterModel|null
      */
-    public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : Models\UpdaterModel
+    public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : ?Models\UpdaterModel
     {
         /** @var TableGateways\UpdaterTableGateway $updaterTable */
         $updaterTable = $this->getNewTableGatewayInstance();

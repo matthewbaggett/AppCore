@@ -404,7 +404,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return array|\ArrayObject|false
+     * @return array|\ArrayObject|null
      */
     public function getByField($field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -420,7 +420,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $row = $resultSet->current();
         if (!$row) {
-            return false;
+            return null;
         }
         return $row;
     }
@@ -432,7 +432,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return array|\ArrayObject|false
+     * @return array|\ArrayObject|null
      */
     public function getManyByField(string $field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -451,7 +451,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            return false;
+            return null;
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
@@ -480,13 +480,13 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param array $primaryKeys
      *
-     * @return array|\ArrayObject|false
+     * @return array|\ArrayObject|null
      */
     public function getByPrimaryKey(array $primaryKeys)
     {
         $row = $this->select($primaryKeys)->current();
         if (!$row) {
-            return false;
+            return null;
         }
         return $row;
     }
@@ -496,7 +496,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
      *
-     * @return array|\ArrayObject|false
+     * @return array|\ArrayObject|null
      */
     public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -511,7 +511,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $row = $resultSet->current();
         if (!$row) {
-            return false;
+            return null;
         }
         return $row;
     }
@@ -534,7 +534,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            return false;
+            return null;
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
