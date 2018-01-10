@@ -42,20 +42,30 @@ abstract class CrudController extends Controller
 
     public function getRequest(Request $request, Response $response, $args)
     {
-        try {
-            $object = $this->getService()->getById($args['id'])->__toArray();
-
+        $object = $this->getService()->getById($args['id']);
+        if($object) {
             return $this->jsonResponse(
                 [
-                    'Status'                          => 'OKAY',
-                    'Action'                          => 'GET',
-                    $this->service->getTermSingular() => $object,
+                    'Status' => 'OKAY',
+                    'Action' => 'GET',
+                    $this->service->getTermSingular() => $object->__toArray(),
                 ],
                 $request,
                 $response
             );
-        } catch (TableGatewayException $tge) {
-            return $this->jsonResponseException($tge, $request, $response);
+        }else{
+            return $this->jsonResponse(
+                [
+                    'Status'                          => 'FAIL',
+                    'Reason' => sprintf(
+                        "No such %s found with id %s",
+                        strtolower($this->service->getTermSingular()),
+                        $args['id']
+                    )
+                ],
+                $request,
+                $response
+            );
         }
     }
 
