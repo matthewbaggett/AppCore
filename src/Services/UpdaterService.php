@@ -2,7 +2,6 @@
 namespace Segura\AppCore\Services;
 
 use Segura\AppCore\Abstracts\Service as AbstractService;
-use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
 use Segura\AppCore\Interfaces\ServiceInterface as ServiceInterface;
 use Segura\AppCore\Models;
 use Segura\AppCore\Models\UpdaterModel;
@@ -14,10 +13,9 @@ class UpdaterService extends AbstractService implements ServiceInterface
 {
     public function updateAlreadyApplied($file)
     {
-        try {
-            $this->getByField(UpdaterModel::FIELD_FILE, $file);
+        if($this->getByField(UpdaterModel::FIELD_FILE, $file)) {
             return true;
-        } catch (TableGatewayRecordNotFoundException $exception) {
+        }else{
             return false;
         }
     }
@@ -90,7 +88,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param int $id
      *
      * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     * @throws \Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException
      *
      * @return Models\UpdaterModel
      */
@@ -108,7 +105,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     * @throws \Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException
      *
      * @return Models\UpdaterModel
      */
@@ -127,7 +123,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     * @throws \Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException
      *
      * @return Models\UpdaterModel[]
      */

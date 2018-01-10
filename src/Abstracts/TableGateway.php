@@ -2,7 +2,6 @@
 namespace Segura\AppCore\Abstracts;
 
 use Segura\AppCore\Exceptions\TableGatewayException;
-use Segura\AppCore\Exceptions\TableGatewayRecordNotFoundException;
 use Segura\AppCore\Filters\FilterCondition;
 use Segura\AppCore\ZendSql;
 use Zend\Db\Adapter\AdapterInterface;
@@ -388,7 +387,7 @@ abstract class TableGateway extends ZendTableGateway
      *
      * @throws TableGatewayException
      *
-     * @return Model
+     * @return Model|false
      */
     public function getById($id)
     {
@@ -405,9 +404,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @throws TableGatewayRecordNotFoundException
-     *
-     * @return array|\ArrayObject|null
+     * @return array|\ArrayObject|false
      */
     public function getByField($field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -423,7 +420,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $row = $resultSet->current();
         if (!$row) {
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by ['{$field}' => '{$value}']");
+            return false;
         }
         return $row;
     }
@@ -435,9 +432,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @throws TableGatewayRecordNotFoundException
-     *
-     * @return array|\ArrayObject|null
+     * @return array|\ArrayObject|false
      */
     public function getManyByField(string $field, $value, int $limit = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -456,7 +451,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by ['{$field}' => '{$value}']");
+            return false;
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
@@ -485,15 +480,13 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param array $primaryKeys
      *
-     * @throws TableGatewayException
-     *
-     * @return array|\ArrayObject|null
+     * @return array|\ArrayObject|false
      */
     public function getByPrimaryKey(array $primaryKeys)
     {
         $row = $this->select($primaryKeys)->current();
         if (!$row) {
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by primary keys: " . var_export($primaryKeys, true) . ".");
+            return false;
         }
         return $row;
     }
@@ -503,9 +496,7 @@ abstract class TableGateway extends ZendTableGateway
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
      *
-     * @throws TableGatewayRecordNotFoundException
-     *
-     * @return array|\ArrayObject|null
+     * @return array|\ArrayObject|false
      */
     public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
     {
@@ -520,11 +511,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $row = $resultSet->current();
         if (!$row) {
-            $matchString = [];
-            foreach ($keyValue as $field => $value) {
-                $matchString[] = "'{$field}' => '{$value}'";
-            }
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [" . implode(", ", $matchString) . "]");
+            return false;
         }
         return $row;
     }
@@ -533,8 +520,6 @@ abstract class TableGateway extends ZendTableGateway
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
-     *
-     * @throws TableGatewayRecordNotFoundException
      *
      * @return array|\ArrayObject|null
      */
@@ -549,7 +534,7 @@ abstract class TableGateway extends ZendTableGateway
 
         $results = [];
         if ($resultSet->count() == 0) {
-            throw new TableGatewayRecordNotFoundException("Could not find {$this->getTable()} record by [".var_export($keyValue, true)."]");
+            return false;
         } else {
             for ($i = 0; $i < $resultSet->count(); $i++) {
                 $row       = $resultSet->current();
