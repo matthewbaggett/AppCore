@@ -42,16 +42,6 @@ abstract class CrudController extends Controller
 
     public function getRequest(Request $request, Response $response, $args)
     {
-<<<<<<< Updated upstream
-        try {
-            $object = $this->getService()->getById($args['id'])->__toArray();
-
-            return $this->jsonResponse(
-                [
-                    'Status'                          => 'OKAY',
-                    'Action'                          => 'GET',
-                    $this->service->getTermSingular() => $object,
-=======
         $object = $this->getService()->getById($args['id']);
         if ($object) {
             return $this->jsonResponse(
@@ -72,13 +62,10 @@ abstract class CrudController extends Controller
                         strtolower($this->service->getTermSingular()),
                         $args['id']
                     )
->>>>>>> Stashed changes
                 ],
                 $request,
                 $response
             );
-        } catch (TableGatewayException $tge) {
-            return $this->jsonResponseException($tge, $request, $response);
         }
     }
 
