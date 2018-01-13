@@ -42,6 +42,7 @@ abstract class CrudController extends Controller
 
     public function getRequest(Request $request, Response $response, $args)
     {
+<<<<<<< Updated upstream
         try {
             $object = $this->getService()->getById($args['id'])->__toArray();
 
@@ -50,6 +51,28 @@ abstract class CrudController extends Controller
                     'Status'                          => 'OKAY',
                     'Action'                          => 'GET',
                     $this->service->getTermSingular() => $object,
+=======
+        $object = $this->getService()->getById($args['id']);
+        if ($object) {
+            return $this->jsonResponse(
+                [
+                    'Status'                          => 'OKAY',
+                    'Action'                          => 'GET',
+                    $this->service->getTermSingular() => $object->__toArray(),
+                ],
+                $request,
+                $response
+            );
+        } else {
+            return $this->jsonResponse(
+                [
+                    'Status'                          => 'FAIL',
+                    'Reason'                          => sprintf(
+                        "No such %s found with id %s",
+                        strtolower($this->service->getTermSingular()),
+                        $args['id']
+                    )
+>>>>>>> Stashed changes
                 ],
                 $request,
                 $response
