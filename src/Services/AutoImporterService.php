@@ -84,9 +84,9 @@ class AutoImporterService
     private function runFile($sqlFile)
     {
         $configs = App::Instance(false)->getContainer()->get("DatabaseConfig");
-        if(isset($configs['Default'])) {
+        if (isset($configs['Default'])) {
             $connection = $configs['Default'];
-        }else{
+        } else {
             $connection = reset($configs);
         }
 

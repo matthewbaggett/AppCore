@@ -3,7 +3,6 @@ namespace Segura\AppCore\Services;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use Predis\Client;
 use Segura\AppCore\Exceptions\AutoConfigurationException;
 use Segura\AppCore\Exceptions\TemporaryAutoConfigurationException;
 
@@ -50,7 +49,7 @@ class AutoConfigurationService
             );
         } catch (ClientException $clientException) {
             throw new AutoConfigurationException("Cannot connect to Gondalez. Got status code \"{$clientException->getResponse()->getStatusCode()}\" . Got guzzle client exception: {$clientException->getMessage()}");
-        } catch (ConnectException $connectException){
+        } catch (ConnectException $connectException) {
             throw new TemporaryAutoConfigurationException("Cannot currently contact Gondalez.");
         }
         if ($response->getStatusCode() !== 200) {

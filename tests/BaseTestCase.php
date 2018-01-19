@@ -7,7 +7,6 @@ use Faker\Provider;
 use Segura\AppCore\App;
 use Segura\AppCore\Db;
 use Segura\AppCore\Services\EnvironmentService;
-use Segura\Lumberjack\Lumberjack;
 use Slim\Container;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
