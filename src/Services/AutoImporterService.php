@@ -83,7 +83,12 @@ class AutoImporterService
 
     private function runFile($sqlFile)
     {
-        $connection = App::Container()->get("DatabaseConfig")['Default'];
+        $configs = App::Instance(false)->getContainer()->get("DatabaseConfig");
+        if(isset($configs['Default'])) {
+            $connection = $configs['Default'];
+        }else{
+            $connection = reset($configs);
+        }
 
         $importCommand = "mysql -u {$connection['username']} -h {$connection['hostname']} -p{$connection['password']} {$connection['database']} < {$sqlFile}  2>&1 | grep -v \"Warning: Using a password\"";
         ob_start();
@@ -109,7 +114,7 @@ class AutoImporterService
 
     public function purge()
     {
-        $db = App::Container()->get('DatabaseInstance');
+        $db = App::Instance(false)->getContainer()->get('DatabaseInstance');
         /** @var Adapter $database */
         $databases = $db->getDatabases();
         $database  = reset($databases);

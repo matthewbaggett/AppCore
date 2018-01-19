@@ -1,6 +1,7 @@
 <?php
 namespace Segura\AppCore\Services;
 
+use Segura\AppCore\Exceptions\TemporaryAutoConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
 class EnvironmentService
@@ -26,10 +27,14 @@ class EnvironmentService
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
-            $autoConfiguration                              = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-            $this->environmentVariables                     = array_merge($this->environmentVariables, $autoConfiguration);
-            $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
-            file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+            try {
+                $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+                $this->environmentVariables = array_merge($autoConfiguration, $this->environmentVariables);
+                $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
+                file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+            }catch(TemporaryAutoConfigurationException $temporaryAutoConfigurationException){
+                // Try again later!
+            }
         }
         ksort($this->environmentVariables);
 

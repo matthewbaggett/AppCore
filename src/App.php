@@ -80,7 +80,7 @@ class App
     }
 
     /**
-     * @return \Interop\Container\ContainerInterface
+     * @return Slim\Container
      */
     public function getContainer()
     {
@@ -450,9 +450,19 @@ class App
         return $this;
     }
 
-    public static function waitForMySQLToBeReady()
+    public static function waitForMySQLToBeReady($connection = null)
     {
-        $connection = App::Container()->get("DatabaseConfig")['Default'];
+        if(!$connection) {
+            $configs = App::Instance()->getContainer()->get("DatabaseConfig");
+            if (isset($configs['Default'])) {
+                $connection = $configs['Default'];
+            } else {
+                foreach ($configs as $option => $connection) {
+                    self::waitForMySQLToBeReady($connection);
+                }
+                return;
+            }
+        }
 
         $ready = false;
         echo "Waiting for MySQL ({$connection['hostname']}:{$connection['port']}) to come up...";
