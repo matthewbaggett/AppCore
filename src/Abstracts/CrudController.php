@@ -1,7 +1,7 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
-use Segura\AppCore\Exceptions\TableGatewayException;
+use Segura\AppCore\Interfaces\ModelInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
@@ -90,20 +90,34 @@ abstract class CrudController extends Controller
 
     public function deleteRequest(Request $request, Response $response, $args)
     {
-        try {
-            $object = $this->getService()->getById($args['id'])->__toArray();
-            $this->service->deleteByID($args['id']);
+        /** @var ModelInterface $object */
+        $object = $this->getService()->getById($args['id']);
+        if ($object) {
+            $array = $object->__toArray();
+            $object->destroy();
+
             return $this->jsonResponse(
                 [
                     'Status'                          => 'OKAY',
                     'Action'                          => 'DELETE',
-                    $this->service->getTermSingular() => $object,
+                    $this->service->getTermSingular() => $array,
                 ],
                 $request,
                 $response
             );
-        } catch (TableGatewayException $tge) {
-            return $this->jsonResponseException($tge, $request, $response);
+        } else {
+            return $this->jsonResponse(
+                [
+                    'Status'                          => 'FAIL',
+                    'Reason'                          => sprintf(
+                        "No such %s found with id %s",
+                        strtolower($this->service->getTermSingular()),
+                        $args['id']
+                    )
+                ],
+                $request,
+                $response
+            );
         }
     }
 }
