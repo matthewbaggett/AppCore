@@ -452,7 +452,7 @@ class App
 
     public static function waitForMySQLToBeReady($connection = null)
     {
-        if(!$connection) {
+        if (!$connection) {
             $configs = App::Instance()->getContainer()->get("DatabaseConfig");
             if (isset($configs['Default'])) {
                 $connection = $configs['Default'];
@@ -477,5 +477,10 @@ class App
             }
         }
         echo " [DONE]\n";
+
+        /** @var EnvironmentService $environmentService */
+        $environmentService = App::Container()->get(EnvironmentService::class);
+
+        $environmentService->rebuildEnvironmentVariables();
     }
 }

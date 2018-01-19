@@ -18,21 +18,26 @@ class EnvironmentService
     public function __construct(
         AutoConfigurationService $autoConfigurationService
     ) {
+        $this->autoConfigurationService = $autoConfigurationService;
+        $this->rebuildEnvironmentVariables();
+    }
+
+    public function rebuildEnvironmentVariables()
+    {
         if (file_exists($this->cacheFile)) {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
         } else {
-            $this->autoConfigurationService = $autoConfigurationService;
             $this->autoConfigurationService->setEnvironmentService($this);
 
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
             try {
-                $autoConfiguration = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-                $this->environmentVariables = array_merge($autoConfiguration, $this->environmentVariables);
+                $autoConfiguration                              = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
+                $this->environmentVariables                     = array_merge($autoConfiguration, $this->environmentVariables);
                 $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
                 file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
-            }catch(TemporaryAutoConfigurationException $temporaryAutoConfigurationException){
+            } catch (TemporaryAutoConfigurationException $temporaryAutoConfigurationException) {
                 // Try again later!
             }
         }

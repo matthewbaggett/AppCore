@@ -53,6 +53,11 @@ class Db
         return self::$instance;
     }
 
+    public static function clean()
+    {
+        self::$instance = null;
+    }
+
     public static function isMySQLConfigured()
     {
         return file_exists(APP_ROOT . "/config/mysql.php");
