@@ -41,10 +41,17 @@ abstract class RoutesTestCase extends BaseTestCase
      * @param string $path
      * @param array  $post
      * @param bool   $isJsonRequest
+     * @param array  $extraHeaders
      *
      * @return Response
      */
-    public function request(string $method, string $path, $post = null, $isJsonRequest = true)
+    public function request(
+        string $method,
+        string $path,
+        $post = null,
+        $isJsonRequest = true,
+        $extraHeaders = []
+    )
     {
         /**
          * @var \Slim\App           $app
@@ -82,6 +89,13 @@ abstract class RoutesTestCase extends BaseTestCase
         $env     = Environment::mock($envArray);
         $uri     = Uri::createFromEnvironment($env);
         $headers = Headers::createFromEnvironment($env);
+        
+        // Handle extra headers
+        if(count($extraHeaders) > 0) {
+            foreach ($extraHeaders as $k => $v) {
+                $headers->add($k, $v);
+            }
+        }
 
         $cookies      = [];
         $serverParams = $env->all();
