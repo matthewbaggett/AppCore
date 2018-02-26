@@ -79,8 +79,10 @@ abstract class RoutesTestCase extends BaseTestCase
         }
         Router::Instance()->populateRoutes($app);
         $this->waypoint("Loaded Routes");
+        
+        $headers = array_merge($this->defaultHeaders, $extraHeaders);
 
-        $envArray = array_merge($this->defaultEnvironment, $this->defaultHeaders);
+        $envArray = array_merge($this->defaultEnvironment, $headers);
         $envArray = array_merge($envArray, [
             'REQUEST_URI'    => $path,
             'REQUEST_METHOD' => $method,
@@ -88,15 +90,8 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $env     = Environment::mock($envArray);
         $uri     = Uri::createFromEnvironment($env);
-        $headers = Headers::createFromEnvironment($env);
+        $headers = Headers::createFromEnvironment($headers);
         
-        // Handle extra headers
-        if(count($extraHeaders) > 0) {
-            foreach ($extraHeaders as $k => $v) {
-                $headers->add($k, $v);
-            }
-        }
-
         $cookies      = [];
         $serverParams = $env->all();
         $body         = new RequestBody();
@@ -117,10 +112,11 @@ abstract class RoutesTestCase extends BaseTestCase
         $response = new Response();
         // Invoke app
         $response = $applicationInstance->getApp()->process($request, $response);
-        #echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
-        #echo "Response: " . (string) $response->getBody()."\n";
+        echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
+        if($headers)
+        echo "Response: " . (string) $response->getBody()."\n";
         $this->waypoint("After Response");
-
+        
         return $response;
     }
 }
