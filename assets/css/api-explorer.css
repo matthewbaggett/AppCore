@@ -1,0 +1,54 @@
+.json {
+    font-family: "Monaco", "Andale Mono", "Courier New", "Courier", monospace;
+    white-space: pre-wrap;
+    line-height: normal;
+    margin-right: 265px;
+    font-size: 10px;
+}
+
+.json .array-count {
+    font-size: 10px;
+    color: gray;
+}
+
+.json ul {
+    list-style: none;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+
+.json li {
+    line-height: normal;
+}
+
+.json li .glyphicon {
+    position: relative;
+    left: -15px;
+    margin-right: -15px;
+}
+
+.prop {
+    font-weight: bold;
+}
+
+.null {
+    color: red;
+}
+
+.bool {
+    color: #0000aa;
+}
+
+.num {
+    color: #0000aa;
+}
+
+.string {
+    color: green;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+
+
+

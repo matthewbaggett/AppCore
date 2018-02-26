@@ -1,0 +1,46 @@
+body{
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: "Monaco", "Andale Mono", "Courier New", "Courier", monospace;
+
+}
+
+ul{
+    float: left;
+    display: block;
+    width: 100%;
+}
+li{
+    background-color: #ffc794;
+    border-color: #ff984b;
+    padding: 10px 10px;
+    margin-bottom: 10px;
+    float: left;
+    display: block;
+    width: 100%;
+}
+li .name,
+li .debug,
+li .method,
+li .pattern{
+    float: left;
+    display: block;
+    width: 100%;
+}
+li .name{
+
+}
+li .debug{
+    font-size: 70%;
+    margin-left: 10px;
+}
+li .method{
+    width: auto;
+    margin-right: 10px;
+}
+li .pattern{
+    width: auto;
+}

@@ -1,6 +1,7 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
+use Segura\AppCore\Controllers\InlineCssTrait;
 use Segura\AppCore\Exceptions\FilterDecodeException;
 use Segura\AppCore\Filters\Filter;
 use Slim\Http\Request;
@@ -8,6 +9,7 @@ use Slim\Http\Response;
 
 abstract class Controller
 {
+    use InlineCssTrait;
 
     /** @var Service */
     protected $service;

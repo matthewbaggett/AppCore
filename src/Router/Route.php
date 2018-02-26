@@ -282,11 +282,13 @@ class Route
     public function populateRoute(App $app)
     {
         #echo "Populating: {$this->getHttpMethod()} {$this->getRouterPattern()}\n";
-        $app->map(
+        $mapping = $app->map(
             [$this->getHttpMethod()],
             $this->getRouterPattern(),
             $this->getCallback()
         );
+
+        $mapping->setName($this->getName() ? $this->getName() : "Unnamed Route");
         return $app;
     }
 

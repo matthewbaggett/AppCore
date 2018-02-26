@@ -3,11 +3,14 @@
 namespace Segura\AppCore\Middleware;
 
 use Segura\AppCore\App;
+use Segura\AppCore\Controllers\InlineCssTrait;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class EnvironmentHeadersOnResponse
 {
+    use InlineCssTrait;
+
     protected $apiExplorerEnabled = true;
 
     public function __invoke(Request $request, Response $response, $next)
@@ -68,6 +71,10 @@ class EnvironmentHeadersOnResponse
                     'page_name'                => "API Explorer",
                     'json'                     => $json,
                     'json_pretty_printed_rows' => explode("\n", json_encode($json, JSON_PRETTY_PRINT)),
+                    'inline_css'               => $this->renderInlineCss([
+                        __DIR__ . "/../../assets/css/reset.css",
+                        __DIR__ . "/../../assets/css/api-explorer.css"
+                    ])
                 ]);
                 $response = $response->withHeader("Content-type", "text/html");
             }

@@ -73,6 +73,11 @@ class ApiListController extends Controller
             return $twig->render($response, 'api/list.html.twig', [
                 'page_name' => "API Endpoint List",
                 'routes'    => $displayRoutes,
+                'inline_css' => $this->renderInlineCss([
+                    __DIR__ . "/../../assets/css/reset.css",
+                    __DIR__ . "/../../assets/css/api-explorer.css",
+                    __DIR__ . "/../../assets/css/api-list.css",
+                ])
             ]);
         }
     }
