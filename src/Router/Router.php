@@ -28,7 +28,7 @@ class Router
     public function weighRoutes() : Router
     {
         $allocatedRoutes = [];
-        if(is_array($this->routes) && count($this->routes) > 0) {
+        if (is_array($this->routes) && count($this->routes) > 0) {
             uasort($this->routes, function (Route $a, Route $b) {
                 return $a->getWeight() > $b->getWeight();
             });

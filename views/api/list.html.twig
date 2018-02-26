@@ -16,6 +16,9 @@
             <div class="name">
                 {{ route.name }}
             </div>
+            <div class="debug">
+                {{ route.callable }}
+            </div>
             <div class="method">
                 {% for method in route.methods %}
                     {{ method }}

@@ -492,6 +492,8 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
+     * Get single matching object
+     *
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
@@ -517,6 +519,8 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
+     * Get many matching objects
+     *
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
