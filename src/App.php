@@ -139,7 +139,18 @@ class App
 
     public function __construct()
     {
+        $this->setup();
+    }
 
+    public function makeClean() : App
+    {
+        $this->setup();
+        $this->loadAllRoutes();
+        return $this;
+    }
+
+    public function setup()
+    {
         // Check defined config
         if (!defined("APP_START")) {
             define("APP_START", microtime(true));
@@ -431,6 +442,7 @@ class App
         if (php_sapi_name() != 'cli') {
             $session = $this->getContainer()->get(Session::class);
         }
+        return $this;
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)
