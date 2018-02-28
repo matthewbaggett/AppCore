@@ -8,6 +8,7 @@ use Slim\Http\Request;
 use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class RoutesTestCase extends BaseTestCase
 {
@@ -43,7 +44,7 @@ abstract class RoutesTestCase extends BaseTestCase
      * @param bool   $isJsonRequest
      * @param array  $extraHeaders
      *
-     * @return Response
+     * @return ResponseInterface
      */
     public function request(
         string $method,
@@ -79,7 +80,6 @@ abstract class RoutesTestCase extends BaseTestCase
         }
         Router::Instance()->populateRoutes($app);
         $this->waypoint("Loaded Routes");
-        
         $headers = array_merge($this->defaultHeaders, $extraHeaders);
 
         $envArray = array_merge($this->defaultEnvironment, $headers);
@@ -90,7 +90,7 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $env     = Environment::mock($envArray);
         $uri     = Uri::createFromEnvironment($env);
-        $headers = Headers::createFromEnvironment($headers);
+        $headers = Headers::createFromEnvironment($env);
         
         $cookies      = [];
         $serverParams = $env->all();
@@ -105,16 +105,22 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
         if ($isJsonRequest) {
+            foreach($extraHeaders as $k => $v){
+                $request = $request->withHeader($k, $v);
+            }
             $request = $request->withHeader("Content-type", "application/json");
             $request = $request->withHeader("Accept", "application/json");
         }
         $this->waypoint("Before Response");
         $response = new Response();
+
         // Invoke app
-        $response = $applicationInstance->getApp()->process($request, $response);
-        echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
-        if($headers)
-        echo "Response: " . (string) $response->getBody()."\n";
+        $response = $applicationInstance
+            ->makeClean()
+            ->getApp()
+            ->process($request, $response);
+        #echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
+        #echo "Response: " . (string) $response->getBody()."\n";
         $this->waypoint("After Response");
         
         return $response;
