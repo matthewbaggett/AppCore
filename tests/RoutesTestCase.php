@@ -52,8 +52,7 @@ abstract class RoutesTestCase extends BaseTestCase
         $post = null,
         $isJsonRequest = true,
         $extraHeaders = []
-    )
-    {
+    ) {
         /**
          * @var \Slim\App           $app
          * @var \Segura\AppCore\App $applicationInstance
@@ -105,7 +104,7 @@ abstract class RoutesTestCase extends BaseTestCase
 
         $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
         if ($isJsonRequest) {
-            foreach($extraHeaders as $k => $v){
+            foreach ($extraHeaders as $k => $v) {
                 $request = $request->withHeader($k, $v);
             }
             $request = $request->withHeader("Content-type", "application/json");

@@ -50,7 +50,7 @@ class ApiListController extends Controller
                     $displayRoutes[]      = $routeJson;
                 } else {
                     $callable = $route->getCallable();
-                    if(is_array($callable)) {
+                    if (is_array($callable)) {
                         list($callableClass, $callableFunction) = $callable;
                         if (is_object($callableClass)) {
                             $callableClass = get_class($callableClass);
