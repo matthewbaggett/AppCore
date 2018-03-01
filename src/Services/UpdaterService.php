@@ -87,8 +87,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
     /**
      * @param int $id
      *
-     * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     *
      * @return Models\UpdaterModel
      */
     public function getById(int $id) : Models\UpdaterModel
@@ -103,8 +101,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param $value
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     *
-     * @throws \Segura\AppCore\Exceptions\TableGatewayException
      *
      * @return Models\UpdaterModel|null
      */
@@ -122,8 +118,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     *
      * @return Models\UpdaterModel[]
      */
     public function getManyByField(string $field, $value, int $limit = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING) : array
@@ -134,8 +128,6 @@ class UpdaterService extends AbstractService implements ServiceInterface
     }
 
     /**
-     * @throws \Segura\AppCore\Exceptions\TableGatewayException
-     *
      * @return Models\UpdaterModel
      */
     public function getRandom() : Models\UpdaterModel

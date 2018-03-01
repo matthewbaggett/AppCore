@@ -1,6 +1,7 @@
 <?php
 namespace Segura\AppCore\Test;
 
+use Psr\Http\Message\ResponseInterface;
 use Segura\AppCore\Router\Router;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
@@ -8,7 +9,6 @@ use Slim\Http\Request;
 use Slim\Http\RequestBody;
 use Slim\Http\Response;
 use Slim\Http\Uri;
-use Psr\Http\Message\ResponseInterface;
 
 abstract class RoutesTestCase extends BaseTestCase
 {

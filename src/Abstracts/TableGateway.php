@@ -1,7 +1,6 @@
 <?php
 namespace Segura\AppCore\Abstracts;
 
-use Segura\AppCore\Exceptions\TableGatewayException;
 use Segura\AppCore\Filters\FilterCondition;
 use Segura\AppCore\ZendSql;
 use Zend\Db\Adapter\AdapterInterface;
@@ -31,8 +30,6 @@ abstract class TableGateway extends ZendTableGateway
 
     /**
      * @param Model $model
-     *
-     * @throws TableGatewayException
      *
      * @return array|\ArrayObject|null
      */
@@ -229,8 +226,6 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * @throws TableGatewayException
-     *
      * @return array|\ArrayObject|null
      */
     public function fetchRandom()
@@ -240,18 +235,16 @@ abstract class TableGateway extends ZendTableGateway
         });
 
         if (0 == count($resultSet)) {
-            throw new TableGatewayException("No data found in table!");
+            return null;
+        } else {
+            return $resultSet->current();
         }
-
-        return $resultSet->current();
     }
 
     /**
      * @param array|Select $where
      * @param array|string $order
      * @param int          $offset
-     *
-     * @throws TableGatewayException
      *
      * @return array|\ArrayObject|null|Model
      */
@@ -385,17 +378,11 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * @param $id
      *
-     * @throws TableGatewayException
-     *
      * @return Model|false
      */
     public function getById($id)
     {
-        try {
-            return $this->getByField('id', $id);
-        } catch (TableGatewayException $tge) {
-            throw new TableGatewayException("Cannot find {$this->getModelName()} record by ID '{$id}'");
-        }
+        return $this->getByField('id', $id);
     }
 
     /**
@@ -492,7 +479,7 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * Get single matching object
+     * Get single matching object.
      *
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
@@ -519,7 +506,7 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
-     * Get many matching objects
+     * Get many matching objects.
      *
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
