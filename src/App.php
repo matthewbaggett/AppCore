@@ -236,12 +236,8 @@ class App
             $environment           = $c->get(EnvironmentService::class);
             $databaseConfiguration = [];
             // Lets connect to a database
-            if ($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
-                if ($environment->isSet('MYSQL_HOST')) {
-                    $databaseConfigurationHost = $environment->get('MYSQL_HOST');
-                } else {
-                    $databaseConfigurationHost = $environment->get('MYSQL_PORT');
-                }
+            if ($environment->isSet('MYSQL_HOST')) {
+                $databaseConfigurationHost = $environment->get('MYSQL_HOST');
                 if (isset(parse_url($databaseConfigurationHost)['host'])) {
                     $databaseConfigurationHost = parse_url($databaseConfigurationHost);
                 } else {
