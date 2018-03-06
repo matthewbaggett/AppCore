@@ -237,10 +237,10 @@ class App
             $databaseConfiguration = [];
             // Lets connect to a database
             if ($environment->isSet('MYSQL_PORT') || $environment->isSet('MYSQL_HOST')) {
-                if ($environment->isSet('MYSQL_PORT')) {
-                    $databaseConfigurationHost = $environment->get('MYSQL_PORT');
-                } else {
+                if ($environment->isSet('MYSQL_HOST')) {
                     $databaseConfigurationHost = $environment->get('MYSQL_HOST');
+                } else {
+                    $databaseConfigurationHost = $environment->get('MYSQL_PORT');
                 }
                 if (isset(parse_url($databaseConfigurationHost)['host'])) {
                     $databaseConfigurationHost = parse_url($databaseConfigurationHost);
