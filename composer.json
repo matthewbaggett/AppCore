@@ -39,6 +39,7 @@
         }
     },
     "bin": [
+        "bin/auto-configure",
         "bin/data-importer",
         "bin/data-purge"
     ]

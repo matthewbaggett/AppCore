@@ -54,6 +54,8 @@ class EnvironmentService
         foreach (['argv', 'argc'] as $unsettable) {
             unset($this->environmentVariables[$unsettable]);
         }
+
+        return $this->environmentVariables;
     }
 
     public function clearCache()

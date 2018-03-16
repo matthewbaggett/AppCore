@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+require_once(__DIR__ . "/../../../../bootstrap.php");
+
+$appClass = APP_CORE_NAME;
+/** @var \Segura\AppCore\Services\AutoConfigurationService $autoConf */
+$autoConf = $appClass::Container()->get(\Segura\AppCore\Services\AutoConfigurationService::class);
+$autoConf->setEnvironmentService($appClass::Container()->get(\Segura\AppCore\Services\EnvironmentService::class));
+\Kint::dump(
+    $autoConf->run()
+);

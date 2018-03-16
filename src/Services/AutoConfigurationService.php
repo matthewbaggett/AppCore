@@ -64,4 +64,9 @@ class AutoConfigurationService
         $json = json_decode($responseBody, true);
         return $json['Service']['Config'];
     }
+
+    public function run(){
+        $this->environmentService->clearCache();
+        return $this->environmentService->rebuildEnvironmentVariables();
+    }
 }
