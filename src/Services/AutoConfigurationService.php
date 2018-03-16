@@ -65,7 +65,8 @@ class AutoConfigurationService
         return $json['Service']['Config'];
     }
 
-    public function run(){
+    public function run()
+    {
         $this->environmentService->clearCache();
         return $this->environmentService->rebuildEnvironmentVariables();
     }
