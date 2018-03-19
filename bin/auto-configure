@@ -8,4 +8,6 @@ $autoConf = $appClass::Container()->get(\Segura\AppCore\Services\AutoConfigurati
 $autoConf->setEnvironmentService($appClass::Container()->get(\Segura\AppCore\Services\EnvironmentService::class));
 $config = $autoConf->run();
 
-#\Kint::dump($config);
+if(isset($config['GONDALEZ_FAULT'])) {
+    echo "Fault: {$config['GONDALEZ_FAULT']}\n";
+}
