@@ -431,8 +431,6 @@ class App
             require(APP_ROOT . "/src/AppContainerExtra.php");
         }
 
-        $this->monolog = $this->getContainer()->get('MonoLog');
-
         $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
 
         if (php_sapi_name() != 'cli') {
@@ -443,7 +441,7 @@ class App
 
     public static function Log(int $level = Logger::DEBUG, $message)
     {
-        return self::Instance()->monolog->log($level, $message);
+        return self::Instance()->getContainer()->get('MonoLog')->log($level, $message);
     }
 
     public function loadAllRoutes()
