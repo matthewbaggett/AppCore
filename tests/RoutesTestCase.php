@@ -118,8 +118,7 @@ abstract class RoutesTestCase extends BaseTestCase
             ->makeClean()
             ->getApp()
             ->process($request, $response);
-        #echo "\nRequesting {$method}: {$path} : ".json_encode($post) . "\n";
-        #echo "Response: " . (string) $response->getBody()."\n";
+        $response->getBody()->rewind();
         $this->waypoint("After Response");
         
         return $response;
