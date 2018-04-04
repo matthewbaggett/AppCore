@@ -10,13 +10,9 @@ class Db
 
     private $pool = null;
 
-    public function __construct(array $dbConfigs)
+    public function __construct(DbConfig $config)
     {
-        if ($this->pool == null) {
-            foreach ($dbConfigs as $name => $dbConfig) {
-                $this->pool[$name] = new Adapter($dbConfig);
-            }
-        }
+        $this->pool = $config->getAdapterPool();
     }
 
     /**
@@ -43,12 +39,14 @@ class Db
     }
 
     /**
+     * @param DbConfig $dbConfig
+     *
      * @return Db
      */
-    public static function getInstance(array $dbConfigs = null)
+    public static function getInstance(DbConfig $dbConfig)
     {
         if (!self::$instance instanceof Db) {
-            self::$instance = new Db($dbConfigs);
+            self::$instance = new Db($dbConfig);
         }
         return self::$instance;
     }

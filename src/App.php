@@ -170,13 +170,14 @@ class App
 
         // Create Slim app
         $this->app = new \Slim\App(
+            new Container(
             [
                 'settings' => [
                     'debug'                             => true,
                     'displayErrorDetails'               => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
-            ]
+            ])
         );
 
         // Middlewares
@@ -231,7 +232,9 @@ class App
             return $view;
         };
 
-        $this->container['DatabaseConfig'] = function (Slim\Container $c) {
+        $this->container[DbConfig::class] = function (Slim\Container $c) {
+            $dbConfig = new DbConfig();
+
             /** @var EnvironmentService $environment */
             $environment           = $c->get(EnvironmentService::class);
             $databaseConfiguration = [];
@@ -247,7 +250,7 @@ class App
                     ];
                 }
 
-                $databaseConfiguration['Default'] = [
+                $dbConfig->set('Default', [
                     'driver'   => 'Pdo_Mysql',
                     'hostname' => $databaseConfigurationHost['host'],
                     'port'     => isset($databaseConfigurationHost['port']) ? $databaseConfigurationHost['port'] : 3306,
@@ -255,20 +258,21 @@ class App
                     'password' => $environment->get(['MYSQL_PASSWORD', 'MYSQL_ENV_MYSQL_PASSWORD']),
                     'database' => $environment->get(['MYSQL_DATABASE', 'MYSQL_ENV_MYSQL_DATABASE']),
                     'charset'  => "UTF8"
-                ];
+                ]);
 
-                return $databaseConfiguration;
+
+                return $dbConfig;
             }
             throw new DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
         };
 
         $this->container['DatabaseInstance'] = function (Slim\Container $c) {
             return Db::getInstance(
-                $c->get('DatabaseConfig')
+                $c->get(\Segura\AppCore\DbConfig::class)
             );
         };
 
-        $this->container['Faker'] = function (Slim\Container $c) {
+        $this->container[FakerFactory::class] = function (Slim\Container $c) {
             $faker = FakerFactory::create();
             $faker->addProvider(new Provider\Base($faker));
             $faker->addProvider(new Provider\DateTime($faker));
@@ -280,6 +284,10 @@ class App
             $faker->addProvider(new Provider\en_US\PhoneNumber($faker));
             $faker->addProvider(new Provider\en_US\Company($faker));
             return $faker;
+        };
+
+        $this->container['Faker'] = function (Slim\Container $c) {
+            return $c->get(FakerFactory::class);
         };
 
         $this->container['HttpClient'] = function (Slim\Container $c) {
@@ -333,7 +341,7 @@ class App
             return $redisConfig;
         };
 
-        $this->container['Redis'] = function (Slim\Container $c) {
+        $this->container[PredisClient::class] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
             $environment  = $this->getContainer()->get(EnvironmentService::class);
             $redisConfig  = $c->get("RedisConfig");
@@ -344,6 +352,9 @@ class App
             return new \Predis\Client($redisConfig, $redisOptions);
         };
 
+        $this->container['Redis'] = function (Slim\Container $c) {
+            return $c->get(PredisClient::class);
+        };
 
         $this->container['MonoLog'] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
@@ -459,7 +470,7 @@ class App
     public static function waitForMySQLToBeReady($connection = null)
     {
         if (!$connection) {
-            $configs = App::Instance()->getContainer()->get("DatabaseConfig");
+            $configs = App::Instance()->getContainer()->get(\Segura\AppCore\DbConfig::class);
             if (isset($configs['Default'])) {
                 $connection = $configs['Default'];
             } else {
