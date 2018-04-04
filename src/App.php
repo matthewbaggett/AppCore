@@ -3,11 +3,9 @@ namespace Segura\AppCore;
 
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
-use GuzzleHttp\Client as HttpClient;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Exceptions\DbConfigException;
@@ -18,8 +16,6 @@ use Segura\AppCore\Services\AutoConfigurationService;
 use Segura\AppCore\Services\AutoImporterService;
 use Segura\AppCore\Services\EnvironmentService;
 use Segura\AppCore\Services\EventLoggerService;
-use Segura\AppCore\Services\UpdaterService;
-use Segura\AppCore\TableGateways\UpdaterTableGateway;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\Session\Session;
@@ -36,8 +32,19 @@ class App
     protected $app;
     /** @var \Interop\Container\ContainerInterface */
     protected $container;
-    /** @var Logger */
+    /** @var \Monolog\Logger */
     protected $monolog;
+
+    protected $containerAliases = [
+        'view'             => Slim\Views\Twig::class,
+        'DatabaseInstance' => DbConfig::class,
+        'Differ'           => Differ::class,
+        'HttpClient'       => \GuzzleHttp\Client::class,
+        'Faker'            => \Faker\Generator::class,
+        'Environment'      => EnvironmentService::class,
+        'Redis'            => PredisClient::class,
+        'Monolog'          => \Monolog\Logger::class
+    ];
 
     protected $routePaths = [
         APP_ROOT . "/src/Routes.php",
@@ -80,9 +87,9 @@ class App
     }
 
     /**
-     * @return Slim\Container
+     * @return Container
      */
-    public function getContainer()
+    public function getContainer() : Container
     {
         return $this->container;
     }
@@ -149,6 +156,17 @@ class App
         return $this;
     }
 
+    public function populateContainerAliases(&$container)
+    {
+        foreach ($this->containerAliases as $alias => $class) {
+            if ($alias != $class) {
+                $container[$alias] = function (Slim\Container $c) use ($class) {
+                    return $c->get($class);
+                };
+            }
+        }
+    }
+
     public function setup()
     {
         // Check defined config
@@ -177,7 +195,8 @@ class App
                     'displayErrorDetails'               => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
-            ])
+            ]
+            )
         );
 
         // Middlewares
@@ -187,8 +206,10 @@ class App
         // Fetch DI Container
         $this->container = $this->app->getContainer();
 
+        $this->populateContainerAliases($this->container);
+
         // Register Twig View helper
-        $this->container['view'] = function ($c) {
+        $this->container[Slim\Views\Twig::class] = function ($c) {
             foreach ($this->viewPaths as $i => $viewLocation) {
                 if (!file_exists($viewLocation) || !is_dir($viewLocation)) {
                     unset($this->viewPaths[$i]);
@@ -237,7 +258,6 @@ class App
 
             /** @var EnvironmentService $environment */
             $environment           = $c->get(EnvironmentService::class);
-            $databaseConfiguration = [];
             // Lets connect to a database
             if ($environment->isSet('MYSQL_HOST')) {
                 $databaseConfigurationHost = $environment->get('MYSQL_HOST');
@@ -266,13 +286,7 @@ class App
             throw new DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
         };
 
-        $this->container['DatabaseInstance'] = function (Slim\Container $c) {
-            return Db::getInstance(
-                $c->get(\Segura\AppCore\DbConfig::class)
-            );
-        };
-
-        $this->container[FakerFactory::class] = function (Slim\Container $c) {
+        $this->container[\Faker\Generator::class] = function (Slim\Container $c) {
             $faker = FakerFactory::create();
             $faker->addProvider(new Provider\Base($faker));
             $faker->addProvider(new Provider\DateTime($faker));
@@ -286,12 +300,8 @@ class App
             return $faker;
         };
 
-        $this->container['Faker'] = function (Slim\Container $c) {
-            return $c->get(FakerFactory::class);
-        };
-
-        $this->container['HttpClient'] = function (Slim\Container $c) {
-            $client = new HttpClient([
+        $this->container[\GuzzleHttp\Client::class] = function (Slim\Container $c) {
+            $client = new \GuzzleHttp\Client([
                 // You can set any number of default request options.
                 'timeout'  => 2.0,
             ]);
@@ -310,13 +320,6 @@ class App
             );
             return $environment;
         };
-
-        $this->container['Environment'] = function (Slim\Container $c) {
-            $environment = $c->get(EnvironmentService::class)->__toArray();
-            trigger_error("Please don't use the \"Environment\" DI object any more. Ta.", E_USER_NOTICE);
-            return $environment;
-        };
-
 
         $this->container['RedisConfig'] = function (Slim\Container $c) {
             // Get environment variables.
@@ -352,18 +355,14 @@ class App
             return new \Predis\Client($redisConfig, $redisOptions);
         };
 
-        $this->container['Redis'] = function (Slim\Container $c) {
-            return $c->get(PredisClient::class);
-        };
-
-        $this->container['MonoLog'] = function (Slim\Container $c) {
+        $this->container[\Monolog\Logger::class] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
             $environment = $this->getContainer()->get(EnvironmentService::class);
 
             // Set up Monolog
-            $monolog = new Logger($this->getAppName());
-            $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", Logger::WARNING));
-            $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", Logger::DEBUG));
+            $monolog = new \Monolog\Logger($this->getAppName());
+            $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
+            $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", \Monolog\Logger::DEBUG));
             if ($environment->isSet('LUMBERJACK_HOST')) {
                 $monolog->pushHandler(new LumberjackHandler(rtrim($environment->get('LUMBERJACK_HOST'), "/") . "/v1/log", $environment->get('LUMBERJACK_API_KEY')));
             }
@@ -375,14 +374,14 @@ class App
                         APP_NAME,
                         true,
                         null,
-                        Logger::CRITICAL
+                        \Monolog\Logger::CRITICAL
                     )
                 );
             }
             return $monolog;
         };
 
-        $this->container["TimeAgo"] = function (Slim\Container $container) {
+        $this->container[\TimeAgo::class] = function (Slim\Container $container) {
             return new \TimeAgo();
         };
 
@@ -400,25 +399,8 @@ class App
             );
         };
 
-        $this->container["Differ"] = function (Slim\Container $container) {
+        $this->container[Differ::class] = function (Slim\Container $container) {
             return new Differ();
-        };
-
-        $this->container[AutoImporterService::class] = function (Slim\Container $container) {
-            return new AutoImporterService($container->get(UpdaterService::class));
-        };
-
-        $this->container[UpdaterService::class] = function (Slim\Container $container) {
-            return new UpdaterService(
-                $container->get(UpdaterTableGateway::class)
-            );
-        };
-
-        $this->container[UpdaterTableGateway::class] = function (Slim\Container $c) {
-            return new UpdaterTableGateway(
-                $c->get('Faker'),
-                $c->get('DatabaseInstance')
-            );
         };
 
         /** @var EnvironmentService $environmentService */
@@ -447,6 +429,7 @@ class App
         if (php_sapi_name() != 'cli') {
             $session = $this->getContainer()->get(Session::class);
         }
+
         return $this;
     }
 
