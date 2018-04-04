@@ -3,20 +3,32 @@
 namespace Segura\AppCore\Services;
 
 use Segura\AppCore\App;
+use Segura\AppCore\Db;
+use Segura\AppCore\DbConfig;
 use Segura\AppCore\Exceptions\AutoImporterException;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\Pdo\Result;
 
 class AutoImporterService
 {
+    /** @var Db */
+    private $db;
+
+    /** @var DbConfig */
+    private $dbConfig;
 
     /** @var UpdaterService */
     private $updaterService;
 
     private $sqlPaths = [];
 
-    public function __construct(UpdaterService $updaterService)
-    {
+    public function __construct(
+        Db $db,
+        DbConfig $dbConfig,
+        UpdaterService $updaterService
+    ) {
+        $this->db             = $db;
+        $this->dbConfig       = $dbConfig;
         $this->updaterService = $updaterService;
     }
 
@@ -114,9 +126,8 @@ class AutoImporterService
 
     public function purge()
     {
-        $db = App::Instance(false)->getContainer()->get('DatabaseInstance');
         /** @var Adapter $database */
-        $databases = $db->getDatabases();
+        $databases = $this->db->getDatabases();
         $database  = reset($databases);
         $sqlDoer   = $database->driver->getConnection();
 
