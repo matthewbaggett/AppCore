@@ -87,7 +87,7 @@ class App
     }
 
     /**
-     * @return Slim\Container
+     * @return Container
      */
     public function getContainer() : Container
     {

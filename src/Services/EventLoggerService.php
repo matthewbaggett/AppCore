@@ -31,8 +31,13 @@ class EventLoggerService
     /** @var Differ */
     private $differ;
 
-    public function __construct(Logger $logger, Client $redis, Session $session, \TimeAgo $timeAgo, Differ $differ)
-    {
+    public function __construct(
+        Logger $logger,
+        Client $redis,
+        Session $session,
+        \TimeAgo $timeAgo,
+        Differ $differ
+    ){
         $this->logger  = $logger;
         $this->redis   = $redis;
         $this->session = $session;

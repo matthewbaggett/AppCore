@@ -6,4 +6,8 @@ $appClass = APP_CORE_NAME;
 /** @var \Segura\AppCore\Services\AutoConfigurationService $autoConf */
 $autoConf = $appClass::Container()->get(\Segura\AppCore\Services\AutoConfigurationService::class);
 $autoConf->setEnvironmentService($appClass::Container()->get(\Segura\AppCore\Services\EnvironmentService::class));
-$autoConf->run();
+$config = $autoConf->run();
+
+if(isset($config['GONDALEZ_FAULT'])) {
+    echo "Fault: {$config['GONDALEZ_FAULT']}\n";
+}

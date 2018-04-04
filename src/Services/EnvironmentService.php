@@ -39,6 +39,7 @@ class EnvironmentService
                 file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
             } catch (TemporaryAutoConfigurationException $temporaryAutoConfigurationException) {
                 // Try again later!
+                $this->environmentVariables['GONDALEZ_FAULT'] = $temporaryAutoConfigurationException->getMessage();
             }
         }
         ksort($this->environmentVariables);
@@ -54,6 +55,8 @@ class EnvironmentService
         foreach (['argv', 'argc'] as $unsettable) {
             unset($this->environmentVariables[$unsettable]);
         }
+
+        ksort($this->environmentVariables);
 
         return $this->environmentVariables;
     }
