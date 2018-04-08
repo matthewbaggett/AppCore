@@ -97,6 +97,26 @@ abstract class Model implements ModelInterface
     }
 
     /**
+     * @return array
+     */
+    public function __toPublicArray() : array
+    {
+        $publicArray = [];
+        foreach ($this->getListOfProperties() as $property) {
+            $publicArray[ucfirst($property)] = $this->$property;
+        }
+        return $publicArray;
+    }
+
+    public function __serialize() : string
+    {
+        return json_encode(
+            $this->__toPublicArray(),
+            JSON_PRETTY_PRINT
+        );
+    }
+
+    /**
      * Return primary key values in an associative array.
      *
      * @return array
@@ -179,18 +199,6 @@ abstract class Model implements ModelInterface
             }
         }
         return $dirtyProperties;
-    }
-
-    /**
-     * @return array
-     */
-    public function __toPublicArray() : array
-    {
-        $publicArray = [];
-        foreach ($this->getListOfProperties() as $property) {
-            $publicArray[ucfirst($property)] = $this->$property;
-        }
-        return $publicArray;
     }
 
     public function __pre_save()
