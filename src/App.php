@@ -272,7 +272,7 @@ class App
 
                 $dbConfig->set('Default', [
                     'driver'   => 'Pdo_Mysql',
-                    'hostname' => $databaseConfigurationHost['host'],
+                    'hostname' => gethostbyname($databaseConfigurationHost['host']),
                     'port'     => isset($databaseConfigurationHost['port']) ? $databaseConfigurationHost['port'] : 3306,
                     'username' => $environment->get(['MYSQL_USERNAME', 'MYSQL_USER', 'MYSQL_ENV_MYSQL_USER']),
                     'password' => $environment->get(['MYSQL_PASSWORD', 'MYSQL_ENV_MYSQL_PASSWORD']),
@@ -336,7 +336,7 @@ class App
             }
 
             // Hack because 'redis' gets interpreted as a path not a host.
-            if(count($redisConfig) == 1 && isset($redisConfig['path'])){
+            if (count($redisConfig) == 1 && isset($redisConfig['path'])) {
                 $redisConfig['host'] = $redisConfig['path'];
                 unset($redisConfig['path']);
             }
