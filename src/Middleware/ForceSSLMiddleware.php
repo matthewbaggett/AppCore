@@ -11,10 +11,8 @@ class ForceSSLMiddleware
     {
         /** @var Response $response */
         if (
-            (
-                $request->getServerParam('SERVER_PORT') == '80'
-                || $request->getServerParam('HTTP_X_FORWARDED_PROTO') != 'https'
-            )
+            $request->getServerParam('SERVER_PORT') == '80'
+            && $request->getServerParam('HTTP_X_FORWARDED_PROTO') != 'https'
             && strtolower($request->getServerParam('FORCE_HTTPS')) == 'yes'
         ) {
             return $response->withRedirect("https://" . $request->getServerParam('HTTP_HOST') . "/" . ltrim($request->getServerParam('REQUEST_URI'),"/"));
