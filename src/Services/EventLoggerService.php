@@ -37,7 +37,7 @@ class EventLoggerService
         Session $session,
         \TimeAgo $timeAgo,
         Differ $differ
-    ){
+    ) {
         $this->logger  = $logger;
         $this->redis   = $redis;
         $this->session = $session;

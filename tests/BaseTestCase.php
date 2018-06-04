@@ -11,6 +11,9 @@ use Slim\Container;
 
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
+
+    // Set this to true if you want to see whats going on inside some unit tests..
+    const DEBUG_MODE = false;
     /**
      * @see https://github.com/fzaninotto/Faker
      *
@@ -29,9 +32,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
     private $waypoint_count;
     private $waypoint_last_time;
 
-    // Set this to true if you want to see whats going on inside some unit tests..
-    const DEBUG_MODE = false;
-
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -48,41 +48,6 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         };
 
         $this->app = $app;
-    }
-
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->singleTestTime     = microtime(true);
-        $this->waypoint_count     = 0;
-        $this->waypoint_last_time = $this->singleTestTime;
-    }
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        if (self::DEBUG_MODE) {
-            $time = microtime(true) - $this->singleTestTime;
-            echo "" . get_called_class() . ":" . $this->getName() . ": Took " . number_format($time, 3) . " seconds\n\n";
-        }
-    }
-
-    /**
-     * @return App
-     */
-    private static function getAppObject()
-    {
-        $coreAppName = APP_CORE_NAME;
-        return $coreAppName::Instance(false);
-    }
-
-    /**
-     * @return Container
-     */
-    private static function getAppContainer()
-    {
-        return self::getAppObject()->getContainer();
     }
 
     public static function setUpBeforeClass()
@@ -128,6 +93,24 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
         if (self::DEBUG_MODE) {
             $time = microtime(true) - self::$startTime;
             echo "\n" . get_called_class() . ": Took " . number_format($time, 3) . " seconds\n";
+        }
+    }
+
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->singleTestTime     = microtime(true);
+        $this->waypoint_count     = 0;
+        $this->waypoint_last_time = $this->singleTestTime;
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        if (self::DEBUG_MODE) {
+            $time = microtime(true) - $this->singleTestTime;
+            echo "" . get_called_class() . ":" . $this->getName() . ": Took " . number_format($time, 3) . " seconds\n\n";
         }
     }
 
@@ -179,5 +162,22 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
             self::$faker->addProvider(new Provider\en_US\Company(self::$faker));
         }
         return self::$faker;
+    }
+
+    /**
+     * @return App
+     */
+    private static function getAppObject()
+    {
+        $coreAppName = APP_CORE_NAME;
+        return $coreAppName::Instance(false);
+    }
+
+    /**
+     * @return Container
+     */
+    private static function getAppContainer()
+    {
+        return self::getAppObject()->getContainer();
     }
 }

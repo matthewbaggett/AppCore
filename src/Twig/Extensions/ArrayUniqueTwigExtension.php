@@ -22,8 +22,7 @@ class ArrayUniqueTwigExtension extends \Twig_Extension
     {
         if (is_array($array)) {
             return array_unique($array, SORT_REGULAR);
-        } else {
-            return $array;
         }
+        return $array;
     }
 }

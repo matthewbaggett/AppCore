@@ -59,15 +59,15 @@ class AutoConfigurationService
         return $this->parseConfiguration($responseBody);
     }
 
-    private function parseConfiguration($responseBody)
-    {
-        $json = json_decode($responseBody, true);
-        return $json['Service']['Config'];
-    }
-
     public function run()
     {
         $this->environmentService->clearCache();
         return $this->environmentService->rebuildEnvironmentVariables();
+    }
+
+    private function parseConfiguration($responseBody)
+    {
+        $json = json_decode($responseBody, true);
+        return $json['Service']['Config'];
     }
 }

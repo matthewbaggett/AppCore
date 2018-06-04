@@ -49,9 +49,8 @@ class Container extends \Slim\Container
                     null,
                     $exception
                 );
-            } else {
-                throw $exception;
             }
+            throw $exception;
         }
     }
 

@@ -12,14 +12,14 @@ class DbConfig implements \ArrayAccess, \Iterator
         $this->position = 0;
     }
 
-    public function set($name, $array)
-    {
-        $this->configs[$name] = $array;
-    }
-
     public function __toArray()
     {
         return $this->configs;
+    }
+
+    public function set($name, $array)
+    {
+        $this->configs[$name] = $array;
     }
 
     /**

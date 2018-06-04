@@ -20,47 +20,6 @@ abstract class Model implements ModelInterface
         }
     }
 
-    public static function factory(array $data = [])
-    {
-        $class = get_called_class();
-        return new $class($data);
-    }
-
-    /**
-     * @return \Interop\Container\ContainerInterface
-     */
-    public function getDIContainer()
-    {
-        return App::Container();
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return Model $this
-     */
-    public function exchangeArray(array $data)
-    {
-        $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
-
-        foreach ($data as $key => $value) {
-            $method           = 'set' . $transformer->transform($key);
-            $originalProperty = $transformer->transform($key);
-
-            // @todo Query $this->getListOfProperties() instead of methods list..
-            if (method_exists($this, $method)) {
-                if (is_numeric($value)) {
-                    $value = doubleval($value);
-                }
-                $this->$method($value);
-                #echo "Writing into \$this->{$originalProperty}: exchangeArray\n";
-                $this->_original[$originalProperty] = $value;
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return array
      */
@@ -116,6 +75,57 @@ abstract class Model implements ModelInterface
         );
     }
 
+    public function __pre_save()
+    {
+        // Stub function to be overridden.
+    }
+
+    public function __post_save()
+    {
+        // Stub function to be overridden.
+    }
+
+    public static function factory(array $data = [])
+    {
+        $class = get_called_class();
+        return new $class($data);
+    }
+
+    /**
+     * @return \Interop\Container\ContainerInterface
+     */
+    public function getDIContainer()
+    {
+        return App::Container();
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return Model $this
+     */
+    public function exchangeArray(array $data)
+    {
+        $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
+
+        foreach ($data as $key => $value) {
+            $method           = 'set' . $transformer->transform($key);
+            $originalProperty = $transformer->transform($key);
+
+            // @todo Query $this->getListOfProperties() instead of methods list..
+            if (method_exists($this, $method)) {
+                if (is_numeric($value)) {
+                    $value = doubleval($value);
+                }
+                $this->$method($value);
+                #echo "Writing into \$this->{$originalProperty}: exchangeArray\n";
+                $this->_original[$originalProperty] = $value;
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * Return primary key values in an associative array.
      *
@@ -163,11 +173,6 @@ abstract class Model implements ModelInterface
         return $notNull;
     }
 
-    protected function getProtectedMethods()
-    {
-        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
-    }
-
     public function getListOfProperties()
     {
         throw new \Exception("getListOfProperties in Abstract Model should never be used.");
@@ -201,13 +206,8 @@ abstract class Model implements ModelInterface
         return $dirtyProperties;
     }
 
-    public function __pre_save()
+    protected function getProtectedMethods()
     {
-        // Stub function to be overridden.
-    }
-
-    public function __post_save()
-    {
-        // Stub function to be overridden.
+        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
     }
 }

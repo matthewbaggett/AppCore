@@ -23,15 +23,14 @@ class ConfigController extends Controller
                 'Environment' => $envvars,
             ];
             return $this->jsonResponse($json, $request, $response);
-        } else {
-
-            /** @var Twig $twig */
-            $twig = App::Instance()->getContainer()->get("view");
-
-            return $twig->render($response, 'config/environment.html.twig', [
-                'page_name'  => "Environment Variables List",
-                'envvars'    => $envvars,
-            ]);
         }
+
+        /** @var Twig $twig */
+        $twig = App::Instance()->getContainer()->get("view");
+
+        return $twig->render($response, 'config/environment.html.twig', [
+            'page_name'  => "Environment Variables List",
+            'envvars'    => $envvars,
+        ]);
     }
 }

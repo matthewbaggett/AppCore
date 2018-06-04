@@ -11,14 +11,6 @@ use Zend\Db\Sql\Select;
 
 class UpdaterService extends AbstractService implements ServiceInterface
 {
-    public function updateAlreadyApplied($file)
-    {
-        if ($this->getByField(UpdaterModel::FIELD_FILE, $file)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 
     // Related Objects Table Gateways
@@ -38,6 +30,13 @@ class UpdaterService extends AbstractService implements ServiceInterface
         TableGateways\UpdaterTableGateway $updaterTableGateway
     ) {
         $this->updaterTableGateway = $updaterTableGateway;
+    }
+    public function updateAlreadyApplied($file)
+    {
+        if ($this->getByField(UpdaterModel::FIELD_FILE, $file)) {
+            return true;
+        }
+        return false;
     }
 
     public function getNewTableGatewayInstance() : TableGateways\UpdaterTableGateway

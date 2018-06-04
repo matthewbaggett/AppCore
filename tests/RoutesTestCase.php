@@ -25,18 +25,6 @@ abstract class RoutesTestCase extends BaseTestCase
         parent::setUp();
     }
 
-    protected function setEnvironmentVariable($key, $value)
-    {
-        $this->defaultEnvironment[$key] = $value;
-        return $this;
-    }
-
-    protected function setRequestHeader($header, $value)
-    {
-        $this->defaultHeaders[$header] = $value;
-        return $this;
-    }
-
     /**
      * @param string $method
      * @param string $path
@@ -122,5 +110,17 @@ abstract class RoutesTestCase extends BaseTestCase
         $this->waypoint("After Response");
         
         return $response;
+    }
+
+    protected function setEnvironmentVariable($key, $value)
+    {
+        $this->defaultEnvironment[$key] = $value;
+        return $this;
+    }
+
+    protected function setRequestHeader($header, $value)
+    {
+        $this->defaultHeaders[$header] = $value;
+        return $this;
     }
 }

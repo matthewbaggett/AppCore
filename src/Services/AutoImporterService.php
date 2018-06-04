@@ -37,9 +37,8 @@ class AutoImporterService
         if (file_exists($sqlPath)) {
             $this->sqlPaths[] = $sqlPath;
             return $this;
-        } else {
-            throw new AutoImporterException("Cannot find path {$sqlPath}");
         }
+        throw new AutoImporterException("Cannot find path {$sqlPath}");
     }
 
     public function scanForSql($path)
@@ -93,21 +92,6 @@ class AutoImporterService
         }
     }
 
-    private function runFile($sqlFile)
-    {
-        $configs = App::Instance(false)->getContainer()->get(\Segura\AppCore\DbConfig::class);
-        if (isset($configs['Default'])) {
-            $connection = $configs['Default'];
-        } else {
-            $connection = reset($configs);
-        }
-
-        $importCommand = "mysql -u {$connection['username']} -h {$connection['hostname']} -p{$connection['password']} {$connection['database']} < {$sqlFile}  2>&1 | grep -v \"Warning: Using a password\"";
-        ob_start();
-        exec($importCommand);
-        ob_end_clean();
-    }
-
     public function run()
     {
         App::waitForMySQLToBeReady();
@@ -146,5 +130,20 @@ class AutoImporterService
             echo " > Dropping {$table}\n";
             $sqlDoer->execute($sql);
         }
+    }
+
+    private function runFile($sqlFile)
+    {
+        $configs = App::Instance(false)->getContainer()->get(\Segura\AppCore\DbConfig::class);
+        if (isset($configs['Default'])) {
+            $connection = $configs['Default'];
+        } else {
+            $connection = reset($configs);
+        }
+
+        $importCommand = "mysql -u {$connection['username']} -h {$connection['hostname']} -p{$connection['password']} {$connection['database']} < {$sqlFile}  2>&1 | grep -v \"Warning: Using a password\"";
+        ob_start();
+        exec($importCommand);
+        ob_end_clean();
     }
 }

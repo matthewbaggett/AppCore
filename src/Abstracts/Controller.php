@@ -86,9 +86,8 @@ abstract class Controller
             $decode     = json_decode($filterText);
             if ($decode !== null) {
                 return true;
-            } else {
-                throw new FilterDecodeException("Could not decode given Filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
             }
+            throw new FilterDecodeException("Could not decode given Filter. Reason: Not JSON. Given: \"" . $filterText . "\"");
         }
         return false;
     }

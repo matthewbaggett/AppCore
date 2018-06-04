@@ -22,6 +22,13 @@ class EnvironmentService
         $this->rebuildEnvironmentVariables();
     }
 
+
+    public function __toArray()
+    {
+        ksort($this->environmentVariables);
+        return $this->environmentVariables;
+    }
+
     public function rebuildEnvironmentVariables()
     {
         if (file_exists($this->cacheFile)) {
@@ -97,12 +104,5 @@ class EnvironmentService
             }
         }
         return $default;
-    }
-
-
-    public function __toArray()
-    {
-        ksort($this->environmentVariables);
-        return $this->environmentVariables;
     }
 }

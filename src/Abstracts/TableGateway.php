@@ -15,6 +15,7 @@ use Zend\Db\TableGateway\TableGateway as ZendTableGateway;
 
 abstract class TableGateway extends ZendTableGateway
 {
+    protected $model;
     public function __construct($table, AdapterInterface $adapter, $features = null, $resultSetPrototype = null, $sql = null)
     {
         $this->adapter = $adapter;
@@ -25,8 +26,6 @@ abstract class TableGateway extends ZendTableGateway
         }
         parent::__construct($table, $adapter, $features, $resultSetPrototype, $sql);
     }
-
-    protected $model;
 
     /**
      * @param Model $model
@@ -93,9 +92,8 @@ abstract class TableGateway extends ZendTableGateway
 
         if ($model->hasPrimaryKey()) {
             return $model->getPrimaryKeys();
-        } else {
-            return $this->getLastInsertValue();
         }
+        return $this->getLastInsertValue();
     }
 
 
@@ -236,9 +234,8 @@ abstract class TableGateway extends ZendTableGateway
 
         if (0 == count($resultSet)) {
             return null;
-        } else {
-            return $resultSet->current();
         }
+        return $resultSet->current();
     }
 
     /**
@@ -439,13 +436,13 @@ abstract class TableGateway extends ZendTableGateway
         $results = [];
         if ($resultSet->count() == 0) {
             return null;
-        } else {
-            for ($i = 0; $i < $resultSet->count(); $i++) {
-                $row       = $resultSet->current();
-                $results[] = $row;
-                $resultSet->next();
-            }
         }
+        for ($i = 0; $i < $resultSet->count(); $i++) {
+            $row       = $resultSet->current();
+            $results[] = $row;
+            $resultSet->next();
+        }
+        
         return $results;
     }
 
@@ -526,13 +523,13 @@ abstract class TableGateway extends ZendTableGateway
         $results = [];
         if ($resultSet->count() == 0) {
             return null;
-        } else {
-            for ($i = 0; $i < $resultSet->count(); $i++) {
-                $row       = $resultSet->current();
-                $results[] = $row;
-                $resultSet->next();
-            }
         }
+        for ($i = 0; $i < $resultSet->count(); $i++) {
+            $row       = $resultSet->current();
+            $results[] = $row;
+            $resultSet->next();
+        }
+        
         return $results;
     }
 

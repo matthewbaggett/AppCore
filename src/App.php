@@ -53,118 +53,9 @@ class App
 
     protected $viewPaths = [];
 
-    /**
-     * @return App
-     */
-    public static function Instance($doNotUseStaticInstance = false)
-    {
-        if (!self::$instance || $doNotUseStaticInstance === true) {
-            $calledClass    = get_called_class();
-            self::$instance = new $calledClass();
-        }
-        return self::$instance;
-    }
-
-    /**
-     * @return \Interop\Container\ContainerInterface
-     */
-    public static function Container()
-    {
-        return self::Instance()->getContainer();
-    }
-
-    public static function Debug($message)
-    {
-        /** @var PredisClient $redis */
-        $redis = self::Container()->get("Redis");
-        if ($message instanceof \Exception) {
-            $message = "EXCEPTION (" . get_class($message) . "): {$message->getMessage()}";
-        }
-        if (is_string($message)) {
-            $redis->publish("debug", $message);
-            $redis->hset("debug_log", microtime(true), $message);
-        }
-    }
-
-    /**
-     * @return Container
-     */
-    public function getContainer() : Container
-    {
-        return $this->container;
-    }
-
-    public function getApp()
-    {
-        return $this->app;
-    }
-
-    public function addRoutePath($path)
-    {
-        if (file_exists($path)) {
-            $this->routePaths[] = $path;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $directory
-     *
-     * @return int Number of Paths added.
-     */
-    public function addRoutePathsRecursively($directory)
-    {
-        $count = 0;
-        if (file_exists($directory)) {
-            foreach (new \DirectoryIterator($directory) as $file) {
-                if (!$file->isDot()) {
-                    if ($file->isFile() && $file->getExtension() == 'php') {
-                        $this->addRoutePath($file->getRealPath());
-                        $count++;
-                    } elseif ($file->isDir()) {
-                        $count += $this->addRoutePathsRecursively($file->getRealPath());
-                    }
-                }
-            }
-        }
-        return $count;
-    }
-
-    public function addViewPath($path)
-    {
-        if (file_exists($path)) {
-            $this->viewPaths[] = $path;
-        }
-        return $this;
-    }
-
-    public function getAppName()
-    {
-        return defined("APP_NAME") ? APP_NAME : null;
-    }
-
     public function __construct()
     {
         $this->setup();
-    }
-
-    public function makeClean() : App
-    {
-        $this->setup();
-        $this->loadAllRoutes();
-        return $this;
-    }
-
-    public function populateContainerAliases(&$container)
-    {
-        foreach ($this->containerAliases as $alias => $class) {
-            if ($alias != $class) {
-                $container[$alias] = function (Slim\Container $c) use ($class) {
-                    return $c->get($class);
-                };
-            }
-        }
     }
 
     public function setup()
@@ -438,6 +329,115 @@ class App
         }
 
         return $this;
+    }
+
+    /**
+     * @return App
+     */
+    public static function Instance($doNotUseStaticInstance = false)
+    {
+        if (!self::$instance || $doNotUseStaticInstance === true) {
+            $calledClass    = get_called_class();
+            self::$instance = new $calledClass();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * @return \Interop\Container\ContainerInterface
+     */
+    public static function Container()
+    {
+        return self::Instance()->getContainer();
+    }
+
+    public static function Debug($message)
+    {
+        /** @var PredisClient $redis */
+        $redis = self::Container()->get("Redis");
+        if ($message instanceof \Exception) {
+            $message = "EXCEPTION (" . get_class($message) . "): {$message->getMessage()}";
+        }
+        if (is_string($message)) {
+            $redis->publish("debug", $message);
+            $redis->hset("debug_log", microtime(true), $message);
+        }
+    }
+
+    /**
+     * @return Container
+     */
+    public function getContainer() : Container
+    {
+        return $this->container;
+    }
+
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    public function addRoutePath($path)
+    {
+        if (file_exists($path)) {
+            $this->routePaths[] = $path;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $directory
+     *
+     * @return int Number of Paths added.
+     */
+    public function addRoutePathsRecursively($directory)
+    {
+        $count = 0;
+        if (file_exists($directory)) {
+            foreach (new \DirectoryIterator($directory) as $file) {
+                if (!$file->isDot()) {
+                    if ($file->isFile() && $file->getExtension() == 'php') {
+                        $this->addRoutePath($file->getRealPath());
+                        $count++;
+                    } elseif ($file->isDir()) {
+                        $count += $this->addRoutePathsRecursively($file->getRealPath());
+                    }
+                }
+            }
+        }
+        return $count;
+    }
+
+    public function addViewPath($path)
+    {
+        if (file_exists($path)) {
+            $this->viewPaths[] = $path;
+        }
+        return $this;
+    }
+
+    public function getAppName()
+    {
+        return defined("APP_NAME") ? APP_NAME : null;
+    }
+
+    public function makeClean() : App
+    {
+        $this->setup();
+        $this->loadAllRoutes();
+        return $this;
+    }
+
+    public function populateContainerAliases(&$container)
+    {
+        foreach ($this->containerAliases as $alias => $class) {
+            if ($alias != $class) {
+                $container[$alias] = function (Slim\Container $c) use ($class) {
+                    return $c->get($class);
+                };
+            }
+        }
     }
 
     public static function Log(int $level = Logger::DEBUG, $message)

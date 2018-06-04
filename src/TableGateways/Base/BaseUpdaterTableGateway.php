@@ -50,12 +50,12 @@ abstract class BaseUpdaterTableGateway extends AbstractTableGateway
     public function getNewMockModelInstance()
     {
         $newUpdaterData = [
-        // dateApplied. Type = datetime. PHPType = string. Has no related objects.
-        'dateApplied' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
-        // file. Type = text. PHPType = string. Has no related objects.
-        'file' => substr($this->faker->text(500 >= 5 ? 500 : 5), 0, 500),
-        // id. Type = int. PHPType = int. Has no related objects.
-        'id' => null,
+            // dateApplied. Type = datetime. PHPType = string. Has no related objects.
+            'dateApplied' => $this->faker->dateTime()->format("Y-m-d H:i:s"), // @todo: Make datetime fields accept DateTime objects instead of strings. - MB
+            // file. Type = text. PHPType = string. Has no related objects.
+            'file' => substr($this->faker->text(500 >= 5 ? 500 : 5), 0, 500),
+            // id. Type = int. PHPType = int. Has no related objects.
+            'id' => null,
         ];
         $newUpdater = $this->getNewModelInstance($newUpdaterData);
         return $newUpdater;

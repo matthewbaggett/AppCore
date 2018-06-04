@@ -53,8 +53,8 @@ abstract class CrudController extends Controller
                 $request,
                 $response
             );
-        } else {
-            return $this->jsonResponse(
+        }
+        return $this->jsonResponse(
                 [
                     'Status'                          => 'FAIL',
                     'Reason'                          => sprintf(
@@ -66,7 +66,6 @@ abstract class CrudController extends Controller
                 $request,
                 $response
             );
-        }
     }
 
     public function createRequest(Request $request, Response $response, $args)
@@ -105,8 +104,8 @@ abstract class CrudController extends Controller
                 $request,
                 $response
             );
-        } else {
-            return $this->jsonResponse(
+        }
+        return $this->jsonResponse(
                 [
                     'Status'                          => 'FAIL',
                     'Reason'                          => sprintf(
@@ -118,6 +117,5 @@ abstract class CrudController extends Controller
                 $request,
                 $response
             );
-        }
     }
 }
