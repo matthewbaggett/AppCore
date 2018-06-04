@@ -18,6 +18,7 @@ use Segura\AppCore\Services\EnvironmentService;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
+use Segura\AppCore\Zend\Profiler;
 use Segura\Session\Session;
 use Slim;
 use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
@@ -43,7 +44,8 @@ class App
         'Faker'            => \Faker\Generator::class,
         'Environment'      => EnvironmentService::class,
         'Redis'            => PredisClient::class,
-        'Monolog'          => \Monolog\Logger::class
+        'Monolog'          => \Monolog\Logger::class,
+        'Segura\AppCore\Logger' => \Monolog\Logger::class,
     ];
 
     protected $routePaths = [
@@ -299,6 +301,10 @@ class App
 
         $this->container[Differ::class] = function (Slim\Container $container) {
             return new Differ();
+        };
+
+        $this->container[Profiler::class] = function (Slim\Container $container) {
+            return new Profiler();
         };
 
         /** @var EnvironmentService $environmentService */
