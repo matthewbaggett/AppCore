@@ -7,6 +7,8 @@ class DbConfig implements \ArrayAccess, \Iterator
     private $configs;
     private $position = 0;
 
+    private static $persistantAdapterPool = [];
+
     public function __construct()
     {
         $this->position = 0;
@@ -29,11 +31,14 @@ class DbConfig implements \ArrayAccess, \Iterator
     {
         $adapterPool = [];
         foreach ($this->configs as $name => $dbConfig) {
-            $adapterPool[$name] = new Adapter($dbConfig);
+            $key = $name . ":" . crc32(implode(":", $dbConfig));
+            if(!isset(self::$persistantAdapterPool[$key])){
+                self::$persistantAdapterPool[$key] = new Adapter($dbConfig);
+            }
+            $adapterPool[$name] = self::$persistantAdapterPool[$key];
         }
         return $adapterPool;
     }
-
 
     public function offsetExists($offset)
     {
