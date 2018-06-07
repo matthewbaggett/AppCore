@@ -355,6 +355,8 @@ abstract class TableGateway extends ZendTableGateway
             }
         }
 
+        #\Kint::dump($this->getSql()->getSqlStringForSqlObject($select));
+        
         $row = $this->getSql()
             ->prepareStatementForSqlObject($select)
             ->execute()
