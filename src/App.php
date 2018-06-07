@@ -78,6 +78,9 @@ class App
 
         $this->addViewPath(APP_ROOT . "/views/");
         $this->addViewPath(APPCORE_ROOT . "/views");
+        if(file_exists(APP_ROOT . "/src/Views")) {
+            $this->addViewPath(APP_ROOT . "/src/Views");
+        }
 
         // Create Slim app
         $this->app = new \Slim\App(
