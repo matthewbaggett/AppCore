@@ -2,7 +2,6 @@
 
 namespace Segura\AppCore;
 
-use Segura\AppCore\Zend\Profiler as AppCoreProfiler;
 use Zend\Db\Adapter\Platform;
 use Zend\Db\Adapter\Profiler;
 use Zend\Db\ResultSet;

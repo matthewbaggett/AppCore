@@ -32,7 +32,7 @@ class DbConfig implements \ArrayAccess, \Iterator
         $adapterPool = [];
         foreach ($this->configs as $name => $dbConfig) {
             $key = $name . ":" . crc32(implode(":", $dbConfig));
-            if(!isset(self::$persistantAdapterPool[$key])){
+            if (!isset(self::$persistantAdapterPool[$key])) {
                 self::$persistantAdapterPool[$key] = new Adapter($dbConfig);
             }
             $adapterPool[$name] = self::$persistantAdapterPool[$key];
