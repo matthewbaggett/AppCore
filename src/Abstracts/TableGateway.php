@@ -224,6 +224,79 @@ abstract class TableGateway extends ZendTableGateway
     }
 
     /**
+     * This method is only supposed to be used by getListAction.
+     *
+     * @param string $distinctColumn Column to be distinct on.
+     * @param array  $wheres    Array of conditions to filter by.
+     *
+     * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
+     */
+    public function fetchDistinct(
+        string $distinctColumn,
+        array $wheres = null
+    ) {
+        /** @var Select $select */
+        $select = $this->getSql()->select();
+        $select->quantifier(Select::QUANTIFIER_DISTINCT);
+        $select->columns([$distinctColumn]);
+        
+        //\Kint::dump($distinctColumn, $wheres);
+        if ($wheres != null) {
+            foreach ($wheres as $conditional) {
+                if ($conditional instanceof \Closure) {
+                    $select->where($conditional);
+                } else {
+                    $spec = function (Where $where) use ($conditional) {
+                        switch ($conditional['condition']) {
+                            case FilterCondition::CONDITION_EQUAL:
+                                $where->equalTo($conditional['column'], $conditional['value']);
+                                break;
+                            case FilterCondition::CONDITION_GREATER_THAN:
+                                $where->greaterThan($conditional['column'], $conditional['value']);
+                                break;
+                            case FilterCondition::CONDITION_GREATER_THAN_OR_EQUAL:
+                                $where->greaterThanOrEqualTo($conditional['column'], $conditional['value']);
+                                break;
+                            case FilterCondition::CONDITION_LESS_THAN:
+                                $where->lessThan($conditional['column'], $conditional['value']);
+                                break;
+                            case FilterCondition::CONDITION_LESS_THAN_OR_EQUAL:
+                                $where->lessThanOrEqualTo($conditional['column'], $conditional['value']);
+                                break;#
+                            case FilterCondition::CONDITION_LIKE:
+                                $where->like($conditional['column'], $conditional['value']);
+                                break;
+                            default:
+                                // @todo better exception plz.
+                                throw new \Exception("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
+                        }
+                    };
+                    $select->where($spec);
+                }
+            }
+        }
+
+        $resultSet = $this->selectWith($select);
+
+        $quantifierSelect = $select
+            ->reset(Select::LIMIT)
+            ->reset(Select::COLUMNS)
+            ->reset(Select::OFFSET)
+            ->reset(Select::ORDER)
+            ->reset(Select::COMBINE)
+            ->columns(['total' => new Expression('COUNT(*)')]);
+
+        /* execute the select and extract the total */
+        $row = $this->getSql()
+            ->prepareStatementForSqlObject($quantifierSelect)
+            ->execute()
+            ->current();
+        $total = (int)$row['total'];
+
+        return [$resultSet, $total];
+    }
+
+    /**
      * @return array|\ArrayObject|null
      */
     public function fetchRandom()

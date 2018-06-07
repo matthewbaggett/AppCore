@@ -50,6 +50,32 @@ abstract class Service
     }
 
     /**
+     * @param string|null           $distinctColumn
+     * @param array|\Closure[]|null $wheres
+     *
+     * @return Model[]
+     */
+    public function getDistinct(
+        string $distinctColumn,
+        array $wheres = null
+    ) {
+        /** @var TableGateway $tableGateway */
+        $tableGateway = $this->getNewTableGatewayInstance();
+        list($matches, $count) = $tableGateway->fetchDistinct(
+            $distinctColumn,
+            $wheres
+        );
+
+        $return = [];
+        if ($matches instanceof ResultSet) {
+            foreach ($matches as $match) {
+                $return[] = $match;
+            }
+        }
+        return $return;
+    }
+
+    /**
      * @param array|\Closure[]|null $wheres
      *
      * @return int
