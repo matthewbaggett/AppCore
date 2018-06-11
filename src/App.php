@@ -36,6 +36,8 @@ class App
     /** @var \Monolog\Logger */
     protected $monolog;
 
+    protected $isSessionsEnabled = true;
+
     protected $containerAliases = [
         'view'             => Slim\Views\Twig::class,
         'DatabaseInstance' => DbConfig::class,
@@ -78,7 +80,7 @@ class App
 
         $this->addViewPath(APP_ROOT . "/views/");
         $this->addViewPath(APPCORE_ROOT . "/views");
-        if(file_exists(APP_ROOT . "/src/Views")) {
+        if (file_exists(APP_ROOT . "/src/Views")) {
             $this->addViewPath(APP_ROOT . "/src/Views");
         }
 
@@ -333,7 +335,7 @@ class App
 
         $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
 
-        if (php_sapi_name() != 'cli') {
+        if (php_sapi_name() != 'cli' && $this->isSessionsEnabled) {
             $session = $this->getContainer()->get(Session::class);
         }
 
