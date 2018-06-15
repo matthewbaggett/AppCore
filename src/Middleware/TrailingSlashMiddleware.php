@@ -2,12 +2,11 @@
 
 namespace Segura\AppCore\Middleware;
 
-use Slim\Http\Response;
 use Slim\Http\Request;
+use Slim\Http\Response;
 
 class TrailingSlashMiddleware
 {
-
     public function __invoke(Request $request, Response $response, callable $next)
     {
         $uri  = $request->getUri();

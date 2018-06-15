@@ -18,7 +18,6 @@ use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\AppCore\Zend\Profiler;
-use Segura\AppCore\Middleware;
 use Segura\Session\Session;
 use Slim;
 use Zeuxisoo\Whoops\Provider\Slim as Whoops;
