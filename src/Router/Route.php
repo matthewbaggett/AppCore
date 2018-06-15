@@ -5,6 +5,9 @@ use Slim\App;
 
 class Route
 {
+    const ACCESS_PUBLIC = 'public';
+    const ACCESS_PRIVATE = 'private';
+
     protected $name;
     protected $callback;
     protected $SDKClass;
@@ -19,6 +22,7 @@ class Route
     protected $properties;
     protected $exampleEntity;
     protected $callbackProperties = [];
+    protected $access = self::ACCESS_PUBLIC;
 
     public static function Factory()
     {
@@ -289,6 +293,7 @@ class Route
         );
 
         $mapping->setName($this->getName() ? $this->getName() : "Unnamed Route");
+        $mapping->setArgument('access', $this->getAccess());
         return $app;
     }
 
@@ -327,6 +332,25 @@ class Route
     public function setHttpEndpoint($httpEndpoint)
     {
         $this->httpEndpoint = $httpEndpoint;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccess()
+    {
+        return $this->access;
+    }
+
+    /**
+     * @param string $access
+     *
+     * @return Route
+     */
+    public function setAccess($access = self::ACCESS_PUBLIC)
+    {
+        $this->access = $access;
         return $this;
     }
 }
