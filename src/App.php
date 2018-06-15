@@ -9,7 +9,6 @@ use Monolog\Handler\StreamHandler;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Exceptions\DbConfigException;
-use Segura\AppCore\Middleware\EnvironmentHeadersOnResponse;
 use Segura\AppCore\Monolog\LumberjackHandler;
 use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\AutoConfigurationService;
@@ -19,9 +18,10 @@ use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\AppCore\Zend\Profiler;
+use Segura\AppCore\Middleware;
 use Segura\Session\Session;
 use Slim;
-use Zeuxisoo\Whoops\Provider\Slim\WhoopsMiddleware;
+use Zeuxisoo\Whoops\Provider\Slim as Whoops;
 
 class App
 {
@@ -98,8 +98,9 @@ class App
         );
 
         // Middlewares
-        $this->app->add(new WhoopsMiddleware());
-        $this->app->add(new EnvironmentHeadersOnResponse());
+        $this->app->add(new Whoops\WhoopsMiddleware());
+        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        $this->app->add(new Middleware\TrailingSlashMiddleware());
 
         // Fetch DI Container
         $this->container = $this->app->getContainer();
