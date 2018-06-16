@@ -583,15 +583,19 @@ abstract class TableGateway extends ZendTableGateway
      * @param Where|\Closure|string|array|Predicate\PredicateInterface $keyValue
      * @param null                                                     $orderBy
      * @param string                                                   $orderDirection
+     * @param int                                                  $limit
      *
      * @return array|\ArrayObject|null
      */
-    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
+    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null)
     {
         $select = $this->sql->select();
         $select->where($keyValue);
         if ($orderBy) {
             $select->order("{$orderBy} {$orderDirection}");
+        }
+        if ($limit) {
+            $select->limit($limit);
         }
         $resultSet = $this->selectWith($select);
 
