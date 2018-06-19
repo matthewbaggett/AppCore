@@ -9,6 +9,10 @@ use Slim\Exception\ContainerValueNotFoundException;
 
 class Container extends \Slim\Container
 {
+    private $seenList = [];
+
+    private $maxDepth = 32;
+
     public function __construct(array $values = [])
     {
         parent::__construct($values);
@@ -32,7 +36,13 @@ class Container extends \Slim\Container
             if ($reflection->getConstructor() !== null && count($reflection->getConstructor()->getParameters()) > 0) {
                 foreach ($reflection->getConstructor()->getParameters() as $order => $parameter) {
                     if ($parameter->getClass()) {
-                        $params[$order] = $this->get($parameter->getClass()->getName());
+                        if (!isset($this->seenList[$parameter->getClass()->getName()])) {
+                            $return = $this->get($parameter->getClass()->getName());
+                            $this->seenList[$parameter->getClass()->getName()] = $return;
+                            $params[$order] = $return;
+                        } else {
+                            $params[$order] = $this->seenList[$parameter->getClass()->getName()];
+                        }
                     }
                 }
             }
