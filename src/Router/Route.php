@@ -89,8 +89,8 @@ class Route
         return implode(
             "::",
             [
-                $this->getHttpMethod(),
                 $this->getRouterPattern(),
+                $this->getHttpMethod(),
                 "Weight={$this->getWeight()}",
             ]
         );
