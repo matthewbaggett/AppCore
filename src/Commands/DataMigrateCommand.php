@@ -5,7 +5,6 @@ use Segura\AppCore\App;
 use Segura\AppCore\Services\AutoImporterService;
 use Segura\AppCore\ZenderatorConfig;
 use Zenderator\Automize;
-use Zenderator\Zenderator;
 
 class DataMigrateCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
 {
