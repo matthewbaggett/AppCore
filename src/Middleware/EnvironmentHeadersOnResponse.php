@@ -41,7 +41,8 @@ class EnvironmentHeadersOnResponse
                         'Human' => date("Y-m-d H:i:s"),
                         'Epoch' => time(),
                     ],
-                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
+                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec",
+                    'Api'    => class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
                 ],
                 'Memory'     => [
                     'Used'       => number_format(memory_get_usage(false)/1024/1024, 2) . "MB",
