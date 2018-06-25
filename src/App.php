@@ -453,7 +453,10 @@ class App
 
     public static function Log(int $level = Logger::DEBUG, $message)
     {
-        return self::Instance()->getContainer()->get('MonoLog')->log($level, $message);
+        return self::Instance()
+            ->getContainer()
+            ->get(\Monolog\Logger::class)
+            ->log($level, $message);
     }
 
     public function loadAllRoutes()
