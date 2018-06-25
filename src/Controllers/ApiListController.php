@@ -6,7 +6,6 @@ use Segura\AppCore\App;
 use Segura\AppCore\Router\Router;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Route;
 use Slim\Views\Twig;
 
 class ApiListController extends Controller
