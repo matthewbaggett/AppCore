@@ -45,15 +45,15 @@ class EnvironmentHeadersOnResponse
                         'Human' => date("Y-m-d H:i:s"),
                         'Epoch' => time(),
                     ],
-                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
-                ],
-                'Memory'     => [
+                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec",
+                ] : null,
+                'Memory'     => DEBUG_ENABLED ? [
                     'Used'       => number_format(memory_get_usage(false)/1024/1024, 2) . "MB",
                     'Allocated'  => number_format(memory_get_usage(true)/1024/1024, 2) . "MB",
                     'Limit'      => ini_get('memory_limit'),
                 ] : null,
                 'SQL' => DEBUG_ENABLED ? $profiler->getQueriesArray() : null,
-                                'Api'    => class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
+                'API' => DEBUG_ENABLED && class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
             ]);
 
             if (isset($json['Status'])) {
