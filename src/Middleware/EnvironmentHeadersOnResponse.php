@@ -4,6 +4,7 @@ namespace Segura\AppCore\Middleware;
 
 use Segura\AppCore\App;
 use Segura\AppCore\Controllers\InlineCssTrait;
+use Segura\AppCore\Zend\Profiler;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -15,6 +16,8 @@ class EnvironmentHeadersOnResponse
 
     public function __invoke(Request $request, Response $response, $next)
     {
+        /** @var Profiler $profiler */
+        $profiler = App::Container()->get(Profiler::class);
         /** @var Response $response */
         $response = $next($request, $response);
         if (isset($response->getHeader('Content-Type')[0])
@@ -34,21 +37,23 @@ class EnvironmentHeadersOnResponse
 
             $json['Extra'] = array_filter([
                 'Hostname'   => gethostname(),
-                'GitVersion' => $gitVersion,
-                'Time'       => [
+                'DebugEnabled' => DEBUG_ENABLED ? 'Yes' : 'No',
+                'GitVersion' => DEBUG_ENABLED ? $gitVersion : null,
+                'Time'       => DEBUG_ENABLED ? [
                     'TimeZone'    => date_default_timezone_get(),
                     'CurrentTime' => [
                         'Human' => date("Y-m-d H:i:s"),
                         'Epoch' => time(),
                     ],
-                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec",
-                    'Api'    => class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
+                    'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec"
                 ],
                 'Memory'     => [
                     'Used'       => number_format(memory_get_usage(false)/1024/1024, 2) . "MB",
                     'Allocated'  => number_format(memory_get_usage(true)/1024/1024, 2) . "MB",
                     'Limit'      => ini_get('memory_limit'),
-                ],
+                ] : null,
+                'SQL' => DEBUG_ENABLED ? $profiler->getQueriesArray() : null,
+                                'Api'    => class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
             ]);
 
             if (isset($json['Status'])) {
