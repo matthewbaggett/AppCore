@@ -21,10 +21,11 @@ class Route
     protected $plural;
     protected $properties;
     protected $exampleEntity;
+    protected $exampleEntityFinderFunction;
     protected $callbackProperties = [];
     protected $access = self::ACCESS_PUBLIC;
 
-    public static function Factory()
+    public static function Factory() : Route
     {
         return new Route();
     }
@@ -109,7 +110,7 @@ class Route
      *
      * @return Route
      */
-    public function setHttpMethod($httpMethod)
+    public function setHttpMethod($httpMethod) : Route
     {
         $this->httpMethod = $httpMethod;
         return $this;
@@ -139,7 +140,7 @@ class Route
      *
      * @return Route
      */
-    public function setRouterPattern($routerPattern)
+    public function setRouterPattern($routerPattern) : Route
     {
         $this->routerPattern = $routerPattern;
         return $this;
@@ -150,6 +151,10 @@ class Route
      */
     public function getExampleEntity()
     {
+        if (!$this->exampleEntity && $this->exampleEntityFinderFunction) {
+            $function = $this->exampleEntityFinderFunction;
+            $this->exampleEntity = $function();
+        }
         return $this->exampleEntity;
     }
 
@@ -158,7 +163,7 @@ class Route
      *
      * @return Route
      */
-    public function setExampleEntity($exampleEntity)
+    public function setExampleEntity($exampleEntity) : Route
     {
         $this->exampleEntity = $exampleEntity;
         return $this;
@@ -177,7 +182,7 @@ class Route
      *
      * @return Route
      */
-    public function setName($name)
+    public function setName($name) : Route
     {
         $this->name = $name;
         return $this;
@@ -196,7 +201,7 @@ class Route
      *
      * @return Route
      */
-    public function setSDKClass($SDKClass)
+    public function setSDKClass($SDKClass) : Route
     {
         $this->SDKClass = $SDKClass;
         return $this;
@@ -215,7 +220,7 @@ class Route
      *
      * @return Route
      */
-    public function setSDKFunction($function)
+    public function setSDKFunction($function) : Route
     {
         $this->SDKFunction = $function;
         return $this;
@@ -234,7 +239,7 @@ class Route
      *
      * @return Route
      */
-    public function setSingular($singular)
+    public function setSingular($singular) : Route
     {
         $this->singular = $singular;
         return $this;
@@ -253,7 +258,7 @@ class Route
      *
      * @return Route
      */
-    public function setPlural($plural)
+    public function setPlural($plural) : Route
     {
         $this->plural = $plural;
         return $this;
@@ -272,7 +277,7 @@ class Route
      *
      * @return Route
      */
-    public function setProperties($properties)
+    public function setProperties($properties) : Route
     {
         $this->properties = $properties;
         return $this;
@@ -283,7 +288,7 @@ class Route
      *
      * @return \Slim\App
      */
-    public function populateRoute(App $app)
+    public function populateRoute(App $app) : App
     {
         #echo "Populating: {$this->getHttpMethod()} {$this->getRouterPattern()}\n";
         $mapping = $app->map(
@@ -310,7 +315,7 @@ class Route
      *
      * @return Route
      */
-    public function setCallback($callback)
+    public function setCallback($callback) : Route
     {
         $this->callback = $callback;
         return $this;
@@ -329,7 +334,7 @@ class Route
      *
      * @return Route
      */
-    public function setHttpEndpoint($httpEndpoint)
+    public function setHttpEndpoint($httpEndpoint) : Route
     {
         $this->httpEndpoint = $httpEndpoint;
         return $this;
@@ -348,9 +353,15 @@ class Route
      *
      * @return Route
      */
-    public function setAccess($access = self::ACCESS_PUBLIC)
+    public function setAccess($access = self::ACCESS_PUBLIC) : Route
     {
         $this->access = $access;
+        return $this;
+    }
+
+    public function setExampleEntityFindFunction(callable $finderFunction) : Route
+    {
+        $this->exampleEntityFinderFunction = $finderFunction;
         return $this;
     }
 }
