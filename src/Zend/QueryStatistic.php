@@ -13,6 +13,14 @@ class QueryStatistic implements QueryStatisticInterface
     /** @var  array */
     private $callPoints;
 
+    public function __toArray(): array
+    {
+        return [
+            "Time" => $this->getTime(),
+            "Query" => $this->getSql(),
+        ];
+    }
+
     /**
      * @return array
      */
@@ -68,13 +76,5 @@ class QueryStatistic implements QueryStatisticInterface
     {
         $this->time = $time;
         return $this;
-    }
-
-    public function __toArray(): array
-    {
-        return [
-            "Time" => $this->getTime(),
-            "Query" => $this->getSql(),
-        ];
     }
 }

@@ -71,9 +71,10 @@ class Profiler implements ProfilerInterface
         return $stats;
     }
 
-    public function getQueriesArray(){
+    public function getQueriesArray()
+    {
         $out = [];
-        foreach($this->getQueries() as $query){
+        foreach ($this->getQueries() as $query) {
             $out[] = $query->__toArray();
         }
         return $out;
