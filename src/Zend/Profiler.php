@@ -48,7 +48,10 @@ class Profiler implements ProfilerInterface
         $this->timer             = null;
     }
 
-    public function getQueries(QueryStatisticInterface $queryStatisticClass = null)
+    /**
+     * @return QueryStatisticInterface[]
+     */
+    public function getQueries(QueryStatisticInterface $queryStatisticClass = null) : array
     {
         $stats = [];
         foreach ($this->queries as $uuid => list($query, $backTrace)) {
@@ -66,5 +69,14 @@ class Profiler implements ProfilerInterface
             $stats[] = $stat;
         }
         return $stats;
+    }
+
+    public function getQueriesArray()
+    {
+        $out = [];
+        foreach ($this->getQueries() as $query) {
+            $out[] = $query->__toArray();
+        }
+        return $out;
     }
 }

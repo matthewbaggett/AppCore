@@ -66,6 +66,7 @@ class Router
      */
     public function getRoutes()
     {
+        ksort($this->routes);
         return $this->routes;
     }
 }

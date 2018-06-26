@@ -6,7 +6,6 @@ use Segura\AppCore\App;
 use Segura\AppCore\Router\Router;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Slim\Route;
 use Slim\Views\Twig;
 
 class ApiListController extends Controller
@@ -28,6 +27,7 @@ class ApiListController extends Controller
                     'singular'           => $route->getSingular(),
                     'plural'             => $route->getPlural(),
                     'properties'         => $route->getProperties(),
+                    'access'             => $route->getAccess(),
                     'example'            => $route->getExampleEntity(),
                     'callbackProperties' => $route->getCallbackProperties(),
                 ];
@@ -41,15 +41,14 @@ class ApiListController extends Controller
 
         $displayRoutes = [];
 
-        foreach ($routes as $route) {
-            /** @var $route Route */
+        foreach (Router::Instance()->getRoutes() as $route) {
             if (json_decode($route->getName()) !== null) {
                 $routeJson            = json_decode($route->getName(), true);
                 $routeJson['pattern'] = $route->getPattern();
                 $routeJson['methods'] = $route->getMethods();
                 $displayRoutes[]      = $routeJson;
             } else {
-                $callable = $route->getCallable();
+                $callable = $route->getCallback();
                 if (is_array($callable)) {
                     list($callableClass, $callableFunction) = $callable;
                     if (is_object($callableClass)) {
@@ -60,9 +59,10 @@ class ApiListController extends Controller
 
                 $displayRoutes[] = [
                     'name'     => $route->getName(),
-                    'pattern'  => $route->getPattern(),
-                    'methods'  => $route->getMethods(),
+                    'pattern'  => $route->getRouterPattern(),
+                    'methods'  => $route->getHttpMethod(),
                     'callable' => $callable,
+                    'access'   => $route->getAccess(),
                 ];
             }
         }

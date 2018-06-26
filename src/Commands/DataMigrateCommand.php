@@ -3,8 +3,8 @@ namespace Segura\AppCore\Commands;
 
 use Segura\AppCore\App;
 use Segura\AppCore\Services\AutoImporterService;
+use Segura\AppCore\ZenderatorConfig;
 use Zenderator\Automize;
-use Zenderator\Zenderator;
 
 class DataMigrateCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
 {
@@ -13,7 +13,7 @@ class DataMigrateCommand extends Automize\AutomizeCommand implements Automize\Au
         $rootOfApp = '/app';
         /** @var AutoImporterService $autoImporter */
         $autoImporter = App::Container()->get(AutoImporterService::class);
-        $config       = Zenderator::getConfig($rootOfApp);
+        $config       = ZenderatorConfig::getConfig($rootOfApp);
         $autoImporter->addSqlPath($rootOfApp . "/vendor/segura/appcore/src/SQL");
         if (isset($config['sql'])) {
             foreach ($config['sql'] as $location) {
@@ -22,7 +22,6 @@ class DataMigrateCommand extends Automize\AutomizeCommand implements Automize\Au
         }
         $autoImporter->run();
         echo "\n\n";
-        $this->getZenderator()->waitForKeypress();
         return true;
     }
 }
