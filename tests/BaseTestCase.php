@@ -4,12 +4,13 @@ namespace Segura\AppCore\Test;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
+use PHPUnit\Framework\TestCase;
 use Segura\AppCore\App;
 use Segura\AppCore\Db;
 use Segura\AppCore\Services\EnvironmentService;
 use Slim\Container;
 
-abstract class BaseTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseTestCase extends TestCase
 {
 
     // Set this to true if you want to see whats going on inside some unit tests..
