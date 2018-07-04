@@ -97,9 +97,9 @@ class App
         );
 
         // Middlewares
-        $this->app->add(new Whoops\WhoopsMiddleware());
-        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
-        $this->app->add(new Middleware\TrailingSlashMiddleware());
+        #$this->app->add(new Whoops\WhoopsMiddleware());
+        #$this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        #$this->app->add(new Middleware\TrailingSlashMiddleware());
 
         // Fetch DI Container
         $this->container = $this->app->getContainer();
