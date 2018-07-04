@@ -37,9 +37,9 @@ class EnvironmentHeadersOnResponse
 
             $json['Extra'] = array_filter([
                 'Hostname'   => gethostname(),
-                'DebugEnabled' => DEBUG_ENABLED ? 'Yes' : 'No',
-                'GitVersion' => DEBUG_ENABLED ? $gitVersion : null,
-                'Time'       => DEBUG_ENABLED ? [
+                'DebugEnabled' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? 'Yes' : 'No',
+                'GitVersion' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? $gitVersion : null,
+                'Time'       => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? [
                     'TimeZone'    => date_default_timezone_get(),
                     'CurrentTime' => [
                         'Human' => date("Y-m-d H:i:s"),
@@ -47,13 +47,13 @@ class EnvironmentHeadersOnResponse
                     ],
                     'Exec'   => number_format(microtime(true) - APP_START, 4) . " sec",
                 ] : null,
-                'Memory'     => DEBUG_ENABLED ? [
+                'Memory'     => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? [
                     'Used'       => number_format(memory_get_usage(false)/1024/1024, 2) . "MB",
                     'Allocated'  => number_format(memory_get_usage(true)/1024/1024, 2) . "MB",
                     'Limit'      => ini_get('memory_limit'),
                 ] : null,
-                'SQL' => DEBUG_ENABLED ? $profiler->getQueriesArray() : null,
-                'API' => DEBUG_ENABLED && class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
+                'SQL' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? $profiler->getQueriesArray() : null,
+                'API' => defined('DEBUG_ENABLED') && DEBUG_ENABLED && class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
             ]);
 
             if (isset($json['Status'])) {
