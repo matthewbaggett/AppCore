@@ -85,26 +85,36 @@ class App
 
         // Create Slim app
         $this->app = new \Slim\App(
-            new Container(
-            [
+            new Container([
                 'settings' => [
                     'debug'                             => true,
                     'displayErrorDetails'               => true,
                     'determineRouteBeforeAppMiddleware' => true,
                 ]
-            ]
-            )
+            ])
         );
-
-        // Middlewares
-        #$this->app->add(new Whoops\WhoopsMiddleware());
-        #$this->app->add(new Middleware\EnvironmentHeadersOnResponse());
-        #$this->app->add(new Middleware\TrailingSlashMiddleware());
 
         // Fetch DI Container
         $this->container = $this->app->getContainer();
 
         $this->populateContainerAliases($this->container);
+
+        // add PSR-15 support shim
+        $this->container['callableResolver'] = function ($container) {
+            return new \Bnf\Slim3Psr15\CallableResolver($container);
+        };
+
+        // Middlewares
+        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        #$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
+        $this->app->add(new \Middlewares\Whoops());
+        $this->app->add(new \Middlewares\Debugbar());
+        #$this->app->add(new \Middlewares\Geolocation());
+        $this->app->add(new \Middlewares\TrailingSlash());
+        $this->app->add(new \Middlewares\CssMinifier());
+        $this->app->add(new \Middlewares\JsMinifier());
+        $this->app->add(new \Middlewares\HtmlMinifier());
+        $this->app->add(new \Middlewares\GzipEncoder());
 
         // Register Twig View helper
         $this->container[Slim\Views\Twig::class] = function ($c) {

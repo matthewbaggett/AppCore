@@ -23,7 +23,17 @@
         "jimmiw/php-time-ago": "^0.4.11",
         "sebastian/diff": "^3.0",
         "guzzlehttp/guzzle": "^6.2.1",
-        "intouch/newrelic": "^1.0"
+        "intouch/newrelic": "^1.0",
+        "jdorn/sql-formatter": "^1.2",
+        "bnf/slim3-psr15": "^1.0",
+        "middlewares/trailing-slash": "^1.0",
+        "middlewares/encoder": "^1.0",
+        "middlewares/debugbar": "^1.0",
+        "middlewares/whoops": "^1.1",
+        "middlewares/geolocation": "^1.0",
+        "middlewares/negotiation": "^1.0",
+        "middlewares/minifier": "^1.0",
+        "marcusschwarz/lesserphp": "^0.5.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.*",
