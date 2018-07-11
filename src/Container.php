@@ -2,7 +2,6 @@
 
 namespace Segura\AppCore;
 
-use League\Flysystem\AdapterInterface;
 use Pimple\Container as PimpleContainer;
 use Slim\Exception\ContainerException;
 use Slim\Exception\ContainerException as SlimContainerException;

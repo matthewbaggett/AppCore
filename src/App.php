@@ -20,7 +20,6 @@ use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Segura\AppCore\Zend\Profiler;
 use Segura\Session\Session;
 use Slim;
-use Zeuxisoo\Whoops\Provider\Slim as Whoops;
 
 class App
 {
