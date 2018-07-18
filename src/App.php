@@ -483,7 +483,10 @@ class App
     public static function waitForMySQLToBeReady($connection = null)
     {
         if (!$connection) {
-            $configs = App::Instance()->getContainer()->get(\Segura\AppCore\DbConfig::class);
+            /** @var DbConfig $configs */
+            $dbConfig = App::Instance()->getContainer()->get(\Segura\AppCore\DbConfig::class);
+            $configs = $dbConfig->__toArray();
+
             if (isset($configs['Default'])) {
                 $connection = $configs['Default'];
             } else {
