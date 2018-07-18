@@ -8,11 +8,22 @@ class Db
 {
     private static $instance;
 
-    private $pool = null;
+    /** @var Adapter[] */
+    private $pool = [];
 
     public function __construct(DbConfig $config)
     {
         $this->pool = $config->getAdapterPool();
+    }
+
+    public static function isMySQLConfigured() : bool
+    {
+        return self::$instance instanceof Db && count(self::$instance->getPool()) > 0;
+    }
+
+    public static function clean()
+    {
+        self::$instance = null;
     }
 
     /**
@@ -27,7 +38,7 @@ class Db
         if (isset($this->pool[$name])) {
             return $this->pool[$name];
         }
-        throw new DbException("No Database connected called {$name}.");
+        throw new DbException("No Database connected called '{$name}'.");
     }
 
     /**
@@ -43,21 +54,19 @@ class Db
      *
      * @return Db
      */
-    public static function getInstance(DbConfig $dbConfig)
+    public static function getInstance(DbConfig $dbConfig = null)
     {
-        if (!self::$instance instanceof Db) {
+        if (!self::$instance instanceof Db && $dbConfig instanceof DbConfig) {
             self::$instance = new Db($dbConfig);
         }
         return self::$instance;
     }
 
-    public static function clean()
+    /**
+     * @return Adapter[]
+     */
+    public function getPool() : array
     {
-        self::$instance = null;
-    }
-
-    public static function isMySQLConfigured()
-    {
-        return file_exists(APP_ROOT . "/config/mysql.php");
+        return $this->pool;
     }
 }

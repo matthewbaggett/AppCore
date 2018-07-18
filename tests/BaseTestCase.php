@@ -59,14 +59,11 @@ abstract class BaseTestCase extends TestCase
         /** @var EnvironmentService $environment */
         $environment = self::getAppContainer()->get(EnvironmentService::class);
 
-        // Force DatabaseInstance to load if MySQL is configured.
-        if (Db::isMySQLConfigured()) {
-            self::getAppContainer()->get("DatabaseInstance");
-        }
+        App::Container()->get(Db::class);
 
         // If MySQL has been configured, begin transaction.
-        if (Db::isMySQLConfigured() && $environment->isSet("MYSQL_HOST")) {
-            foreach (Db::getInstance()->getDatabases() as $database) {
+        if (Db::isMySQLConfigured()) {
+            foreach (Db::getInstance()->getDatabases() as $name => $database) {
                 $database->driver->getConnection()->beginTransaction();
             }
         }
@@ -81,8 +78,8 @@ abstract class BaseTestCase extends TestCase
         /** @var EnvironmentService $environment */
         $environment = self::getAppContainer()->get(EnvironmentService::class);
 
-        if (Db::isMySQLConfigured() && $environment->isSet("MYSQL_HOST")) {
-            foreach (Db::getInstance()->getDatabases() as $database) {
+        if (Db::isMySQLConfigured()) {
+            foreach (Db::getInstance()->getDatabases() as $name => $database) {
                 $database->driver->getConnection()->rollback();
             }
         }
