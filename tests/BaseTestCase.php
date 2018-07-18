@@ -55,11 +55,10 @@ abstract class BaseTestCase extends TestCase
     {
         self::$startTime = microtime(true);
 
-
         /** @var EnvironmentService $environment */
         $environment = self::getAppContainer()->get(EnvironmentService::class);
 
-        App::Container()->get(Db::class);
+        App::Instance()->getContainer()->get(Db::class);
 
         // If MySQL has been configured, begin transaction.
         if (Db::isMySQLConfigured()) {

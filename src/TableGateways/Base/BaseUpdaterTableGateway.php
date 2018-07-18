@@ -11,9 +11,7 @@ use \Zend\Db\ResultSet\ResultSet;
 abstract class BaseUpdaterTableGateway extends AbstractTableGateway
 {
     protected $table = 'updater';
-
-    protected $database = 'Default';
-
+    
     protected $model = Models\UpdaterModel::class;
 
     /** @var \Faker\Generator */
@@ -39,7 +37,8 @@ abstract class BaseUpdaterTableGateway extends AbstractTableGateway
 
         /** @var $adaptor AdapterInterface */
         // @todo rename all uses of 'adaptor' to 'adapter'. I cannot spell - MB
-        $this->databaseAdaptor = $this->databaseConnector->getDatabase($this->database);
+        $databases = $this->databaseConnector->getDatabases();
+        $this->databaseAdaptor = reset($databases);
         $resultSetPrototype    = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, new $this->model);
         return parent::__construct($this->table, $this->databaseAdaptor, null, $resultSetPrototype);
     }

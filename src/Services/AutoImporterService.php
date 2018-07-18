@@ -134,7 +134,11 @@ class AutoImporterService
 
     private function runFile($sqlFile)
     {
-        $configs = App::Instance(false)->getContainer()->get(\Segura\AppCore\DbConfig::class);
+        /** @var DbConfig $dbConfig */
+        $dbConfig = App::Instance(false)->getContainer()->get(\Segura\AppCore\DbConfig::class);
+
+        $configs = $dbConfig->__toArray();
+
         if (isset($configs['Default'])) {
             $connection = $configs['Default'];
         } else {
