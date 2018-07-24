@@ -2,15 +2,11 @@
 
 namespace Segura\AppCore\Middleware;
 
-use Segura\AppCore\App;
-use Segura\AppCore\Controllers\InlineCssTrait;
-use Segura\AppCore\Zend\Profiler;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class SeguraJSONResponseLinter
 {
-
     protected $apiExplorerEnabled = true;
 
     public function __invoke(Request $request, Response $response, $next)
