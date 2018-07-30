@@ -31,7 +31,7 @@ abstract class CrudController extends Controller
 
         return $this->jsonResponse(
             [
-                'Status'                        => 'OKAY',
+                'Status'                        => 'Okay',
                 'Action'                        => 'LIST',
                 $this->service->getTermPlural() => $objects,
             ],
@@ -46,7 +46,7 @@ abstract class CrudController extends Controller
         if ($object) {
             return $this->jsonResponse(
                 [
-                    'Status'                          => 'OKAY',
+                    'Status'                          => 'Okay',
                     'Action'                          => 'GET',
                     $this->service->getTermSingular() => $object->__toArray(),
                 ],
@@ -56,7 +56,7 @@ abstract class CrudController extends Controller
         }
         return $this->jsonResponse(
                 [
-                    'Status'                          => 'FAIL',
+                    'Status'                          => 'Fail',
                     'Reason'                          => sprintf(
                         "No such %s found with id %s",
                         strtolower($this->service->getTermSingular()),
@@ -75,7 +75,7 @@ abstract class CrudController extends Controller
             $object = $this->getService()->createFromArray($newObjectArray);
             return $this->jsonResponse(
                 [
-                    'Status'                          => 'OKAY',
+                    'Status'                          => 'Okay',
                     'Action'                          => 'CREATE',
                     $this->service->getTermSingular() => $object->__toArray(),
                 ],
@@ -97,7 +97,7 @@ abstract class CrudController extends Controller
 
             return $this->jsonResponse(
                 [
-                    'Status'                          => 'OKAY',
+                    'Status'                          => 'Okay',
                     'Action'                          => 'DELETE',
                     $this->service->getTermSingular() => $array,
                 ],
@@ -107,7 +107,7 @@ abstract class CrudController extends Controller
         }
         return $this->jsonResponse(
                 [
-                    'Status'                          => 'FAIL',
+                    'Status'                          => 'Fail',
                     'Reason'                          => sprintf(
                         "No such %s found with id %s",
                         strtolower($this->service->getTermSingular()),

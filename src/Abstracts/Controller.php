@@ -61,7 +61,7 @@ abstract class Controller
     {
         return $this->jsonResponse(
             [
-                'Status' => 'FAIL',
+                'Status' => 'Fail',
                 'Reason' => $e->getMessage(),
             ],
             $request,
