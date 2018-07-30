@@ -105,12 +105,12 @@ class App
 
         // Middlewares
         $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
-        $this->app->add(new Middleware\SeguraJSONResponseLinter());
         ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
-        $this->app->add(new \Middlewares\Whoops());
         ##$this->app->add(new \Middlewares\Debugbar());
         ##$this->app->add(new \Middlewares\Geolocation());
         $this->app->add(new \Middlewares\TrailingSlash());
+        $this->app->add(new Middleware\SeguraJSONResponseLinter());
+        $this->app->add(new \Middlewares\Whoops());
         $this->app->add(new \Middlewares\CssMinifier());
         $this->app->add(new \Middlewares\JsMinifier());
         $this->app->add(new \Middlewares\HtmlMinifier());
