@@ -7,8 +7,6 @@ use Slim\Http\Response;
 
 class SeguraJSONResponseLinter
 {
-    protected $apiExplorerEnabled = true;
-
     public function __invoke(Request $request, Response $response, $next)
     {
         try {
@@ -30,6 +28,7 @@ class SeguraJSONResponseLinter
                     'Status' => 'Fail',
                     'Exception' => get_class($exception),
                     'Reason' => $exception->getMessage(),
+                    'Trace' => $exception->getTraceAsString(),
                 ],
                 500,
                 JSON_PRETTY_PRINT
