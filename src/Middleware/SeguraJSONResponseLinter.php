@@ -12,7 +12,7 @@ class SeguraJSONResponseLinter
         try {
             $response = $next($request, $response);
             $jsonMode = (isset($response->getHeader('Content-Type')[0]) and stripos($response->getHeader('Content-Type')[0], 'application/json') !== false);
-            if($jsonMode) {
+            if ($jsonMode) {
                 $body = $response->getBody();
                 $body->rewind();
                 $json = json_decode($body->getContents(), true);
@@ -22,7 +22,7 @@ class SeguraJSONResponseLinter
                 $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
             }
             return $response;
-        }catch(\Exception $exception){
+        } catch (\Exception $exception) {
             $response = $response->withJson(
                 [
                     'Status' => 'Fail',

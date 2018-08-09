@@ -162,23 +162,6 @@ abstract class BaseTestCase extends TestCase
     }
 
     /**
-     * @return App
-     */
-    private static function getAppObject()
-    {
-        $coreAppName = APP_CORE_NAME;
-        return $coreAppName::Instance(false);
-    }
-
-    /**
-     * @return Container
-     */
-    private static function getAppContainer()
-    {
-        return self::getAppObject()->getContainer();
-    }
-
-    /**
      * Call protected/private method of a class.
      *
      * @param object &$object    Instantiated object that we will run method on.
@@ -187,7 +170,7 @@ abstract class BaseTestCase extends TestCase
      *
      * @return mixed Method return.
      */
-    public function invokeMethod(&$object, $methodName, array $parameters = array())
+    public function invokeMethod(&$object, $methodName, array $parameters = [])
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
@@ -210,5 +193,22 @@ abstract class BaseTestCase extends TestCase
         $prop = $reflection->getProperty($property);
         $prop->setAccessible(true);
         return $prop->getValue($object);
+    }
+
+    /**
+     * @return App
+     */
+    private static function getAppObject()
+    {
+        $coreAppName = APP_CORE_NAME;
+        return $coreAppName::Instance(false);
+    }
+
+    /**
+     * @return Container
+     */
+    private static function getAppContainer()
+    {
+        return self::getAppObject()->getContainer();
     }
 }
