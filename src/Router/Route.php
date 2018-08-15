@@ -147,6 +147,17 @@ class Route
     }
 
     /**
+     * @param callable $finderFunction
+     *
+     * @return Route
+     */
+    public function setExampleEntityFindFunction(callable $finderFunction) : Route
+    {
+        $this->exampleEntityFinderFunction = $finderFunction;
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getExampleEntity()
@@ -356,12 +367,6 @@ class Route
     public function setAccess($access = self::ACCESS_PUBLIC) : Route
     {
         $this->access = $access;
-        return $this;
-    }
-
-    public function setExampleEntityFindFunction(callable $finderFunction) : Route
-    {
-        $this->exampleEntityFinderFunction = $finderFunction;
         return $this;
     }
 }
