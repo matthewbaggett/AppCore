@@ -23,12 +23,26 @@ class SeguraJSONResponseLinter
             }
             return $response;
         } catch (\Exception $exception) {
+            $trace = explode("\n", $exception->getTraceAsString());
+            array_walk($trace, function (&$elem) {
+                $pieces = explode(" ", $elem, 2);
+                $elem = $pieces[1];
+                $highlightLocations = [
+                    '/app/src/',
+                    '/app/tests/'
+                ];
+                foreach ($highlightLocations as $highlightLocation) {
+                    if (substr($elem, 0, strlen($highlightLocation)) == $highlightLocation) {
+                        $elem = "*** {$elem}";
+                    }
+                }
+            });
             $response = $response->withJson(
                 [
                     'Status' => 'Fail',
                     'Exception' => get_class($exception),
                     'Reason' => $exception->getMessage(),
-                    'Trace' => $exception->getTraceAsString(),
+                    'Trace' => $trace,
                 ],
                 500,
                 JSON_PRETTY_PRINT
