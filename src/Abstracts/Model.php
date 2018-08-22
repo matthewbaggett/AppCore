@@ -107,22 +107,21 @@ abstract class Model implements ModelInterface
     public function exchangeArray(array $data)
     {
         $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
-
+        
         foreach ($data as $key => $value) {
             $method           = 'set' . $transformer->transform($key);
             $originalProperty = $transformer->transform($key);
 
-            // @todo Query $this->getListOfProperties() instead of methods list..
             if (method_exists($this, $method)) {
-                if (is_numeric($value)) {
+                if (is_numeric($value) && constant(get_called_class() . '::' . "TYPE_" . strtoupper($key)) == 'int') {
                     $value = doubleval($value);
                 }
                 $this->$method($value);
-                #echo "Writing into \$this->{$originalProperty}: exchangeArray\n";
+                #echo "Writing into \$this->{$originalProperty}: \"{$value}\"\n";
                 $this->_original[$originalProperty] = $value;
             }
         }
-
+        
         return $this;
     }
 
