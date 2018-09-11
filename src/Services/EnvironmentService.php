@@ -44,6 +44,7 @@ class EnvironmentService
                 $this->environmentVariables                     = array_merge($autoConfiguration, $this->environmentVariables);
                 $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
                 file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+                chmod($this->cacheFile, 777);
             } catch (TemporaryAutoConfigurationException $temporaryAutoConfigurationException) {
                 // Try again later!
                 $this->environmentVariables['GONDALEZ_FAULT'] = $temporaryAutoConfigurationException->getMessage();
