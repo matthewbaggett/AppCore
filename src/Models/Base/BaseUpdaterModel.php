@@ -28,6 +28,10 @@ abstract class BaseUpdaterModel extends AbstractModel implements ModelInterface
     const FIELD_FILE        = 'file';
     const FIELD_DATEAPPLIED = 'dateApplied';
 
+    const TYPE_ID = 'int';
+    const TYPE_FILE = 'text';
+    const TYPE_DATEAPPLIED = 'datetime';
+
     // Constants defined by ENUMs
 
     protected $_primary_keys = ['id'];
