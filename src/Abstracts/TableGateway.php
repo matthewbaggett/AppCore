@@ -174,6 +174,9 @@ abstract class TableGateway extends ZendTableGateway
                             case FilterCondition::CONDITION_EQUAL:
                                 $where->equalTo($conditional['column'], $conditional['value']);
                                 break;
+                            case FilterCondition::CONDITION_NOT_EQUAL:
+                                $where->notEqualTo($conditional['column'], $conditional['value']);
+                                break;
                             case FilterCondition::CONDITION_GREATER_THAN:
                                 $where->greaterThan($conditional['column'], $conditional['value']);
                                 break;
@@ -185,13 +188,20 @@ abstract class TableGateway extends ZendTableGateway
                                 break;
                             case FilterCondition::CONDITION_LESS_THAN_OR_EQUAL:
                                 $where->lessThanOrEqualTo($conditional['column'], $conditional['value']);
-                                break;#
+                                break;
                             case FilterCondition::CONDITION_LIKE:
                                 $where->like($conditional['column'], $conditional['value']);
+                                break;
+                            case FilterCondition::CONDITION_NOT_LIKE:
+                                $where->notLike($conditional['column'], $conditional['value']);
                                 break;
                             case FilterCondition::CONDITION_IN:
                                 $where->in($conditional['column'], $conditional['value']);
                                 break;
+                            case FilterCondition::CONDITION_NOT_IN:
+                                $where->notIn($conditional['column'], $conditional['value']);
+                                break;
+
                             default:
                                 // @todo better exception plz.
                                 throw new \Exception("Cannot work out what conditional '{$conditional['condition']}'' is supposed to do in Zend... Probably unimplemented?");
