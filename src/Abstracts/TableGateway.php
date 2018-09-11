@@ -189,9 +189,12 @@ abstract class TableGateway extends ZendTableGateway
                             case FilterCondition::CONDITION_LIKE:
                                 $where->like($conditional['column'], $conditional['value']);
                                 break;
+                            case FilterCondition::CONDITION_IN:
+                                $where->in($conditional['column'], $conditional['value']);
+                                break;
                             default:
                                 // @todo better exception plz.
-                                throw new \Exception("Cannot work out what conditional {$conditional['condition']} is supposed to do in Zend... Probably unimplemented?");
+                                throw new \Exception("Cannot work out what conditional '{$conditional['condition']}'' is supposed to do in Zend... Probably unimplemented?");
                         }
                     };
                     $select->where($spec);
