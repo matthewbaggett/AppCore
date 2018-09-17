@@ -31,7 +31,7 @@ class EnvironmentService
 
     public function rebuildEnvironmentVariables()
     {
-        if (file_exists($this->cacheFile)) {
+        if (file_exists($this->cacheFile) && php_sapi_name() != 'cli') {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
         } else {
             $this->autoConfigurationService->setEnvironmentService($this);
@@ -44,8 +44,10 @@ class EnvironmentService
                 $this->environmentVariables                     = array_merge($autoConfiguration, $this->environmentVariables);
                 $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
                 ksort($this->environmentVariables);
-                file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
-                chmod($this->cacheFile, 0777);
+                if(php_sapi_name() != 'cli') {
+                    file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+                    chmod($this->cacheFile, 0777);
+                }
             } catch (TemporaryAutoConfigurationException $temporaryAutoConfigurationException) {
                 // Try again later!
                 $this->environmentVariables['GONDALEZ_FAULT'] = $temporaryAutoConfigurationException->getMessage();
