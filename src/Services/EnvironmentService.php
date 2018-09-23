@@ -44,7 +44,7 @@ class EnvironmentService
                 $this->environmentVariables                     = array_merge($autoConfiguration, $this->environmentVariables);
                 $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
                 ksort($this->environmentVariables);
-                if(php_sapi_name() != 'cli') {
+                if (php_sapi_name() != 'cli') {
                     file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
                     chmod($this->cacheFile, 0777);
                 }
