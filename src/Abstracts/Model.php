@@ -195,9 +195,9 @@ abstract class Model implements ModelInterface
         foreach ($this->getListOfProperties() as $property) {
             $originalProperty = $transformer->transform($property);
             #echo "Writing into \$this->{$originalProperty}: getListOfDirtyProperties\n";
-            if ($this->$property != $this->_original[$originalProperty]) {
+            if (!isset($this->_original[$originalProperty]) || $this->$property != $this->_original[$originalProperty]) {
                 $dirtyProperties[$property] = [
-                    'before' => $this->_original[$originalProperty],
+                    'before' => isset($this->_original[$originalProperty]) ? $this->_original[$originalProperty] : null,
                     'after'  => $this->$property,
                 ];
             }
