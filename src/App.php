@@ -3,8 +3,8 @@ namespace Segura\AppCore;
 
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
-use Gone\Twig\TransformExtension;
 use Gone\Twig\InflectionExtension;
+use Gone\Twig\TransformExtension;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
@@ -72,7 +72,7 @@ class App
         if (!defined("APPCORE_ROOT")) {
             define("APPCORE_ROOT", realpath(__DIR__ . "/../"));
         }
-        if (!defined("DEFAULT_ROUTE_ACCESS_MODE")){
+        if (!defined("DEFAULT_ROUTE_ACCESS_MODE")) {
             define("DEFAULT_ROUTE_ACCESS_MODE", Route::ACCESS_PUBLIC);
         }
 
