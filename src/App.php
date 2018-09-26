@@ -1,6 +1,9 @@
 <?php
 namespace Segura\AppCore;
 
+use DebugBar\Bridge\MonologCollector;
+use DebugBar\DebugBar;
+use DebugBar\StandardDebugBar;
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
 use Gone\Twig\InflectionExtension;
@@ -313,6 +316,18 @@ class App
                 );
             }
             return $monolog;
+        };
+
+        $this->container[DebugBar::class] = function(Slim\Container $container) {
+            $debugBar = new StandardDebugBar();
+            $debugBar->addCollector(new MonologCollector($container->get(\Monolog\Logger::class)));
+            return $debugBar;
+        };
+
+        $this->container[\Middlewares\Debugbar::class] = function (Slim\Container $container) {
+            $debugBar = $container->get(DebugBar::class);
+            $middleware = new \Middlewares\Debugbar($debugBar);
+            return $middleware;
         };
 
         $this->container[\TimeAgo::class] = function (Slim\Container $container) {
