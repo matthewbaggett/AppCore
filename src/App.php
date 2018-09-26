@@ -63,6 +63,22 @@ class App
         $this->setup();
     }
 
+    public function setupMiddlewares()
+    {
+        // Middlewares
+        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
+        #$this->app->add(new \Middlewares\Debugbar());
+        ##$this->app->add(new \Middlewares\Geolocation());
+        $this->app->add(new \Middlewares\TrailingSlash());
+        $this->app->add(new Middleware\SeguraJSONResponseLinter());
+        #$this->app->add(new \Middlewares\Whoops());
+        $this->app->add(new \Middlewares\CssMinifier());
+        $this->app->add(new \Middlewares\JsMinifier());
+        $this->app->add(new \Middlewares\HtmlMinifier());
+        $this->app->add(new \Middlewares\GzipEncoder());
+    }
+
     public function setup()
     {
         // Check defined config
@@ -108,19 +124,6 @@ class App
         $this->container['callableResolver'] = function ($container) {
             return new \Bnf\Slim3Psr15\CallableResolver($container);
         };
-
-        // Middlewares
-        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
-        ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
-        ##$this->app->add(new \Middlewares\Debugbar());
-        ##$this->app->add(new \Middlewares\Geolocation());
-        $this->app->add(new \Middlewares\TrailingSlash());
-        $this->app->add(new Middleware\SeguraJSONResponseLinter());
-        #$this->app->add(new \Middlewares\Whoops());
-        $this->app->add(new \Middlewares\CssMinifier());
-        $this->app->add(new \Middlewares\JsMinifier());
-        $this->app->add(new \Middlewares\HtmlMinifier());
-        $this->app->add(new \Middlewares\GzipEncoder());
 
         // Register Twig View helper
         $this->container[Slim\Views\Twig::class] = function ($c) {
@@ -364,6 +367,8 @@ class App
         if (php_sapi_name() != 'cli' && $this->isSessionsEnabled) {
             $session = $this->getContainer()->get(Session::class);
         }
+
+        $this->setupMiddlewares();
 
         return $this;
     }
