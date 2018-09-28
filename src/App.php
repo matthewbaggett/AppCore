@@ -66,22 +66,6 @@ class App
         $this->setup();
     }
 
-    public function setupMiddlewares()
-    {
-        // Middlewares
-        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
-        ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
-        #$this->app->add(new \Middlewares\Debugbar());
-        ##$this->app->add(new \Middlewares\Geolocation());
-        $this->app->add(new \Middlewares\TrailingSlash());
-        $this->app->add(new Middleware\SeguraJSONResponseLinter());
-        #$this->app->add(new \Middlewares\Whoops());
-        $this->app->add(new \Middlewares\CssMinifier());
-        $this->app->add(new \Middlewares\JsMinifier());
-        $this->app->add(new \Middlewares\HtmlMinifier());
-        $this->app->add(new \Middlewares\GzipEncoder());
-    }
-
     public function setup()
     {
         // Check defined config
@@ -318,7 +302,7 @@ class App
             return $monolog;
         };
 
-        $this->container[DebugBar::class] = function(Slim\Container $container) {
+        $this->container[DebugBar::class] = function (Slim\Container $container) {
             $debugBar = new StandardDebugBar();
             $debugBar->addCollector(new MonologCollector($container->get(\Monolog\Logger::class)));
             return $debugBar;
@@ -386,6 +370,22 @@ class App
         $this->setupMiddlewares();
 
         return $this;
+    }
+
+    public function setupMiddlewares()
+    {
+        // Middlewares
+        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
+        #$this->app->add(new \Middlewares\Debugbar());
+        ##$this->app->add(new \Middlewares\Geolocation());
+        $this->app->add(new \Middlewares\TrailingSlash());
+        $this->app->add(new Middleware\SeguraJSONResponseLinter());
+        #$this->app->add(new \Middlewares\Whoops());
+        $this->app->add(new \Middlewares\CssMinifier());
+        $this->app->add(new \Middlewares\JsMinifier());
+        $this->app->add(new \Middlewares\HtmlMinifier());
+        $this->app->add(new \Middlewares\GzipEncoder());
     }
 
     /**
