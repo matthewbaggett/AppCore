@@ -197,7 +197,6 @@ class App
 
                 return $dbConfig;
             }
-            !\Kint::dump($environment->__toArray());exit;
             throw new DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
         };
 
@@ -394,7 +393,7 @@ class App
         #$this->app->add(new \Middlewares\CssMinifier());
         #$this->app->add(new \Middlewares\JsMinifier());
         #$this->app->add(new \Middlewares\HtmlMinifier());
-        $this->app->add(new \Middlewares\GzipEncoder());
+        #$this->app->add(new \Middlewares\GzipEncoder());
     }
 
     /**
