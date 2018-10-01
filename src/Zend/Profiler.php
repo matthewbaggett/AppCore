@@ -3,6 +3,7 @@
 namespace Segura\AppCore\Zend;
 
 use Gone\UUID\UUID;
+use Monolog\Logger;
 use Segura\AppCore\Interfaces\QueryStatisticInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
@@ -13,6 +14,14 @@ class Profiler implements ProfilerInterface
     private $sql        = null;
     private $queries    = [];
     private $queryTimes = [];
+
+    /** @var Logger */
+    private $logger;
+
+    public function __construct(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
 
     public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null)
     {
@@ -42,7 +51,9 @@ class Profiler implements ProfilerInterface
     public function profilerFinish()
     {
         $uuid                    = UUID::v4();
-        $this->queryTimes[$uuid] = microtime(true) - $this->timer;
+        $executionTime           = microtime(true) - $this->timer;
+        $this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
+        $this->queryTimes[$uuid] = $executionTime;
         $this->queries[$uuid]    = [$this->sql, debug_backtrace()];
         $this->sql               = null;
         $this->timer             = null;
@@ -64,7 +75,7 @@ class Profiler implements ProfilerInterface
                 $stat = new QueryStatistic();
             }
             $stat->setSql($query);
-            $stat->setTime($this->queryTimes[$uuid] * 1000);
+            $stat->setTime($this->queryTimes[$uuid]);
             $stat->setCallPoints($backTrace);
             $stats[] = $stat;
         }
