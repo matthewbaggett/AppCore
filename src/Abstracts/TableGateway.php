@@ -139,11 +139,11 @@ abstract class TableGateway extends ZendTableGateway
     /**
      * This method is only supposed to be used by getListAction.
      *
-     * @param int    $limit     Number to limit to
-     * @param int    $offset    Offset of limit statement. Is ignored if limit not set.
-     * @param array  $wheres    Array of conditions to filter by.
-     * @param string $order     Column to order on
-     * @param string $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
+     * @param int|null              $limit      Number to limit to
+     * @param int|null              $offset     Offset of limit statement. Is ignored if limit not set.
+     * @param array|null            $wheres     Array of conditions to filter by.
+     * @param string|Expression|null $order     Column to order on
+     * @param string|null            $direction Direction to order on (SELECT::ORDER_ASCENDING|SELECT::ORDER_DESCENDING)
      *
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
      */
@@ -151,7 +151,7 @@ abstract class TableGateway extends ZendTableGateway
         int $limit = null,
         int $offset = null,
         array $wheres = null,
-        string $order = null,
+        $order = null,
         string $direction = Select::ORDER_ASCENDING
     ) {
         /** @var Select $select */
@@ -213,7 +213,11 @@ abstract class TableGateway extends ZendTableGateway
         }
 
         if ($order !== null) {
-            $select->order("{$order} {$direction}");
+            if ($order instanceof Expression) {
+                $select->order($order);
+            } else {
+                $select->order("{$order} {$direction}");
+            }
         }
 
         $resultSet = $this->selectWith($select);

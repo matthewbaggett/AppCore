@@ -52,7 +52,7 @@ class Profiler implements ProfilerInterface
     {
         $uuid                    = UUID::v4();
         $executionTime           = microtime(true) - $this->timer;
-        $this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
+        #$this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
         $this->queryTimes[$uuid] = $executionTime;
         $this->queries[$uuid]    = [$this->sql, debug_backtrace()];
         $this->sql               = null;

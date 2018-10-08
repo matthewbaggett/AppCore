@@ -16,7 +16,7 @@ class QueryStatistic implements QueryStatisticInterface
     public function __toArray(): array
     {
         return [
-            "Time" => number_format($this->getTime()*1000,3) . "ms",
+            "Time" => number_format($this->getTime()*1000, 3) . "ms",
             "Query" => $this->getSql(),
         ];
     }

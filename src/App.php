@@ -287,7 +287,7 @@ class App
             //$streamHandler->setFormatter(new LineFormatter("%level_name%: %message%\n", null, false, true));
             $monolog->pushHandler($streamHandler);
             $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
-            if($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
+            if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
                 $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
             }
             if ($environment->isSet('LUMBERJACK_HOST')) {

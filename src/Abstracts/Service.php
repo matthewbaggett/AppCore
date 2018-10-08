@@ -2,6 +2,7 @@
 namespace Segura\AppCore\Abstracts;
 
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Expression;
 use Zend\Db\Sql\Select;
 
 abstract class Service
@@ -15,11 +16,11 @@ abstract class Service
     abstract public function getNewTableGatewayInstance();
 
     /**
-     * @param int|null              $limit
-     * @param int|null              $offset
-     * @param array|\Closure[]|null $wheres
-     * @param string|null           $order
-     * @param string|null           $orderDirection
+     * @param int|null               $limit
+     * @param int|null               $offset
+     * @param array|\Closure[]|null  $wheres
+     * @param string|Expression|null $order
+     * @param string|null            $orderDirection
      *
      * @return Model[]
      */
@@ -27,7 +28,7 @@ abstract class Service
         int $limit = null,
         int $offset = null,
         array $wheres = null,
-        string $order = null,
+        $order = null,
         string $orderDirection = null
     ) {
         /** @var TableGateway $tableGateway */

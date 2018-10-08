@@ -2,6 +2,7 @@
 namespace Segura\AppCore\Filters;
 
 use Segura\AppCore\Exceptions\FilterDecodeException;
+use Zend\Db\Sql\Expression;
 
 class Filter
 {
@@ -26,10 +27,10 @@ class Filter
      *
      * @return Filter
      */
-    public function setOrderDirection($orderDirection)
+    public function setOrderDirection($orderDirection) : self
     {
-        if (!in_array(strtoupper($orderDirection), ['ASC', 'DESC'])) {
-            throw new FilterDecodeException("Failed to decode Filter Order, Direction unknown: {$orderDirection} must be ASC|DESC");
+        if (!in_array(strtoupper($orderDirection), ['ASC', 'DESC', 'RAND'])) {
+            throw new FilterDecodeException("Failed to decode Filter Order, Direction unknown: {$orderDirection} must be ASC|DESC|RAND");
         }
         $this->orderDirection = strtoupper($orderDirection);
         return $this;
@@ -40,7 +41,7 @@ class Filter
      *
      * @throws FilterDecodeException
      */
-    public function parseFromHeader($header)
+    public function parseFromHeader($header) : self
     {
         foreach ($header as $key => $value) {
             switch ($key) {
@@ -60,6 +61,7 @@ class Filter
                     throw new FilterDecodeException("Failed to decode Filter, unknown key: {$key}");
             }
         }
+        return $this;
     }
 
     /**
@@ -75,7 +77,7 @@ class Filter
      *
      * @return Filter
      */
-    public function setLimit($limit)
+    public function setLimit($limit) : self
     {
         $this->limit = $limit;
         return $this;
@@ -94,7 +96,7 @@ class Filter
      *
      * @return Filter
      */
-    public function setOffset($offset)
+    public function setOffset($offset) : self
     {
         $this->offset = $offset;
         return $this;
@@ -113,7 +115,7 @@ class Filter
      *
      * @return Filter
      */
-    public function setWheres($wheres)
+    public function setWheres($wheres) : self
     {
         $this->wheres = $wheres;
         return $this;
@@ -132,20 +134,32 @@ class Filter
      *
      * @return Filter
      */
-    public function setOrder($order)
+    public function setOrder($order) : self
     {
         $this->order = $order;
         return $this;
     }
 
-    public function parseOrder($orderArray)
+    public function setOrderRandom() : self
     {
-        if (isset($orderArray['column']) && isset($orderArray['direction'])) {
-            $this
-                ->setOrder($orderArray['column'])
-                ->setOrderDirection($orderArray['direction']);
+        $this->setOrder(new Expression('RAND()'));
+        return $this;
+    }
+
+    public function parseOrder($orderArray) : self
+    {
+        if (in_array(strtolower($orderArray['column']), ['rand', 'random', 'rand()'])) {
+            $this->setOrderRandom();
+        } elseif (isset($orderArray['column']) && isset($orderArray['direction'])) {
+            $this->setOrder($orderArray['column']);
+
+            if (isset($orderArray['direction'])) {
+                $this->setOrderDirection($orderArray['direction']);
+            }
         } else {
             throw new FilterDecodeException("Could not find properties 'column' or 'direction' of the order array given.");
         }
+
+        return $this;
     }
 }
