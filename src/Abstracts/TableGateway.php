@@ -132,7 +132,8 @@ abstract class TableGateway extends ZendTableGateway
      */
     public function update($data, $where = null, $oldData = [])
     {
-        #!\Kint::dump($data);exit;
+        $data = array_filter($data);
+        #!\Kint::dump($data, $oldData, $where);exit;
         return parent::update($data, $where);
     }
 
