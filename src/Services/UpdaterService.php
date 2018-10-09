@@ -53,7 +53,7 @@ class UpdaterService extends AbstractService implements ServiceInterface
      * @param int|null              $limit
      * @param int|null              $offset
      * @param array|\Closure[]|null $wheres
-     * @param string|null           $order
+     * @param string|Expression|null           $order
      * @param string|null           $orderDirection
      *
      * @return Models\UpdaterModel[]
@@ -62,7 +62,7 @@ class UpdaterService extends AbstractService implements ServiceInterface
         int $limit = null,
         int $offset = null,
         array $wheres = null,
-        string $order = null,
+        $order = null,
         string $orderDirection = null
     ) {
         $updaterTable              = $this->getNewTableGatewayInstance();
