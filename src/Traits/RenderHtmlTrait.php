@@ -42,7 +42,6 @@ trait RenderHtmlTrait
             'extraJs'  => $this->extraJs,
             'extraCss' => $this->extraCss,
             'hostname' => gethostname(),
-            'isAdmin'  => $user ? $user->getAccountType() == UsersModel::ACCOUNTTYPE_ADMIN : false,
         ];
     }
 
