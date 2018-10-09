@@ -286,7 +286,9 @@ class App
             $streamHandler = new StreamHandler('php://stdout', Logger::DEBUG);
             //$streamHandler->setFormatter(new LineFormatter("%level_name%: %message%\n", null, false, true));
             $monolog->pushHandler($streamHandler);
-            $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
+            if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
+                $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
+            }
             if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
                 $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
             }
@@ -418,15 +420,7 @@ class App
 
     public static function Debug($message)
     {
-        /** @var PredisClient $redis */
-        $redis = self::Container()->get("Redis");
-        if ($message instanceof \Exception) {
-            $message = "EXCEPTION (" . get_class($message) . "): {$message->getMessage()}";
-        }
-        if (is_string($message)) {
-            $redis->publish("debug", $message);
-            $redis->hset("debug_log", microtime(true), $message);
-        }
+        self::Log(Logger::DEBUG, $message);
     }
 
     /**
@@ -510,7 +504,7 @@ class App
         return self::Instance()
             ->getContainer()
             ->get(\Monolog\Logger::class)
-            ->log($level, $message);
+            ->log($level, ($message instanceof \Exception) ? $message->__toString() : $message);
     }
 
     public function loadAllRoutes()
