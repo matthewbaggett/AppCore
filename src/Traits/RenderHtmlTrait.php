@@ -7,7 +7,8 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
-trait RenderHtmlTrait {
+trait RenderHtmlTrait
+{
 
     /** @var Twig */
     private $twig;
@@ -47,8 +48,9 @@ trait RenderHtmlTrait {
 
     protected function renderHtml(Request $request, Response $response, string $template, array $parameters = []) : Response
     {
-        if(!$this->twig)
+        if (!$this->twig) {
             $this->twig = App::Container()->get("view");
+        }
         $parameters = array_merge($this->getParameters($request), $parameters);
         return $this->twig->render(
             $response,
