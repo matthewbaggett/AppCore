@@ -8,7 +8,7 @@ use Zend\Db\Adapter\Exception\InvalidQueryException;
 
 abstract class CrudController extends Controller
 {
-    public function listRequest(Request $request, Response $response, $args)
+    public function listRequest(Request $request, Response $response) : Response
     {
         $objects = [];
         $service = $this->getService();
@@ -40,7 +40,7 @@ abstract class CrudController extends Controller
         );
     }
 
-    public function getRequest(Request $request, Response $response, $args)
+    public function getRequest(Request $request, Response $response, $args) : Response
     {
         $object = $this->getService()->getById($args['id']);
         if ($object) {
@@ -68,7 +68,7 @@ abstract class CrudController extends Controller
             );
     }
 
-    public function createRequest(Request $request, Response $response, $args)
+    public function createRequest(Request $request, Response $response, $args) : Response
     {
         $newObjectArray = $request->getParsedBody();
         try {
@@ -87,7 +87,7 @@ abstract class CrudController extends Controller
         }
     }
 
-    public function deleteRequest(Request $request, Response $response, $args)
+    public function deleteRequest(Request $request, Response $response, $args) : Response
     {
         /** @var ModelInterface $object */
         $object = $this->getService()->getById($args['id']);

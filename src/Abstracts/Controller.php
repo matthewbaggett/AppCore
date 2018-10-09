@@ -31,15 +31,16 @@ abstract class Controller
     /**
      * @param Service $service
      */
-    public function setService($service)
+    public function setService($service) : self
     {
         $this->service = $service;
+        return $this;
     }
 
     /**
      * @return bool
      */
-    public function isApiExplorerEnabled()
+    public function isApiExplorerEnabled()  : self
     {
         return $this->apiExplorerEnabled;
     }
@@ -47,17 +48,18 @@ abstract class Controller
     /**
      * @param bool $apiExplorerEnabled
      */
-    public function setApiExplorerEnabled(bool $apiExplorerEnabled)
+    public function setApiExplorerEnabled(bool $apiExplorerEnabled) : self
     {
         $this->apiExplorerEnabled = $apiExplorerEnabled;
+        return $this;
     }
 
-    public function jsonResponse($json, Request $request, Response $response)
+    public function jsonResponse($json, Request $request, Response $response) : Response
     {
         return $response->withJson($json);
     }
 
-    public function jsonResponseException(\Exception $e, Request $request, Response $response)
+    public function jsonResponseException(\Exception $e, Request $request, Response $response) : Response
     {
         return $this->jsonResponse(
             [
@@ -79,7 +81,7 @@ abstract class Controller
      *
      * @return bool
      */
-    protected function requestHasFilters(Request $request, Response $response)
+    protected function requestHasFilters(Request $request, Response $response) : bool
     {
         if ($request->hasHeader("Filter")) {
             $filterText = $request->getHeader('Filter')[0];
@@ -100,7 +102,7 @@ abstract class Controller
      *
      * @return Filter
      */
-    protected function parseFilters(Request $request, Response $response)
+    protected function parseFilters(Request $request, Response $response) : Filter
     {
         $filter = new Filter();
         $filter->parseFromHeader(json_decode($request->getHeader('Filter')[0], true));

@@ -11,6 +11,7 @@ use Gone\Twig\TransformExtension;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
 use Segura\AppCore\Exceptions\DbConfigException;
@@ -282,8 +283,13 @@ class App
 
             // Set up Monolog
             $monolog = new \Monolog\Logger($this->getAppName());
+            $streamHandler = new StreamHandler('php://stdout', Logger::DEBUG);
+            //$streamHandler->setFormatter(new LineFormatter("%level_name%: %message%\n", null, false, true));
+            $monolog->pushHandler($streamHandler);
             $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
-            $monolog->pushHandler(new RedisHandler($this->getContainer()->get('Redis'), "Logs", \Monolog\Logger::DEBUG));
+            if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
+                $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
+            }
             if ($environment->isSet('LUMBERJACK_HOST')) {
                 $monolog->pushHandler(new LumberjackHandler(rtrim($environment->get('LUMBERJACK_HOST'), "/") . "/v1/log", $environment->get('LUMBERJACK_API_KEY')));
             }
@@ -337,7 +343,7 @@ class App
         };
 
         $this->container[Profiler::class] = function (Slim\Container $container) {
-            return new Profiler();
+            return new Profiler($container->get(\Monolog\Logger::class));
         };
 
         /** @var EnvironmentService $environmentService */
@@ -347,6 +353,8 @@ class App
         } else {
             date_default_timezone_set(self::DEFAULT_TIMEZONE);
         }
+
+        $this->monolog = $this->getContainer()->get(\Monolog\Logger::class);
 
         if (file_exists(APP_ROOT . "/sql")) {
             $this->getContainer()->get(AutoImporterService::class)
@@ -382,10 +390,10 @@ class App
         $this->app->add(new \Middlewares\TrailingSlash());
         $this->app->add(new Middleware\SeguraJSONResponseLinter());
         #$this->app->add(new \Middlewares\Whoops());
-        $this->app->add(new \Middlewares\CssMinifier());
-        $this->app->add(new \Middlewares\JsMinifier());
-        $this->app->add(new \Middlewares\HtmlMinifier());
-        $this->app->add(new \Middlewares\GzipEncoder());
+        #$this->app->add(new \Middlewares\CssMinifier());
+        #$this->app->add(new \Middlewares\JsMinifier());
+        #$this->app->add(new \Middlewares\HtmlMinifier());
+        #$this->app->add(new \Middlewares\GzipEncoder());
     }
 
     /**

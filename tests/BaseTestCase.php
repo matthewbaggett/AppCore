@@ -55,15 +55,15 @@ abstract class BaseTestCase extends TestCase
     {
         self::$startTime = microtime(true);
 
-        /** @var EnvironmentService $environment */
-        $environment = self::getAppContainer()->get(EnvironmentService::class);
+        // If MySQL has been configured, enable a transaction that we can rollback later.
+        if (self::isTestDatabaseEnabled()) {
+            App::Instance()->getContainer()->get(Db::class);
 
-        App::Instance()->getContainer()->get(Db::class);
-
-        // If MySQL has been configured, begin transaction.
-        if (Db::isMySQLConfigured()) {
-            foreach (Db::getInstance()->getDatabases() as $name => $database) {
-                $database->driver->getConnection()->beginTransaction();
+            // If MySQL has been configured, begin transaction.
+            if (Db::isMySQLConfigured()) {
+                foreach (Db::getInstance()->getDatabases() as $name => $database) {
+                    $database->driver->getConnection()->beginTransaction();
+                }
             }
         }
 
@@ -74,12 +74,11 @@ abstract class BaseTestCase extends TestCase
     public static function tearDownAfterClass()
     {
         // If MySQL has been configured, roll back transaction.
-        /** @var EnvironmentService $environment */
-        $environment = self::getAppContainer()->get(EnvironmentService::class);
-
-        if (Db::isMySQLConfigured()) {
-            foreach (Db::getInstance()->getDatabases() as $name => $database) {
-                $database->driver->getConnection()->rollback();
+        if (self::isTestDatabaseEnabled()) {
+            if (Db::isMySQLConfigured()) {
+                foreach (Db::getInstance()->getDatabases() as $name => $database) {
+                    $database->driver->getConnection()->rollback();
+                }
             }
         }
 
@@ -193,6 +192,13 @@ abstract class BaseTestCase extends TestCase
         $prop = $reflection->getProperty($property);
         $prop->setAccessible(true);
         return $prop->getValue($object);
+    }
+
+    private static function isTestDatabaseEnabled() : bool
+    {
+        /** @var EnvironmentService $environment */
+        $environment = self::getAppContainer()->get(EnvironmentService::class);
+        return $environment->isSet('MYSQL_HOST') || $environment->isSet('MYSQL_PORT');
     }
 
     /**
