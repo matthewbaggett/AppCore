@@ -49,6 +49,11 @@ class ApiListController extends Controller
                 $displayRoutes[]      = $routeJson;
             } else {
                 $callable = $route->getCallback();
+
+                if ($callable instanceof \Closure){
+                    $callable = "\Closure";
+                }
+
                 if (is_array($callable)) {
                     list($callableClass, $callableFunction) = $callable;
                     if (is_object($callableClass)) {
