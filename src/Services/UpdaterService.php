@@ -50,11 +50,11 @@ class UpdaterService extends AbstractService implements ServiceInterface
     }
 
     /**
-     * @param int|null              $limit
-     * @param int|null              $offset
-     * @param array|\Closure[]|null $wheres
-     * @param string|Expression|null           $order
-     * @param string|null           $orderDirection
+     * @param int|null               $limit
+     * @param int|null               $offset
+     * @param array|\Closure[]|null  $wheres
+     * @param string|Expression|null $order
+     * @param string|null            $orderDirection
      *
      * @return Models\UpdaterModel[]
      */

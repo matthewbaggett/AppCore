@@ -50,7 +50,7 @@ class ApiListController extends Controller
             } else {
                 $callable = $route->getCallback();
 
-                if ($callable instanceof \Closure){
+                if ($callable instanceof \Closure) {
                     $callable = "\Closure";
                 }
 

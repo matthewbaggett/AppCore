@@ -35,13 +35,12 @@ trait RenderHtmlTrait
 
     protected function getParameters(Request $request)
     {
-        /** @var UsersModel $user */
-        $user = Session::get("User");
         return [
-            "path"     => $request->getUri()->getPath(),
+            'path'     => $request->getUri()->getPath(),
             'extraJs'  => $this->extraJs,
             'extraCss' => $this->extraCss,
             'hostname' => gethostname(),
+            'user'     => Session::get("User"),
         ];
     }
 
