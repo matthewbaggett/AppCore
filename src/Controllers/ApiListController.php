@@ -27,6 +27,7 @@ class ApiListController extends Controller
                     'singular'           => $route->getSingular(),
                     'plural'             => $route->getPlural(),
                     'properties'         => $route->getProperties(),
+                    'propertiesOptions'  => $route->getPropertyOptions(),
                     'access'             => $route->getAccess(),
                     'example'            => $route->getExampleEntity() ? $route->getExampleEntity()->__toArray() : null,
                     'callbackProperties' => $route->getCallbackProperties(),

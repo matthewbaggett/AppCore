@@ -20,6 +20,7 @@ class Route
     protected $singular;
     protected $plural;
     protected $properties;
+    protected $propertyOptions;
     protected $exampleEntity;
     protected $exampleEntityFinderFunction;
     protected $callbackProperties = [];
@@ -291,6 +292,24 @@ class Route
     public function setProperties($properties) : Route
     {
         $this->properties = $properties;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPropertyOptions()
+    {
+        return $this->propertyOptions;
+    }
+
+    /**
+     * @param mixed $propertyOptions
+     * @return Route
+     */
+    public function setPropertyOptions($propertyOptions)
+    {
+        $this->propertyOptions = $propertyOptions;
         return $this;
     }
 
