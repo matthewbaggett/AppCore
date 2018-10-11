@@ -305,6 +305,7 @@ class Route
 
     /**
      * @param mixed $propertyOptions
+     *
      * @return Route
      */
     public function setPropertyOptions($propertyOptions)
