@@ -36,6 +36,7 @@ class EnvironmentHeadersOnResponse
             }
 
             $json['Extra'] = array_filter([
+                '_Warning' => "Do not depend on any variables inside this block - This is for debug only!",
                 'Hostname'   => gethostname(),
                 'DebugEnabled' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? 'Yes' : 'No',
                 'GitVersion' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? $gitVersion : null,
