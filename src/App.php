@@ -358,12 +358,6 @@ class App
 
         $this->monolog = $this->getContainer()->get(\Monolog\Logger::class);
 
-        if (file_exists(APP_ROOT . "/sql")) {
-            $this->getContainer()->get(AutoImporterService::class)
-                ->addSqlPath(APPCORE_ROOT . "/src/SQL")
-                ->addSqlPath(APP_ROOT . "/sql");
-        }
-
         if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
             require(APP_ROOT . "/src/AppContainer.php");
         }
