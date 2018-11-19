@@ -85,7 +85,7 @@ abstract class Controller
     {
         if ($request->hasHeader("Filter")) {
             $filterText = trim($request->getHeader('Filter')[0]);
-            if(!empty($filterText)) {
+            if (!empty($filterText)) {
                 $decode = json_decode($filterText);
                 if ($decode !== null) {
                     return true;

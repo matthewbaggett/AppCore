@@ -7,7 +7,6 @@ use Slim\Http\Response;
 
 class CORSController extends Controller
 {
-
     public function optionsRequest(Request $request, Response $response)
     {
         return $this->jsonResponse([

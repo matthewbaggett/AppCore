@@ -19,7 +19,6 @@ use Segura\AppCore\Monolog\LumberjackHandler;
 use Segura\AppCore\Router\Route;
 use Segura\AppCore\Router\Router;
 use Segura\AppCore\Services\AutoConfigurationService;
-use Segura\AppCore\Services\AutoImporterService;
 use Segura\AppCore\Services\EnvironmentService;
 use Segura\AppCore\Services\EventLoggerService;
 use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
