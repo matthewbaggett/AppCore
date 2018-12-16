@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore\Middleware;
+namespace Gone\AppCore\Middleware;
 
 use Slim\Http\Request;
 use Slim\Http\Response;

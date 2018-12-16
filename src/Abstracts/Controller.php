@@ -1,9 +1,9 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
-use Segura\AppCore\Controllers\InlineCssTrait;
-use Segura\AppCore\Exceptions\FilterDecodeException;
-use Segura\AppCore\Filters\Filter;
+use Gone\AppCore\Controllers\InlineCssTrait;
+use Gone\AppCore\Exceptions\FilterDecodeException;
+use Gone\AppCore\Filters\Filter;
 use Slim\Http\Request;
 use Slim\Http\Response;
 

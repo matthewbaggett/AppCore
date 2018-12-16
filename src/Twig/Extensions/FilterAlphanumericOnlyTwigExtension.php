@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Twig\Extensions;
+namespace Gone\AppCore\Twig\Extensions;
 
 class FilterAlphanumericOnlyTwigExtension extends \Twig_Extension
 {

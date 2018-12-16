@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Router;
+namespace Gone\AppCore\Router;
 
 use Slim\App;
 

@@ -1,10 +1,10 @@
 <?php
-namespace Segura\AppCore\Services;
+namespace Gone\AppCore\Services;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use Segura\AppCore\Exceptions\AutoConfigurationException;
-use Segura\AppCore\Exceptions\TemporaryAutoConfigurationException;
+use Gone\AppCore\Exceptions\AutoConfigurationException;
+use Gone\AppCore\Exceptions\TemporaryAutoConfigurationException;
 
 class AutoConfigurationService
 {

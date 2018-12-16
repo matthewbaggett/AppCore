@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Filters;
+namespace Gone\AppCore\Filters;
 
-use Segura\AppCore\Exceptions\FilterDecodeException;
+use Gone\AppCore\Exceptions\FilterDecodeException;
 use Zend\Db\Sql\Expression;
 
 class Filter

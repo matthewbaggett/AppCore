@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 class DbConfig implements \ArrayAccess, \Iterator
 {

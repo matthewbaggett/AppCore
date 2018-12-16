@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\TableGateways;
+namespace Gone\AppCore\TableGateways;
 
-use Segura\AppCore\TableGateways\Base\BaseUpdaterTableGateway;
+use Gone\AppCore\TableGateways\Base\BaseUpdaterTableGateway;
 
 class UpdaterTableGateway extends BaseUpdaterTableGateway
 {

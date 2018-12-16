@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 use DebugBar\Bridge\MonologCollector;
 use DebugBar\DebugBar;
@@ -14,17 +14,17 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
-use Segura\AppCore\Exceptions\DbConfigException;
-use Segura\AppCore\Monolog\LumberjackHandler;
-use Segura\AppCore\Router\Route;
-use Segura\AppCore\Router\Router;
-use Segura\AppCore\Services\AutoConfigurationService;
-use Segura\AppCore\Services\EnvironmentService;
-use Segura\AppCore\Services\EventLoggerService;
-use Segura\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
-use Segura\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
-use Segura\AppCore\Zend\Profiler;
-use Segura\Session\Session;
+use Gone\AppCore\Exceptions\DbConfigException;
+use Gone\AppCore\Monolog\LumberjackHandler;
+use Gone\AppCore\Router\Route;
+use Gone\AppCore\Router\Router;
+use Gone\AppCore\Services\AutoConfigurationService;
+use Gone\AppCore\Services\EnvironmentService;
+use Gone\AppCore\Services\EventLoggerService;
+use Gone\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
+use Gone\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
+use Gone\AppCore\Zend\Profiler;
+use Gone\Session\Session;
 use Slim;
 
 class App
@@ -51,7 +51,7 @@ class App
         'Environment'      => EnvironmentService::class,
         'Redis'            => PredisClient::class,
         'Monolog'          => \Monolog\Logger::class,
-        'Segura\AppCore\Logger' => \Monolog\Logger::class,
+        'Gone\AppCore\Logger' => \Monolog\Logger::class,
     ];
 
     protected $routePaths = [
@@ -383,7 +383,7 @@ class App
         #$this->app->add(new \Middlewares\Debugbar());
         ##$this->app->add(new \Middlewares\Geolocation());
         $this->app->add(new \Middlewares\TrailingSlash());
-        $this->app->add(new Middleware\SeguraJSONResponseLinter());
+        $this->app->add(new Middleware\JSONResponseLinter());
         #$this->app->add(new \Middlewares\Whoops());
         #$this->app->add(new \Middlewares\CssMinifier());
         #$this->app->add(new \Middlewares\JsMinifier());
@@ -516,7 +516,7 @@ class App
     {
         if (!$connection) {
             /** @var DbConfig $configs */
-            $dbConfig = App::Instance()->getContainer()->get(\Segura\AppCore\DbConfig::class);
+            $dbConfig = App::Instance()->getContainer()->get(\Gone\AppCore\DbConfig::class);
             $configs = $dbConfig->__toArray();
 
             if (isset($configs['Default'])) {

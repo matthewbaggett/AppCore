@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore\Interfaces;
+namespace Gone\AppCore\Interfaces;
 
 interface QueryStatisticInterface
 {

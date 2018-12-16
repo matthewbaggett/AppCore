@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore\Filters;
+namespace Gone\AppCore\Filters;
 
 class FilterCondition
 {

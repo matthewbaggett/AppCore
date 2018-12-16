@@ -1,9 +1,9 @@
 <?php
-namespace Segura\AppCore\Commands;
+namespace Gone\AppCore\Commands;
 
-use Segura\AppCore\App;
-use Segura\AppCore\Services\AutoImporterService;
-use Segura\AppCore\ZenderatorConfig;
+use Gone\AppCore\App;
+use Gone\AppCore\Services\AutoImporterService;
+use Gone\AppCore\ZenderatorConfig;
 use Zenderator\Automize;
 
 class DataRevertCommand extends Automize\AutomizeCommand implements Automize\AutomizeCommandInterface
@@ -14,7 +14,7 @@ class DataRevertCommand extends Automize\AutomizeCommand implements Automize\Aut
         /** @var AutoImporterService $autoImporter */
         $autoImporter = App::Container()->get(AutoImporterService::class);
         $config       = ZenderatorConfig::getConfig($rootOfApp);
-        $autoImporter->addSqlPath($rootOfApp . "/vendor/segura/appcore/src/SQL");
+        $autoImporter->addSqlPath($rootOfApp . "/vendor/gone.io/appcore/src/SQL");
         if (isset($config['sql'])) {
             foreach ($config['sql'] as $location) {
                 $autoImporter->addSqlPath($rootOfApp . "/" . $location);

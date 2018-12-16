@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore\Test;
+namespace Gone\AppCore\Test;
 
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\WebDriverCapabilityType;

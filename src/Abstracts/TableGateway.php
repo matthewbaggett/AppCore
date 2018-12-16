@@ -1,8 +1,8 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
-use Segura\AppCore\Filters\FilterCondition;
-use Segura\AppCore\ZendSql;
+use Gone\AppCore\Filters\FilterCondition;
+use Gone\AppCore\ZendSql;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Exception\InvalidQueryException;
 use Zend\Db\ResultSet\ResultSet;

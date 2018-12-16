@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Models;
+namespace Gone\AppCore\Models;
 
-use Segura\AppCore\Models\Base\BaseUpdaterModel;
+use Gone\AppCore\Models\Base\BaseUpdaterModel;
 
 class UpdaterModel extends BaseUpdaterModel
 {

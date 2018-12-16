@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Services;
+namespace Gone\AppCore\Services;
 
-use Segura\AppCore\Exceptions\TemporaryAutoConfigurationException;
+use Gone\AppCore\Exceptions\TemporaryAutoConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
 class EnvironmentService

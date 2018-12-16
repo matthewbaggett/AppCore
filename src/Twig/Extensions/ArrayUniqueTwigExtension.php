@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Twig\Extensions;
+namespace Gone\AppCore\Twig\Extensions;
 
 class ArrayUniqueTwigExtension extends \Twig_Extension
 {

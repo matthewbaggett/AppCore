@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Controllers;
+namespace Gone\AppCore\Controllers;
 
-use Segura\AppCore\Abstracts\Controller;
+use Gone\AppCore\Abstracts\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
 

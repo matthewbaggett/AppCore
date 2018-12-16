@@ -1,13 +1,13 @@
 <?php
-namespace Segura\AppCore\Test;
+namespace Gone\AppCore\Test;
 
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
 use PHPUnit\Framework\TestCase;
-use Segura\AppCore\App;
-use Segura\AppCore\Db;
-use Segura\AppCore\Services\EnvironmentService;
+use Gone\AppCore\App;
+use Gone\AppCore\Db;
+use Gone\AppCore\Services\EnvironmentService;
 use Slim\Container;
 
 abstract class BaseTestCase extends TestCase

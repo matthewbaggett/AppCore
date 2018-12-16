@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
-use Segura\AppCore\Traits\RenderHtmlTrait;
+use Gone\AppCore\Traits\RenderHtmlTrait;
 
 abstract class HtmlController extends Controller
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Exceptions;
+namespace Gone\AppCore\Exceptions;
 
 class DbConfigException extends DbException
 {

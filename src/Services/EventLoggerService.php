@@ -1,10 +1,10 @@
 <?php
-namespace Segura\AppCore\Services;
+namespace Gone\AppCore\Services;
 
 use Monolog\Logger;
 use Predis\Client;
 use SebastianBergmann\Diff\Differ;
-use Segura\Session\Session;
+use Gone\Session\Session;
 
 class EventLoggerService
 {

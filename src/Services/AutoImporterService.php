@@ -1,11 +1,11 @@
 <?php
 
-namespace Segura\AppCore\Services;
+namespace Gone\AppCore\Services;
 
-use Segura\AppCore\App;
-use Segura\AppCore\Db;
-use Segura\AppCore\DbConfig;
-use Segura\AppCore\Exceptions\AutoImporterException;
+use Gone\AppCore\App;
+use Gone\AppCore\Db;
+use Gone\AppCore\DbConfig;
+use Gone\AppCore\Exceptions\AutoImporterException;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\Pdo\Result;
 
@@ -135,7 +135,7 @@ class AutoImporterService
     private function runFile($sqlFile)
     {
         /** @var DbConfig $dbConfig */
-        $dbConfig = App::Instance(false)->getContainer()->get(\Segura\AppCore\DbConfig::class);
+        $dbConfig = App::Instance(false)->getContainer()->get(\Gone\AppCore\DbConfig::class);
 
         $configs = $dbConfig->__toArray();
 

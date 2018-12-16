@@ -1,10 +1,10 @@
 <?php
 
-namespace Segura\AppCore\Zend;
+namespace Gone\AppCore\Zend;
 
 use Gone\UUID\UUID;
 use Monolog\Logger;
-use Segura\AppCore\Interfaces\QueryStatisticInterface;
+use Gone\AppCore\Interfaces\QueryStatisticInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
 

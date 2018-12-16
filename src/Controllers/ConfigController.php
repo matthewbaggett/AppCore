@@ -1,9 +1,9 @@
 <?php
-namespace Segura\AppCore\Controllers;
+namespace Gone\AppCore\Controllers;
 
-use Segura\AppCore\Abstracts\Controller;
-use Segura\AppCore\App;
-use Segura\AppCore\Services\EnvironmentService;
+use Gone\AppCore\Abstracts\Controller;
+use Gone\AppCore\App;
+use Gone\AppCore\Services\EnvironmentService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;

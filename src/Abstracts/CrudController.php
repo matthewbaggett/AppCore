@@ -1,7 +1,7 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
-use Segura\AppCore\Interfaces\ModelInterface;
+use Gone\AppCore\Interfaces\ModelInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Zend\Db\Adapter\Exception\InvalidQueryException;

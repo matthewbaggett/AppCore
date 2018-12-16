@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Controllers;
+namespace Gone\AppCore\Controllers;
 
 trait InlineCssTrait
 {

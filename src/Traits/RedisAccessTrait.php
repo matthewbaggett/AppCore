@@ -1,8 +1,8 @@
 <?php
-namespace Segura\AppCore\Traits;
+namespace Gone\AppCore\Traits;
 
 use Predis\Client as Redis;
-use Segura\AppCore\App;
+use Gone\AppCore\App;
 
 trait RedisAccessTrait
 {

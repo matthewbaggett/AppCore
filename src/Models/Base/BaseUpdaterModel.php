@@ -1,11 +1,11 @@
 <?php
-namespace Segura\AppCore\Models\Base;
+namespace Gone\AppCore\Models\Base;
 
-use Segura\AppCore\Abstracts\Model as AbstractModel;
-use Segura\AppCore\App;
-use Segura\AppCore\Interfaces\ModelInterface as ModelInterface;
-use Segura\AppCore\Models;
-use Segura\AppCore\TableGateways;
+use Gone\AppCore\Abstracts\Model as AbstractModel;
+use Gone\AppCore\App;
+use Gone\AppCore\Interfaces\ModelInterface as ModelInterface;
+use Gone\AppCore\Models;
+use Gone\AppCore\TableGateways;
 
 /********************************************************
  *             ___                         __           *

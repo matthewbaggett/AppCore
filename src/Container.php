@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 use Pimple\Container as PimpleContainer;
 use Slim\Exception\ContainerException;

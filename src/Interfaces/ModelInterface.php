@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Interfaces;
+namespace Gone\AppCore\Interfaces;
 
 interface ModelInterface
 {

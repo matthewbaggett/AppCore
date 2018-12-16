@@ -1,11 +1,11 @@
 <?php
 
-namespace Segura\AppCore\Middleware;
+namespace Gone\AppCore\Middleware;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class SeguraJSONResponseLinter
+class JSONResponseLinter
 {
     public function __invoke(Request $request, Response $response, $next)
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
-use Segura\AppCore\Exceptions\DbException;
+use Gone\AppCore\Exceptions\DbException;
 
 class Db
 {

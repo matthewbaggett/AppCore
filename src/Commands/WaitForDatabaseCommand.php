@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Commands;
+namespace Gone\AppCore\Commands;
 
 use Zenderator\Automize;
 

@@ -1,8 +1,8 @@
 <?php
-namespace Segura\AppCore\Test;
+namespace Gone\AppCore\Test;
 
 use Psr\Http\Message\ResponseInterface;
-use Segura\AppCore\Router\Router;
+use Gone\AppCore\Router\Router;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
 use Slim\Http\Request;
@@ -43,7 +43,7 @@ abstract class RoutesTestCase extends BaseTestCase
     ) {
         /**
          * @var \Slim\App           $app
-         * @var \Segura\AppCore\App $applicationInstance
+         * @var \Gone\AppCore\App $applicationInstance
          */
         $this->waypoint("Before App Fetch");
         $applicationInstance = $this->getApp();

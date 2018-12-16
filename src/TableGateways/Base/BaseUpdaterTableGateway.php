@@ -1,10 +1,10 @@
 <?php
-namespace Segura\AppCore\TableGateways\Base;
+namespace Gone\AppCore\TableGateways\Base;
 
-use \Segura\AppCore\Abstracts\Model;
-use \Segura\AppCore\Abstracts\TableGateway as AbstractTableGateway;
-use \Segura\AppCore\Db;
-use \Segura\AppCore\Models;
+use \Gone\AppCore\Abstracts\Model;
+use \Gone\AppCore\Abstracts\TableGateway as AbstractTableGateway;
+use \Gone\AppCore\Db;
+use \Gone\AppCore\Models;
 use \Zend\Db\Adapter\AdapterInterface;
 use \Zend\Db\ResultSet\ResultSet;
 

@@ -1,8 +1,8 @@
 <?php
-namespace Segura\AppCore\Traits;
+namespace Gone\AppCore\Traits;
 
-use Segura\AppCore\App;
-use Segura\Session\Session;
+use Gone\AppCore\App;
+use Gone\Session\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;

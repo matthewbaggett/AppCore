@@ -1,11 +1,11 @@
 <?php
-namespace Segura\AppCore\Services;
+namespace Gone\AppCore\Services;
 
-use Segura\AppCore\Abstracts\Service as AbstractService;
-use Segura\AppCore\Interfaces\ServiceInterface as ServiceInterface;
-use Segura\AppCore\Models;
-use Segura\AppCore\Models\UpdaterModel;
-use Segura\AppCore\TableGateways;
+use Gone\AppCore\Abstracts\Service as AbstractService;
+use Gone\AppCore\Interfaces\ServiceInterface as ServiceInterface;
+use Gone\AppCore\Models;
+use Gone\AppCore\Models\UpdaterModel;
+use Gone\AppCore\TableGateways;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Select;
 

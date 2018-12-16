@@ -6,7 +6,7 @@
  * Time: 12:54
  */
 
-namespace Segura\AppCore\Middleware;
+namespace Gone\AppCore\Middleware;
 
 use Slim\Http\Request;
 use Slim\Http\Response;

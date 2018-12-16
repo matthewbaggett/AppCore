@@ -4,6 +4,6 @@
 require_once(__DIR__ . "/../../../../bootstrap.php");
 
 $appClass = APP_CORE_NAME;
-/** @var \Segura\AppCore\Services\AutoImporterService $autoImporter */
-$autoImporter = $appClass::Container()->get(\Segura\AppCore\Services\AutoImporterService::class);
+/** @var \Gone\AppCore\Services\AutoImporterService $autoImporter */
+$autoImporter = $appClass::Container()->get(\Gone\AppCore\Services\AutoImporterService::class);
 $autoImporter->run();

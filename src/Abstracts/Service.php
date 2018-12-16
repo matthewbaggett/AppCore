@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Expression;

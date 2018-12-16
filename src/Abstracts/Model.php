@@ -1,9 +1,9 @@
 <?php
-namespace Segura\AppCore\Abstracts;
+namespace Gone\AppCore\Abstracts;
 
 use Camel\CaseTransformer;
 use Camel\Format;
-use Segura\AppCore\Interfaces\ModelInterface;
+use Gone\AppCore\Interfaces\ModelInterface;
 
 abstract class Model implements ModelInterface
 {

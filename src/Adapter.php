@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 use Zend\Db\Adapter\Platform;
 use Zend\Db\Adapter\Profiler;
@@ -12,7 +12,7 @@ class Adapter extends \Zend\Db\Adapter\Adapter
     {
         parent::__construct($driver, $platform, $queryResultPrototype, $profiler);
         if (!defined('ZEND_PROFILER_DISABLE') || ZEND_PROFILER_DISABLE == false) {
-            $this->setProfiler(App::Container()->get(\Segura\AppCore\Zend\Profiler::class));
+            $this->setProfiler(App::Container()->get(\Gone\AppCore\Zend\Profiler::class));
         }
     }
 }

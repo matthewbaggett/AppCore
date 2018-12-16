@@ -1,8 +1,8 @@
 <?php
 
-namespace Segura\AppCore\Zend;
+namespace Gone\AppCore\Zend;
 
-use Segura\AppCore\Interfaces\QueryStatisticInterface;
+use Gone\AppCore\Interfaces\QueryStatisticInterface;
 
 class QueryStatistic implements QueryStatisticInterface
 {

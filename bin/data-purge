@@ -3,6 +3,6 @@
 
 require_once(__DIR__ . "/../../../../bootstrap.php");
 
-/** @var \Segura\AppCore\Services\AutoImporterService $autoImporter */
-$autoImporter = \Segura\AppCore\App::Container()->get(\Segura\AppCore\Services\AutoImporterService::class);
+/** @var \Gone\AppCore\Services\AutoImporterService $autoImporter */
+$autoImporter = \Gone\AppCore\App::Container()->get(\Gone\AppCore\Services\AutoImporterService::class);
 $autoImporter->purge();

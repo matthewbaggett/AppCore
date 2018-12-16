@@ -1,10 +1,10 @@
 <?php
 
-namespace Segura\AppCore\Middleware;
+namespace Gone\AppCore\Middleware;
 
-use Segura\AppCore\App;
-use Segura\AppCore\Controllers\InlineCssTrait;
-use Segura\AppCore\Zend\Profiler;
+use Gone\AppCore\App;
+use Gone\AppCore\Controllers\InlineCssTrait;
+use Gone\AppCore\Zend\Profiler;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -54,7 +54,7 @@ class EnvironmentHeadersOnResponse
                     'Limit'      => ini_get('memory_limit'),
                 ] : null,
                 'SQL' => defined('DEBUG_ENABLED') && DEBUG_ENABLED ? $profiler->getQueriesArray() : null,
-                'API' => defined('DEBUG_ENABLED') && DEBUG_ENABLED && class_exists('\Segura\SDK\Common\Profiler') ? \Segura\SDK\Common\Profiler::debugArray() : null,
+                'API' => defined('DEBUG_ENABLED') && DEBUG_ENABLED && class_exists('\Gone\SDK\Common\Profiler') ? \Gone\SDK\Common\Profiler::debugArray() : null,
             ]);
 
             if (isset($json['Status'])) {

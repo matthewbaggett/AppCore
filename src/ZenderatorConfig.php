@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 class ZenderatorConfig
 {
@@ -10,7 +10,7 @@ class ZenderatorConfig
         } elseif (file_exists($rootOfApp . "/zenderator.yml.dist")) {
             $zenderatorConfigPath = $rootOfApp . "/zenderator.yml.dist";
         } else {
-            die("Missing Zenderator config /zenderator.yml or /zenderator.yml.dist\nThere is an example in /vendor/bin/segura/zenderator/zenderator.example.yml\n\n");
+            die("Missing Zenderator config /zenderator.yml or /zenderator.yml.dist\nThere is an example in /vendor/bin/gone.io/zenderator/zenderator.example.yml\n\n");
         }
 
         $config = file_get_contents($zenderatorConfigPath);

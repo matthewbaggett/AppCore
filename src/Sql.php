@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore;
+namespace Gone\AppCore;
 
 use Zend\Db\Sql\PreparableSqlInterface;
 

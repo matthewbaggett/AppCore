@@ -1,6 +1,6 @@
 <?php
 
-namespace Segura\AppCore\Monolog;
+namespace Gone\AppCore\Monolog;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;

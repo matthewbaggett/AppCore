@@ -1,5 +1,5 @@
 <?php
-namespace Segura\AppCore\Traits;
+namespace Gone\AppCore\Traits;
 
 use Slim\Http\Response;
 
