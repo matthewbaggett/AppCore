@@ -9,6 +9,12 @@ class JSONResponseLinter
 {
     public function __invoke(Request $request, Response $response, $next)
     {
+        $encodingOptions = 0;
+        $jsonCompact = $request->hasHeader('CompactJson');
+
+        if(!$jsonCompact)
+            $encodingOptions = JSON_PRETTY_PRINT;
+
         try {
             $response = $next($request, $response);
             $jsonMode = (isset($response->getHeader('Content-Type')[0]) and stripos($response->getHeader('Content-Type')[0], 'application/json') !== false);
@@ -16,10 +22,15 @@ class JSONResponseLinter
                 $body = $response->getBody();
                 $body->rewind();
                 $json = json_decode($body->getContents(), true);
+                if ($jsonCompact){
+                    if(isset($json['Extra'])) {
+                        unset($json['Extra']);
+                    }
+                }
                 if (isset($json['Status'])) {
                     $json['Status'] = ucfirst(strtolower($json['Status']));
                 }
-                $response = $response->withJson($json, null, JSON_PRETTY_PRINT);
+                $response = $response->withJson($json, null, $encodingOptions);
             }
             return $response;
         } catch (\Exception $exception) {
@@ -45,7 +56,7 @@ class JSONResponseLinter
                     'Trace' => $trace,
                 ],
                 500,
-                JSON_PRETTY_PRINT
+                $encodingOptions
             );
             return $response;
         }
