@@ -7,6 +7,9 @@
         },{
             "name": "Segura Systems",
             "email": "support@segura.co.uk"
+        },{
+            "name": "Wolfgang von Caron",
+            "email": "wolfgang@wlf.io"
         }
     ],
     "require": {

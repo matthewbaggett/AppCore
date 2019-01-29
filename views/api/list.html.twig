@@ -18,9 +18,13 @@
                 {{ route.callable }}
             </div>
             <div class="method">
-                {% for method in route.methods %}
-                    {{ method }}
-                {% endfor %}
+                {% if route.methods is iterable %}
+                    {% for method in route.methods %}
+                        {{ method }}
+                    {% endfor %}
+                {% else %}
+                    {{ route.methods }}
+                {% endif %}
             </div>
             <div class="pattern">
                 <a href="{{ route.pattern }}">{{ route.pattern }}</a>

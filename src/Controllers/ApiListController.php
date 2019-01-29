@@ -28,6 +28,7 @@ class ApiListController extends Controller
                     'plural'             => $route->getPlural(),
                     'properties'         => $route->getProperties(),
                     'propertiesOptions'  => $route->getPropertyOptions(),
+                    'propertyData'       => $route->getPropertyData(),
                     'access'             => $route->getAccess(),
                     'example'            => $route->getExampleEntity() ? $route->getExampleEntity()->__toArray() : null,
                     'callbackProperties' => $route->getCallbackProperties(),
@@ -69,6 +70,7 @@ class ApiListController extends Controller
                     'methods'  => $route->getHttpMethod(),
                     'callable' => $callable,
                     'access'   => $route->getAccess(),
+                    'properties'=> $route->getCallbackProperties(),
                 ];
             }
         }

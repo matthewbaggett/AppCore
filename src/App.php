@@ -267,8 +267,8 @@ class App
 
         $this->container[\Predis\Client::class] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
-            $environment  = $this->getContainer()->get(EnvironmentService::class);
-            $redisConfig  = $c->get("RedisConfig");
+            $environment = $this->getContainer()->get(EnvironmentService::class);
+            $redisConfig = $c->get("RedisConfig");
             $redisOptions = [];
             if ($environment->isSet('REDIS_PREFIX')) {
                 $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
@@ -516,7 +516,7 @@ class App
     {
         if (!$connection) {
             /** @var DbConfig $configs */
-            $dbConfig = App::Instance()->getContainer()->get(\Gone\AppCore\DbConfig::class);
+            $dbConfig = App::Instance()->getContainer()->get(DbConfig::class);
             $configs = $dbConfig->__toArray();
 
             if (isset($configs['Default'])) {

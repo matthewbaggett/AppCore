@@ -20,6 +20,7 @@ class Route
     protected $singular;
     protected $plural;
     protected $properties;
+    protected $propertyData = [];
     protected $propertyOptions;
     protected $exampleEntity;
     protected $exampleEntityFinderFunction;
@@ -46,7 +47,10 @@ class Route
      */
     public function setCallbackProperties(array $callbackProperties): Route
     {
-        $this->callbackProperties = $callbackProperties;
+        $this->callbackProperties = [];
+        foreach ($callbackProperties as $name => $property){
+            $this->populateCallbackProperty($name,$property);
+        }
         return $this;
     }
 
@@ -57,13 +61,31 @@ class Route
      *
      * @return $this
      */
-    public function addCallbackProperty($name, $mandatory = false, $default = null)
+    public function addCallbackProperty(string $name, bool $mandatory = false, $default = null)
     {
-        $this->callbackProperties[$name] = [
-            'name'        => $name,
+        return $this->populateCallbackProperty($name,[
             'isMandatory' => $mandatory,
             'default'     => $default,
-        ];
+        ]);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $property
+     */
+    public function populateCallbackProperty(string $name,array $property){
+        $property["name"] = $name;
+        $this->callbackProperties[$name] = array_merge(
+            [
+                "in" => null,
+                "description" => null,
+                "isMandatory" => null,
+                "default" => null,
+                "type" => null,
+                "examples" => [],
+            ],
+            $property
+        );
         return $this;
     }
 
@@ -276,6 +298,10 @@ class Route
         return $this;
     }
 
+    public function getPropertyData(){
+        return $this->propertyData;
+    }
+
     /**
      * @return mixed
      */
@@ -291,7 +317,15 @@ class Route
      */
     public function setProperties($properties) : Route
     {
-        $this->properties = $properties;
+        $this->properties = [];
+        foreach ($properties as $name => $type) {
+            if(is_numeric($name)){
+                $this->properties[] = $type;
+            } else {
+                $this->properties[] = $name;
+                $this->propertyData[$name]["type"] = $type;
+            }
+        }
         return $this;
     }
 
@@ -310,7 +344,11 @@ class Route
      */
     public function setPropertyOptions($propertyOptions)
     {
-        $this->propertyOptions = $propertyOptions;
+        $this->propertyOptions = [];
+        foreach ($propertyOptions as $name => $options) {
+            $this->propertyOptions[$name] = $options;
+            $this->propertyData[$name]["options"] = $options;
+        }
         return $this;
     }
 
