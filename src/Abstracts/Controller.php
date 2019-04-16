@@ -54,6 +54,13 @@ abstract class Controller
         return $this;
     }
 
+    public function xmlResponse(\SimpleXMLElement $root, Request $request, Response $response) : Response
+    {
+        $response = $response->withBody($root->asXML());
+        $response = $response->withHeader('Content-type', 'text/xml');
+        return $response;
+    }
+
     public function jsonResponse($json, Request $request, Response $response) : Response
     {
         return $response->withJson($json);
