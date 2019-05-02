@@ -72,6 +72,11 @@ class Container extends \Slim\Container
         return $this->offsetExists($id);
     }
 
+    public function set(string $id, callable $callback) : void
+    {
+        $this->offsetSet($id, $callback);
+    }
+
     /**
      * Tests whether an exception needs to be recast for compliance with Container-Interop.  This will be if the
      * exception was thrown by Pimple.
