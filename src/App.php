@@ -107,6 +107,30 @@ class App
 
         $this->populateContainerAliases($this->container);
 
+        $this->setupDependencies();
+
+        $this->monolog = $this->getContainer()->get(\Monolog\Logger::class);
+
+        if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
+            require(APP_ROOT . "/src/AppContainer.php");
+        }
+        if (file_exists(APP_ROOT . "/src/AppContainerExtra.php")) {
+            require(APP_ROOT . "/src/AppContainerExtra.php");
+        }
+
+        $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
+
+        if (php_sapi_name() != 'cli' && $this->isSessionsEnabled) {
+            $session = $this->getContainer()->get(Session::class);
+        }
+
+        $this->setupMiddlewares();
+
+        return $this;
+    }
+    
+    public function setupDependencies() : void
+    {
         // add PSR-15 support shim
         $this->container['callableResolver'] = function ($container) {
             return new \Bnf\Slim3Psr15\CallableResolver($container);
@@ -354,28 +378,9 @@ class App
         } else {
             date_default_timezone_set(self::DEFAULT_TIMEZONE);
         }
-
-        $this->monolog = $this->getContainer()->get(\Monolog\Logger::class);
-
-        if (file_exists(APP_ROOT . "/src/AppContainer.php")) {
-            require(APP_ROOT . "/src/AppContainer.php");
-        }
-        if (file_exists(APP_ROOT . "/src/AppContainerExtra.php")) {
-            require(APP_ROOT . "/src/AppContainerExtra.php");
-        }
-
-        $this->addRoutePathsRecursively(APP_ROOT . "/src/Routes");
-
-        if (php_sapi_name() != 'cli' && $this->isSessionsEnabled) {
-            $session = $this->getContainer()->get(Session::class);
-        }
-
-        $this->setupMiddlewares();
-
-        return $this;
     }
 
-    public function setupMiddlewares()
+    public function setupMiddlewares() : void
     {
         // Middlewares
         $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
