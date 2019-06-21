@@ -297,6 +297,11 @@ class App
             if ($environment->isSet('REDIS_PREFIX')) {
                 $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
             }
+            if($environment->isSet('REDIS_DATABASE_INDEX')){
+                $redisOptions['parameters'] = [
+                    'database' => $environment->get('REDIS_DATABASE_INDEX'),
+                ];
+            }
             return new \Predis\Client($redisConfig, $redisOptions);
         };
 
