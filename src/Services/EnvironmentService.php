@@ -12,8 +12,8 @@ class EnvironmentService
 
     protected $cacheFile = "/tmp/.configcache.yml";
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
         $this->rebuildEnvironmentVariables();
     }
 
@@ -33,12 +33,12 @@ class EnvironmentService
                 $this->environmentVariables[$key] = $value;
             }
 
-			ksort($this->environmentVariables);
+            ksort($this->environmentVariables);
 
-			if (php_sapi_name() != 'cli') {
-				file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
-				chmod($this->cacheFile, 0777);
-			}
+            if (php_sapi_name() != 'cli') {
+                file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+                chmod($this->cacheFile, 0777);
+            }
         }
 
         // Generate some convenience envvars that will help us.
