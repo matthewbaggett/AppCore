@@ -12,8 +12,9 @@ class JSONResponseLinter
         $encodingOptions = 0;
         $jsonCompact = $request->hasHeader('CompactJson');
 
-        if(!$jsonCompact)
+        if (!$jsonCompact) {
             $encodingOptions = JSON_PRETTY_PRINT;
+        }
 
         try {
             $response = $next($request, $response);
@@ -22,8 +23,8 @@ class JSONResponseLinter
                 $body = $response->getBody();
                 $body->rewind();
                 $json = json_decode($body->getContents(), true);
-                if ($jsonCompact){
-                    if(isset($json['Extra'])) {
+                if ($jsonCompact) {
+                    if (isset($json['Extra'])) {
                         unset($json['Extra']);
                     }
                 }

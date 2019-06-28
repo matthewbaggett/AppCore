@@ -55,7 +55,7 @@ abstract class CrudController extends Controller
             );
         }
         return $this->jsonResponse(
-                [
+            [
                     'Status'                          => 'Fail',
                     'Reason'                          => sprintf(
                         "No such %s found with id %s",
@@ -63,9 +63,9 @@ abstract class CrudController extends Controller
                         $args['id']
                     )
                 ],
-                $request,
-                $response
-            );
+            $request,
+            $response
+        );
     }
 
     public function createRequest(Request $request, Response $response, $args) : Response
@@ -106,7 +106,7 @@ abstract class CrudController extends Controller
             );
         }
         return $this->jsonResponse(
-                [
+            [
                     'Status'                          => 'Fail',
                     'Reason'                          => sprintf(
                         "No such %s found with id %s",
@@ -114,8 +114,8 @@ abstract class CrudController extends Controller
                         $args['id']
                     )
                 ],
-                $request,
-                $response
-            );
+            $request,
+            $response
+        );
     }
 }

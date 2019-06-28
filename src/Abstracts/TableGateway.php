@@ -489,9 +489,9 @@ abstract class TableGateway extends ZendTableGateway
 
         $select->where([$field => $value]);
         if ($orderBy) {
-            if($orderBy instanceof Expression){
+            if ($orderBy instanceof Expression) {
                 $select->order($orderBy);
-            }else {
+            } else {
                 $select->order("{$orderBy} {$orderDirection}");
             }
         }
@@ -521,9 +521,9 @@ abstract class TableGateway extends ZendTableGateway
 
         $select->where([$field => $value]);
         if ($orderBy) {
-            if($orderBy instanceof Expression){
+            if ($orderBy instanceof Expression) {
                 $select->order($orderBy);
-            }else {
+            } else {
                 $select->order("{$orderBy} {$orderDirection}");
             }
         }
@@ -590,9 +590,9 @@ abstract class TableGateway extends ZendTableGateway
         $select = $this->sql->select();
         $select->where($keyValue);
         if ($orderBy) {
-            if($orderBy instanceof Expression){
+            if ($orderBy instanceof Expression) {
                 $select->order($orderBy);
-            }else {
+            } else {
                 $select->order("{$orderBy} {$orderDirection}");
             }
         }
@@ -622,9 +622,9 @@ abstract class TableGateway extends ZendTableGateway
         $select = $this->sql->select();
         $select->where($keyValue);
         if ($orderBy) {
-            if($orderBy instanceof Expression){
+            if ($orderBy instanceof Expression) {
                 $select->order($orderBy);
-            }else {
+            } else {
                 $select->order("{$orderBy} {$orderDirection}");
             }
         }

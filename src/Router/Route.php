@@ -48,8 +48,8 @@ class Route
     public function setCallbackProperties(array $callbackProperties): Route
     {
         $this->callbackProperties = [];
-        foreach ($callbackProperties as $name => $property){
-            $this->populateCallbackProperty($name,$property);
+        foreach ($callbackProperties as $name => $property) {
+            $this->populateCallbackProperty($name, $property);
         }
         return $this;
     }
@@ -63,7 +63,7 @@ class Route
      */
     public function addCallbackProperty(string $name, bool $mandatory = false, $default = null)
     {
-        return $this->populateCallbackProperty($name,[
+        return $this->populateCallbackProperty($name, [
             'isMandatory' => $mandatory,
             'default'     => $default,
         ]);
@@ -73,7 +73,8 @@ class Route
      * @param string $name
      * @param array  $property
      */
-    public function populateCallbackProperty(string $name,array $property){
+    public function populateCallbackProperty(string $name, array $property)
+    {
         $property["name"] = $name;
         $this->callbackProperties[$name] = array_merge(
             [
@@ -298,7 +299,8 @@ class Route
         return $this;
     }
 
-    public function getPropertyData(){
+    public function getPropertyData()
+    {
         return $this->propertyData;
     }
 
@@ -319,7 +321,7 @@ class Route
     {
         $this->properties = [];
         foreach ($properties as $name => $type) {
-            if(is_numeric($name)){
+            if (is_numeric($name)) {
                 $this->properties[] = $type;
             } else {
                 $this->properties[] = $name;

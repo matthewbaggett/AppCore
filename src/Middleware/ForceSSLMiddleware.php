@@ -10,8 +10,7 @@ class ForceSSLMiddleware
     public function __invoke(Request $request, Response $response, $next)
     {
         /** @var Response $response */
-        if (
-            $request->getServerParam('SERVER_PORT') == '80'
+        if ($request->getServerParam('SERVER_PORT') == '80'
             && $request->getServerParam('HTTP_X_FORWARDED_PROTO') != 'https'
             && strtolower($request->getServerParam('FORCE_HTTPS')) == 'yes'
         ) {
