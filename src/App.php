@@ -8,9 +8,11 @@ use Faker\Factory as FakerFactory;
 use Faker\Provider;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
 use Monolog\Logger;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
@@ -297,7 +299,7 @@ class App
             if ($environment->isSet('REDIS_PREFIX')) {
                 $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
             }
-            if($environment->isSet('REDIS_DATABASE_INDEX')){
+            if ($environment->isSet('REDIS_DATABASE_INDEX')) {
                 $redisOptions['parameters'] = [
                     'database' => $environment->get('REDIS_DATABASE_INDEX'),
                 ];
@@ -311,11 +313,22 @@ class App
 
             // Set up Monolog
             $monolog = new \Monolog\Logger($this->getAppName());
+            $monolog->setHandlers([]);
+
+            // If we're in PHPUnit, configure with a nullhandler & return early.
+            if ($environment->isSet('PHP_SELF')) {
+                if (stripos($environment->get('PHP_SELF'), 'phpunit') !== false) {
+                    $monolog->pushHandler(new NullHandler());
+                    return $monolog;
+                }
+            }
+
             $streamHandler = new StreamHandler('php://stdout', Logger::DEBUG);
             //$streamHandler->setFormatter(new LineFormatter("%level_name%: %message%\n", null, false, true));
             $monolog->pushHandler($streamHandler);
+            $monolog->pushHandler(new SyslogHandler($this->getAppName(), LOG_USER, Logger::DEBUG));
             if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
-                $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::WARNING));
+                $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG));
             }
             if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
                 $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
