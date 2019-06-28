@@ -14,7 +14,7 @@ use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogHandler;
 use Monolog\Logger;
-use Predis\Client as PredisClient;
+use Predis\Client as Redis;
 use SebastianBergmann\Diff\Differ;
 use Gone\AppCore\Exceptions\DbConfigException;
 use Gone\AppCore\Router\Route;
@@ -50,7 +50,7 @@ class App
         'HttpClient'       => \GuzzleHttp\Client::class,
         'Faker'            => \Faker\Generator::class,
         'Environment'      => EnvironmentService::class,
-        'Redis'            => PredisClient::class,
+        'Redis'            => Redis::class,
         'Monolog'          => \Monolog\Logger::class,
         'Gone\AppCore\Logger' => \Monolog\Logger::class,
     ];
@@ -282,7 +282,7 @@ class App
             return $redisConfig;
         };
 
-        $this->container[\Predis\Client::class] = function (Slim\Container $c) {
+        $this->container[Redis::class] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
             $environment = $this->getContainer()->get(EnvironmentService::class);
             $redisConfig = $c->get("RedisConfig");
@@ -295,7 +295,7 @@ class App
                     'database' => $environment->get('REDIS_DATABASE_INDEX'),
                 ];
             }
-            return new \Predis\Client($redisConfig, $redisOptions);
+            return new Redis($redisConfig, $redisOptions);
         };
 
         $this->container[\Monolog\Logger::class] = function (Slim\Container $c) {
