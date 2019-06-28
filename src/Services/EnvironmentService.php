@@ -10,15 +10,10 @@ class EnvironmentService
     /** @var array */
     protected $environmentVariables;
 
-    /** @var AutoConfigurationService */
-    protected $autoConfigurationService;
-
     protected $cacheFile = "/tmp/.configcache.yml";
 
     public function __construct(
-        AutoConfigurationService $autoConfigurationService
     ) {
-        $this->autoConfigurationService = $autoConfigurationService;
         $this->rebuildEnvironmentVariables();
     }
 
@@ -39,21 +34,14 @@ class EnvironmentService
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
-            try {
-                $autoConfiguration                              = $this->autoConfigurationService->isGondalezConfigurationPresent() ? $this->autoConfigurationService->getConfiguration() : [];
-                $this->environmentVariables                     = array_merge($autoConfiguration, $this->environmentVariables);
-                $this->environmentVariables['GONDALEZ_ENABLED'] = $this->autoConfigurationService->isGondalezConfigurationPresent() ? 'Yes' : 'No';
-                ksort($this->environmentVariables);
-                if (php_sapi_name() != 'cli') {
-                    file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
-                    chmod($this->cacheFile, 0777);
-                }
-            } catch (TemporaryAutoConfigurationException $temporaryAutoConfigurationException) {
-                // Try again later!
-                $this->environmentVariables['GONDALEZ_FAULT'] = $temporaryAutoConfigurationException->getMessage();
-            }
+
+			ksort($this->environmentVariables);
+
+			if (php_sapi_name() != 'cli') {
+				file_put_contents($this->cacheFile, Yaml::dump($this->environmentVariables));
+				chmod($this->cacheFile, 0777);
+			}
         }
-        ksort($this->environmentVariables);
 
         // Generate some convenience envvars that will help us.
         if (isset($this->environmentVariables['HTTP_HOST'])) {
