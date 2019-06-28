@@ -17,7 +17,6 @@ use Monolog\Logger;
 use Predis\Client as PredisClient;
 use SebastianBergmann\Diff\Differ;
 use Gone\AppCore\Exceptions\DbConfigException;
-use Gone\AppCore\Monolog\LumberjackHandler;
 use Gone\AppCore\Router\Route;
 use Gone\AppCore\Router\Router;
 use Gone\AppCore\Services\AutoConfigurationService;
@@ -332,9 +331,6 @@ class App
             }
             if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
                 $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
-            }
-            if ($environment->isSet('LUMBERJACK_HOST')) {
-                $monolog->pushHandler(new LumberjackHandler(rtrim($environment->get('LUMBERJACK_HOST'), "/") . "/v1/log", $environment->get('LUMBERJACK_API_KEY')));
             }
             if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
                 $monolog->pushHandler(
