@@ -246,16 +246,8 @@ class App
             return $client;
         };
 
-        $this->container[AutoConfigurationService::class] = function (Slim\Container $c) {
-            return new AutoConfigurationService(
-                $c->get('HttpClient')
-            );
-        };
-
         $this->container[EnvironmentService::class] = function (Slim\Container $c) {
-            $environment = new EnvironmentService(
-                $c->get(AutoConfigurationService::class)
-            );
+            $environment = new EnvironmentService();
             return $environment;
         };
 
