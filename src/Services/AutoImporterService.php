@@ -6,6 +6,7 @@ use Gone\AppCore\App;
 use Gone\AppCore\Db;
 use Gone\AppCore\DbConfig;
 use Gone\AppCore\Exceptions\AutoImporterException;
+use Gone\AppCore\Exceptions\DbException;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Adapter\Driver\Pdo\Result;
 
@@ -21,6 +22,8 @@ class AutoImporterService
     private $updaterService;
 
     private $sqlPaths = [];
+
+    private $error;
 
     public function __construct(
         Db $db,
@@ -67,6 +70,7 @@ class AutoImporterService
             $this->applyScript($sqlFiles);
         }
     }
+
     public function applyScript($sqlFile)
     {
         echo " > Running {$sqlFile}...";
@@ -80,13 +84,18 @@ class AutoImporterService
         }
 
         if (!$alreadyApplied) {
-            $this->runFile($sqlFile);
-            $update = $this->updaterService->getNewModelInstance();
-            $update
-                ->setFile($sqlFile)
-                ->setDateApplied(date("Y-m-d H:i:s"))
-                ->save();
-            echo " [DONE]\n";
+            if ($this->runFile($sqlFile)) {
+                ;
+                $update = $this->updaterService->getNewModelInstance();
+                $update
+                    ->setFile($sqlFile)
+                    ->setDateApplied(date("Y-m-d H:i:s"))
+                    ->save();
+                echo " [DONE]\n";
+            } else {
+                echo " [FAILED!]\n";
+                throw new DbException($this->error);
+            }
         } else {
             echo " [SKIPPED]\n";
         }
@@ -132,7 +141,7 @@ class AutoImporterService
         }
     }
 
-    private function runFile($sqlFile)
+    private function runFile($sqlFile) : bool
     {
         /** @var DbConfig $dbConfig */
         $dbConfig = App::Instance(false)->getContainer()->get(\Gone\AppCore\DbConfig::class);
@@ -145,9 +154,19 @@ class AutoImporterService
             $connection = reset($configs);
         }
 
-        $importCommand = "mysql -u {$connection['username']} -h {$connection['hostname']} -p{$connection['password']} {$connection['database']} < {$sqlFile}  2>&1 | grep -v \"Warning: Using a password\"";
+        $importCommand = "mysql -u {$connection['username']} -h {$connection['hostname']} -p{$connection['password']} {$connection['database']} < {$sqlFile}  2>&1";
         ob_start();
-        exec($importCommand);
+        exec($importCommand, $importOutput, $importReturnVar);
         ob_end_clean();
+        foreach ($importOutput as $k => $v) {
+            if (stripos($v, "Using a password on the command line interface") !== false) {
+                unset($importOutput[$k]);
+            }
+        }
+        if ($importReturnVar != 0) {
+            $this->error = implode("\n", $importOutput);
+        }
+
+        return ($importReturnVar == 0);
     }
 }
