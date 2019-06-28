@@ -29,8 +29,6 @@ class EnvironmentService
         if (file_exists($this->cacheFile) && php_sapi_name() != 'cli') {
             $this->environmentVariables = Yaml::parse(file_get_contents($this->cacheFile));
         } else {
-            $this->autoConfigurationService->setEnvironmentService($this);
-
             foreach (array_merge($_SERVER, $_ENV) as $key => $value) {
                 $this->environmentVariables[$key] = $value;
             }
