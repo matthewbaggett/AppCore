@@ -1,28 +1,18 @@
 <?php
 namespace Gone\AppCore;
 
-use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\Adapter\Apc\ApcCachePool;
 use Cache\Adapter\Apcu\ApcuCachePool;
 use Cache\Adapter\Chain\CachePoolChain;
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use Cache\Adapter\Predis\PredisCachePool;
 use DebugBar\Bridge\MonologCollector;
 use DebugBar\DebugBar;
 use DebugBar\StandardDebugBar;
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
-use Monolog\Handler\NullHandler;
-use Monolog\Handler\RedisHandler;
-use Monolog\Handler\SlackHandler;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\SyslogHandler;
-use Monolog\Logger;
-use Predis\Client as Redis;
-use SebastianBergmann\Diff\Differ;
-use Gone\AppCore\Exceptions;
 use Gone\AppCore\Router\Route;
 use Gone\AppCore\Router\Router;
-use Gone\AppCore\Services\AutoConfigurationService;
 use Gone\AppCore\Services\EnvironmentService;
 use Gone\AppCore\Services\EventLoggerService;
 use Gone\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
@@ -31,6 +21,14 @@ use Gone\AppCore\Zend\Profiler;
 use Gone\Session\Session;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
+use Monolog\Handler\NullHandler;
+use Monolog\Handler\RedisHandler;
+use Monolog\Handler\SlackHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
+use Monolog\Logger;
+use Predis\Client as Redis;
+use SebastianBergmann\Diff\Differ;
 use Slim;
 
 class App

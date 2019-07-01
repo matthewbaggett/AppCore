@@ -56,13 +56,13 @@ abstract class CrudController extends Controller
         }
         return $this->jsonResponse(
             [
-                    'Status'                          => 'Fail',
-                    'Reason'                          => sprintf(
-                        "No such %s found with id %s",
-                        strtolower($this->service->getTermSingular()),
-                        $args['id']
-                    )
-                ],
+                'Status'                          => 'Fail',
+                'Reason'                          => sprintf(
+                    "No such %s found with id %s",
+                    strtolower($this->service->getTermSingular()),
+                    $args['id']
+                )
+            ],
             $request,
             $response
         );
@@ -107,13 +107,13 @@ abstract class CrudController extends Controller
         }
         return $this->jsonResponse(
             [
-                    'Status'                          => 'Fail',
-                    'Reason'                          => sprintf(
-                        "No such %s found with id %s",
-                        strtolower($this->service->getTermSingular()),
-                        $args['id']
-                    )
-                ],
+                'Status'                          => 'Fail',
+                'Reason'                          => sprintf(
+                    "No such %s found with id %s",
+                    strtolower($this->service->getTermSingular()),
+                    $args['id']
+                )
+            ],
             $request,
             $response
         );

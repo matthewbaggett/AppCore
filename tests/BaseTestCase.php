@@ -4,10 +4,10 @@ namespace Gone\AppCore\Test;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Faker\Provider;
-use PHPUnit\Framework\TestCase;
 use Gone\AppCore\App;
 use Gone\AppCore\Db;
 use Gone\AppCore\Services\EnvironmentService;
+use PHPUnit\Framework\TestCase;
 use Slim\Container;
 
 abstract class BaseTestCase extends TestCase

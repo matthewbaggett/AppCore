@@ -2,9 +2,9 @@
 
 namespace Gone\AppCore\Zend;
 
+use Gone\AppCore\Interfaces\QueryStatisticInterface;
 use Gone\UUID\UUID;
 use Monolog\Logger;
-use Gone\AppCore\Interfaces\QueryStatisticInterface;
 use Zend\Db\Adapter\ParameterContainer;
 use Zend\Db\Adapter\Profiler\ProfilerInterface;
 

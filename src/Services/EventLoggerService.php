@@ -1,10 +1,10 @@
 <?php
 namespace Gone\AppCore\Services;
 
+use Gone\Session\Session;
 use Monolog\Logger;
 use Predis\Client;
 use SebastianBergmann\Diff\Differ;
-use Gone\Session\Session;
 
 class EventLoggerService
 {

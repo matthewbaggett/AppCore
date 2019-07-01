@@ -1,8 +1,8 @@
 <?php
 namespace Gone\AppCore\Traits;
 
-use Predis\Client as Redis;
 use Gone\AppCore\App;
+use Predis\Client as Redis;
 
 trait RedisAccessTrait
 {

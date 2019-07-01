@@ -1,7 +1,6 @@
 <?php
 namespace Gone\AppCore\Services;
 
-use Gone\AppCore\Exceptions\TemporaryAutoConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
 class EnvironmentService

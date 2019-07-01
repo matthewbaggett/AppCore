@@ -1,8 +1,8 @@
 <?php
 namespace Gone\AppCore\Test;
 
-use Psr\Http\Message\ResponseInterface;
 use Gone\AppCore\Router\Router;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Environment;
 use Slim\Http\Headers;
 use Slim\Http\Request;
