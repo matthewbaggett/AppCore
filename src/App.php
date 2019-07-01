@@ -1,13 +1,16 @@
 <?php
 namespace Gone\AppCore;
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use Cache\Adapter\Apc\ApcCachePool;
+use Cache\Adapter\Apcu\ApcuCachePool;
+use Cache\Adapter\Chain\CachePoolChain;
+use Cache\Adapter\Predis\PredisCachePool;
 use DebugBar\Bridge\MonologCollector;
 use DebugBar\DebugBar;
 use DebugBar\StandardDebugBar;
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
-use Gone\Twig\InflectionExtension;
-use Gone\Twig\TransformExtension;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
@@ -16,7 +19,7 @@ use Monolog\Handler\SyslogHandler;
 use Monolog\Logger;
 use Predis\Client as Redis;
 use SebastianBergmann\Diff\Differ;
-use Gone\AppCore\Exceptions\DbConfigException;
+use Gone\AppCore\Exceptions;
 use Gone\AppCore\Router\Route;
 use Gone\AppCore\Router\Router;
 use Gone\AppCore\Services\AutoConfigurationService;
@@ -26,6 +29,8 @@ use Gone\AppCore\Twig\Extensions\ArrayUniqueTwigExtension;
 use Gone\AppCore\Twig\Extensions\FilterAlphanumericOnlyTwigExtension;
 use Gone\AppCore\Zend\Profiler;
 use Gone\Session\Session;
+use Gone\Twig\InflectionExtension;
+use Gone\Twig\TransformExtension;
 use Slim;
 
 class App
@@ -53,6 +58,7 @@ class App
         'Redis'            => Redis::class,
         'Monolog'          => \Monolog\Logger::class,
         'Gone\AppCore\Logger' => \Monolog\Logger::class,
+        'Cache'            => CachePoolChain::class,
     ];
 
     protected $routePaths = [
@@ -221,7 +227,7 @@ class App
 
                 return $dbConfig;
             }
-            throw new DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
+            throw new Exceptions\DbConfigException("No Database configuration present, but DatabaseConfig object requested from DI");
         };
 
         $this->container[\Faker\Generator::class] = function (Slim\Container $c) {
@@ -263,7 +269,7 @@ class App
                 $redisConfig = parse_url($environment->get('REDIS_HOST'));
             } else {
                 $environment->clearCache();
-                throw new \Exception("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
+                throw new Exceptions\RedisConfigException("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
             }
 
             // Hack because 'redis' gets interpreted as a path not a host.
@@ -296,6 +302,29 @@ class App
                 ];
             }
             return new Redis($redisConfig, $redisOptions);
+        };
+
+        $this->container[CachePoolChain::class] = function (Slim\Container $c) {
+            $caches = [];
+
+            // If apc/apcu present, add it to the pool
+            if (function_exists('apcu_add')) {
+                $caches[] = new ApcuCachePool();
+            } elseif (function_exists('apc_add')) {
+                $caches[] = new ApcCachePool();
+            }
+
+            // If Redis is configured, add it to the pool.
+            try {
+                $c->get('RedisConfig');
+                $caches[] = new PredisCachePool($c->get(Redis::class));
+            } catch (RedisConfigException $rce) {
+                // No redis.
+            }
+
+            $caches[] = new ArrayCachePool();
+
+            return new CachePoolChain($caches);
         };
 
         $this->container[\Monolog\Logger::class] = function (Slim\Container $c) {

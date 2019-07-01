@@ -41,7 +41,13 @@
         "middlewares/minifier": "^1.0",
         "marcusschwarz/lesserphp": "^0.5.2",
         "gone.io/twig-extension-transform": "^1.0",
-        "gone.io/twig-extension-inflection": "^1.0"
+        "gone.io/twig-extension-inflection": "^1.0",
+        "cache/predis-adapter": "^1.0",
+        "cache/chain-adapter": "^1.0",
+        "cache/apc-adapter": "^1.0",
+        "cache/apcu-adapter": "^1.0",
+        "cache/array-adapter": "^1.0",
+        "cache/namespaced-cache": "^1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "3.*",
