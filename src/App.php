@@ -422,11 +422,11 @@ class App
         ##$this->app->add(new \Middlewares\Geolocation());
         $this->app->add(new \Middlewares\TrailingSlash());
         $this->app->add(new Middleware\JSONResponseLinter());
-        #$this->app->add(new \Middlewares\Whoops());
+        $this->app->add(new \Middlewares\Whoops());
         #$this->app->add(new \Middlewares\CssMinifier());
         #$this->app->add(new \Middlewares\JsMinifier());
         #$this->app->add(new \Middlewares\HtmlMinifier());
-        #$this->app->add(new \Middlewares\GzipEncoder());
+        $this->app->add(new \Middlewares\GzipEncoder());
     }
 
     /**
