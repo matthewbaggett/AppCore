@@ -16,9 +16,9 @@ class Db
         $this->pool = $config->getAdapterPool();
     }
 
-    public static function isMySQLConfigured() : bool
+    public function isMySQLConfigured() : bool
     {
-        return self::$instance instanceof Db && count(self::$instance->getPool()) > 0;
+        return count($this->getPool()) > 0;
     }
 
     public static function clean()
