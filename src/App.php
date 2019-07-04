@@ -348,7 +348,7 @@ class App
             if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
                 $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG));
             }
-            if ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST')) {
+            if ($environment->isSet('REDIS_LOGGING_ENABLED') && strtolower($environment->get('REDIS_LOGGING_ENABLED')) == 'yes' && ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST'))) {
                 $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
             }
             if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
