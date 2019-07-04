@@ -57,11 +57,12 @@ abstract class BaseTestCase extends TestCase
 
         // If MySQL has been configured, enable a transaction that we can rollback later.
         if (self::isTestDatabaseEnabled()) {
-            App::Instance()->getContainer()->get(Db::class);
+            /** @var Db $db **/
+            $db = App::Instance()->getContainer()->get(Db::class);
 
             // If MySQL has been configured, begin transaction.
-            if (Db::isMySQLConfigured()) {
-                foreach (Db::getInstance()->getDatabases() as $name => $database) {
+            if ($db->isMySQLConfigured()) {
+                foreach ($db->getDatabases() as $name => $database) {
                     $database->driver->getConnection()->beginTransaction();
                 }
             }
@@ -75,8 +76,10 @@ abstract class BaseTestCase extends TestCase
     {
         // If MySQL has been configured, roll back transaction.
         if (self::isTestDatabaseEnabled()) {
-            if (Db::isMySQLConfigured()) {
-                foreach (Db::getInstance()->getDatabases() as $name => $database) {
+            /** @var Db $db **/
+            $db = App::Instance()->getContainer()->get(Db::class);
+            if ($db->isMySQLConfigured()) {
+                foreach ($db->getDatabases() as $name => $database) {
                     $database->driver->getConnection()->rollback();
                 }
             }

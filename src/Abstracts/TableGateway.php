@@ -367,7 +367,8 @@ abstract class TableGateway extends ZendTableGateway
     {
         $select = $this->getSql()->select();
         $select->columns(['total' => new Expression('IFNULL(COUNT(*),0)')]);
-        if (count($wheres) > 0) {
+        
+        if (is_array($wheres) && count($wheres) > 0) {
             foreach ($wheres as $where) {
                 $select->where($where);
             }
