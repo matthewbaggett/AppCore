@@ -60,7 +60,7 @@
     "autoload": {
         "psr-4": {
             "Gone\\AppCore\\": "src",
-            "Gone\\AppCore\\Test\\": "tests/"
+            "Gone\\AppCore\\Tests\\": "tests/"
         }
     },
     "bin": [
