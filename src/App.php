@@ -11,6 +11,7 @@ use DebugBar\DebugBar;
 use DebugBar\StandardDebugBar;
 use Faker\Factory as FakerFactory;
 use Faker\Provider;
+use Gone\AppCore\Redis\Redis;
 use Gone\AppCore\Router\Route;
 use Gone\AppCore\Router\Router;
 use Gone\AppCore\Services\EnvironmentService;
@@ -28,7 +29,6 @@ use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogHandler;
 use Monolog\Logger;
-use Predis\Client as Redis;
 use SebastianBergmann\Diff\Differ;
 use Slim;
 
@@ -254,53 +254,6 @@ class App
         $this->container[EnvironmentService::class] = function (Slim\Container $c) {
             $environment = new EnvironmentService();
             return $environment;
-        };
-
-        $this->container['RedisConfig'] = function (Slim\Container $c) {
-            // Get environment variables.
-            /** @var EnvironmentService $environment */
-            $environment = $this->getContainer()->get(EnvironmentService::class);
-
-            // Determine where Redis is.
-            if ($environment->isSet('REDIS_PORT')) {
-                $redisConfig = parse_url($environment->get('REDIS_PORT'));
-            } elseif ($environment->isSet('REDIS_HOST')) {
-                $redisConfig = parse_url($environment->get('REDIS_HOST'));
-            } else {
-                $environment->clearCache();
-                throw new Exceptions\RedisConfigException("No REDIS_PORT or REDIS_HOST defined in environment variables, cannot connect to Redis!");
-            }
-
-            // Hack because 'redis' gets interpreted as a path not a host.
-            if (count($redisConfig) == 1 && isset($redisConfig['path'])) {
-                $redisConfig['host'] = $redisConfig['path'];
-                unset($redisConfig['path']);
-            }
-
-            // Allow for overrides
-            if ($environment->isSet('REDIS_OVERRIDE_HOST')) {
-                $redisConfig['host'] = $environment->get('REDIS_OVERRIDE_HOST');
-            }
-            if ($environment->isSet('REDIS_OVERRIDE_PORT')) {
-                $redisConfig['port'] = $environment->get('REDIS_OVERRIDE_PORT');
-            }
-            return $redisConfig;
-        };
-
-        $this->container[Redis::class] = function (Slim\Container $c) {
-            /** @var EnvironmentService $environment */
-            $environment = $this->getContainer()->get(EnvironmentService::class);
-            $redisConfig = $c->get("RedisConfig");
-            $redisOptions = [];
-            if ($environment->isSet('REDIS_PREFIX')) {
-                $redisOptions['prefix'] = $environment->get('REDIS_PREFIX') . ":";
-            }
-            if ($environment->isSet('REDIS_DATABASE_INDEX')) {
-                $redisOptions['parameters'] = [
-                    'database' => $environment->get('REDIS_DATABASE_INDEX'),
-                ];
-            }
-            return new Redis($redisConfig, $redisOptions);
         };
 
         $this->container[CachePoolChain::class] = function (Slim\Container $c) {
