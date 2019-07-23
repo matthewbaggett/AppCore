@@ -4,14 +4,27 @@ namespace Gone\AppCore\Controllers;
 use Gone\AppCore\Abstracts\Controller;
 use Gone\AppCore\App;
 use Gone\AppCore\Router\Router;
+use Monolog\Logger;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
 class ApiListController extends Controller
 {
+    /** @var Logger */
+    private $logger;
+
+    public function __construct(
+        Logger $logger
+    )
+    {
+        $this->logger = $logger;
+    }
+
     public function listAllRoutes(Request $request, Response $response, $args)
     {
+        $this->logger->info("listAllRoutes requested");
+
         if ($request->getContentType() == "application/json" || $request->getHeader("Accept")[0] == "application/json") {
             $json           = [];
             $json['Status'] = "Okay";
