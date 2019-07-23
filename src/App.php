@@ -325,6 +325,48 @@ class App
             return new CachePoolChain($caches);
         };
 
+        $this->container["MonologStreamHandler"] = function (Slim\Container $c){
+            return new StreamHandler('php://stdout', Logger::DEBUG);
+        };
+
+        $this->container["MonologSyslogHandler"] = function (Slim\Container $c){
+            return new SyslogHandler($this->getAppName(), LOG_USER, Logger::DEBUG);
+        };
+
+        $this->container["MonologFilesystemLogHandler"] = function (Slim\Container $c){
+            if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
+                return new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG);
+            }
+            return false;
+        };
+
+        $this->container["MonologRedisHandler"] = function (Slim\Container $c){
+            /** @var EnvironmentService $environment */
+            $environment = $this->getContainer()->get(EnvironmentService::class);
+
+            if ($environment->isSet('REDIS_LOGGING_ENABLED') && strtolower($environment->get('REDIS_LOGGING_ENABLED')) == 'yes' && ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST'))) {
+                return new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG);
+            }
+            return false;
+        };
+
+        $this->container["MonologSlackHandler"] = function (Slim\Container $c){
+            /** @var EnvironmentService $environment */
+            $environment = $this->getContainer()->get(EnvironmentService::class);
+
+            if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
+                return new SlackHandler(
+                    $environment->get('SLACK_TOKEN'),
+                    $environment->get('SLACK_CHANNEL'),
+                    APP_NAME,
+                    true,
+                    null,
+                    \Monolog\Logger::CRITICAL
+                );
+            }
+            return false;
+        };
+
         $this->container[\Monolog\Logger::class] = function (Slim\Container $c) {
             /** @var EnvironmentService $environment */
             $environment = $this->getContainer()->get(EnvironmentService::class);
@@ -341,28 +383,15 @@ class App
                 }
             }
 
-            $streamHandler = new StreamHandler('php://stdout', Logger::DEBUG);
-            //$streamHandler->setFormatter(new LineFormatter("%level_name%: %message%\n", null, false, true));
-            $monolog->pushHandler($streamHandler);
-            $monolog->pushHandler(new SyslogHandler($this->getAppName(), LOG_USER, Logger::DEBUG));
-            if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
-                $monolog->pushHandler(new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG));
+            $monologHandlers = array_filter($c->keys(), function($item){ return fnmatch("Monolog*Handler", $item); });
+
+            foreach($monologHandlers as $handlerDiItemName){
+                $handler = $c->get($handlerDiItemName);
+                if($handler !== false){
+                    $monolog->pushHandler($handler);
+                }
             }
-            if ($environment->isSet('REDIS_LOGGING_ENABLED') && strtolower($environment->get('REDIS_LOGGING_ENABLED')) == 'yes' && ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST'))) {
-                $monolog->pushHandler(new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG));
-            }
-            if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
-                $monolog->pushHandler(
-                    new SlackHandler(
-                        $environment->get('SLACK_TOKEN'),
-                        $environment->get('SLACK_CHANNEL'),
-                        APP_NAME,
-                        true,
-                        null,
-                        \Monolog\Logger::CRITICAL
-                    )
-                );
-            }
+
             return $monolog;
         };
 
