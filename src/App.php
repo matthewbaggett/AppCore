@@ -21,6 +21,7 @@ use Gone\AppCore\Zend\Profiler;
 use Gone\Session\Session;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RedisHandler;
 use Monolog\Handler\SlackHandler;
@@ -325,17 +326,32 @@ class App
             return new CachePoolChain($caches);
         };
 
+        $this->container["MonologFormatter"] = function (Slim\Container $c) {
+            /** @var EnvironmentService $environment */
+            $environment = $c->get(EnvironmentService::class);
+            return (
+                new LineFormatter(
+                    // the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%"
+                    $environment->get("MONOLOG_FORMAT", "[%datetime%] %channel%.%level_name%: %message% %context% %extra%"),
+                    "Y n j, g:i a"
+                )
+            );
+        };
+
         $this->container["MonologStreamHandler"] = function (Slim\Container $c){
-            return new StreamHandler('php://stdout', Logger::DEBUG);
+            return (new StreamHandler('php://stdout', Logger::DEBUG))
+                ->setFormatter($c->get("MonologFormatter"));
         };
 
         $this->container["MonologSyslogHandler"] = function (Slim\Container $c){
-            return new SyslogHandler($this->getAppName(), LOG_USER, Logger::DEBUG);
+            return (new SyslogHandler($this->getAppName(), LOG_USER, Logger::DEBUG))
+                ->setFormatter($c->get("MonologFormatter"));
         };
 
         $this->container["MonologFilesystemLogHandler"] = function (Slim\Container $c){
             if (file_exists(APP_ROOT . "/logs") && is_writable(APP_ROOT . "/logs")) {
-                return new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG);
+                return (new StreamHandler(APP_ROOT . "/logs/" . $this->getAppName() . "." . date("Y-m-d") . ".log", \Monolog\Logger::DEBUG))
+                    ->setFormatter($c->get("MonologFormatter"));
             }
             return false;
         };
@@ -345,7 +361,8 @@ class App
             $environment = $this->getContainer()->get(EnvironmentService::class);
 
             if ($environment->isSet('REDIS_LOGGING_ENABLED') && strtolower($environment->get('REDIS_LOGGING_ENABLED')) == 'yes' && ($environment->isSet('REDIS_PORT') || $environment->isSet('REDIS_HOST'))) {
-                return new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG);
+                return (new RedisHandler($this->getContainer()->get(\Predis\Client::class), "Logs", \Monolog\Logger::DEBUG))
+                    ->setFormatter($c->get("MonologFormatter"));
             }
             return false;
         };
@@ -355,14 +372,17 @@ class App
             $environment = $this->getContainer()->get(EnvironmentService::class);
 
             if ($environment->isSet('SLACK_TOKEN') && $environment->isSet('SLACK_CHANNEL')) {
-                return new SlackHandler(
-                    $environment->get('SLACK_TOKEN'),
-                    $environment->get('SLACK_CHANNEL'),
-                    APP_NAME,
-                    true,
-                    null,
-                    \Monolog\Logger::CRITICAL
-                );
+                return (
+                    new SlackHandler(
+                        $environment->get('SLACK_TOKEN'),
+                        $environment->get('SLACK_CHANNEL'),
+                        APP_NAME,
+                        true,
+                        null,
+                        \Monolog\Logger::CRITICAL
+                        )
+                    )
+                    ->setFormatter($c->get("MonologFormatter"));
             }
             return false;
         };
@@ -389,6 +409,7 @@ class App
                 $handler = $c->get($handlerDiItemName);
                 if($handler !== false){
                     $monolog->pushHandler($handler);
+                    #!\Kint::dump($handlerDiItemName, $handler->getFormatter());
                 }
             }
 
