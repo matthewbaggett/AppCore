@@ -75,6 +75,6 @@ class RedisClusterTest extends BaseTestCase
         $this->assertCount(count($data),  $this->redis->keys("{{$prefix}}:*"));
     }
 
-    
+
     
 }
