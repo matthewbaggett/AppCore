@@ -1,9 +1,11 @@
+SHELL := /bin/bash
+
 ifndef CI_PROJECT_NAME
-CI_PROJECT_NAME:=Facetizer
+CI_PROJECT_NAME:=$(shell basename $(PWD))
 endif
 
 ifndef CI_COMMIT_SHORT_SHA
-CI_COMMIT_SHORT_SHA:=$(shell git rev-parse --short HEAD)
+CI_COMMIT_SHORT_SHA := $(shell git rev-parse --short HEAD)
 endif
 
 all: clean setup test clean
