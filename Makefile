@@ -24,7 +24,8 @@ setup:
 
 test:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
-		exec test vendor/phpunit/phpunit/phpunit
+		exec -T \
+			test vendor/phpunit/phpunit/phpunit
 
 clean:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
@@ -35,9 +36,10 @@ dev-test:
 		&& (echo "Starting Services" && $(call setup)) \
 		|| echo "Services already running"
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
-		exec test vendor/phpunit/phpunit/phpunit \
-			--stop-on-failure --stop-on-error \
-			--no-coverage
+		exec -T \
+			test vendor/phpunit/phpunit/phpunit \
+				--stop-on-failure --stop-on-error \
+				--no-coverage
 
 dev-logs:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
