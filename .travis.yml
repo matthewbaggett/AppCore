@@ -1,0 +1,18 @@
+language: php
+
+services:
+  - docker
+
+before_install:
+  - make clean
+  - make setup
+
+after_script:
+  - make clean
+
+script:
+  - make test
+
+notifications:
+  email:
+    - matthew@baggett.me
