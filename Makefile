@@ -19,6 +19,9 @@ define setup
 	sleep 10
 endef
 
+setup:
+	$(call setup)
+
 test:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		exec test vendor/phpunit/phpunit/phpunit
