@@ -5,22 +5,29 @@ use Predis;
 
 class MSetMGetTest extends RedisTest
 {
-    const ITERATIONS_MIN = 2;
-    const ITERATIONS_MAX = 2;
+    const ITERATIONS_MIN = 200;
+    const ITERATIONS_MAX = 800;
 
     public function testMSet()
     {
-        $prefix = "k-" . $this->getFaker()->word;
-        $suffixes = $this->getFaker()->words($this->getFaker()->numberBetween(self::ITERATIONS_MIN, self::ITERATIONS_MAX));
+        $numberToGenerate = $this->getFaker()->numberBetween(self::ITERATIONS_MIN, self::ITERATIONS_MAX);
 
-        foreach($suffixes as $suffix){
+        $numberToGenerate = 2000;
+        $prefix = "k-" . $this->getFaker()->word;
+
+        for($i = 0; $i < $numberToGenerate; $i++){
+            $words = $this->getFaker()->words(5);
+            shuffle($words);
+            $suffix = "s-" . implode("-", $words);
             $data["{{$prefix}}:{$suffix}"] = "v-" . $this->getFaker()->numberBetween(10000,99999);
         }
+        exit;
 
         ksort($data);
 
         /** @var Predis\Response\Status $status */
         $status = $this->redis->mset($data);
+        exit;
 
         $this->assertInstanceOf(Predis\Response\Status::class, $status);
         $this->assertEquals("OK", $status->getPayload());

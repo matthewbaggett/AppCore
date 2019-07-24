@@ -76,15 +76,25 @@ class Redis implements ClientInterface
                 ->setReadOnly(true);
         }
 
-        if (!self::$clusterConfiguration || self::$clusterConfigurationLastUpdated <= time() - self::CLUSTER_CONFIGURATION_MAX_AGE_SECONDS) {
+
             $this->configureCluster();
-        }
+
 
         #!\Kint::dump(self::$clusterConfiguration, "Configuration is " . (self::$clusterConfigurationLastUpdated - time()) . " seconds old");
     }
 
+    protected function clearClusterConfig() : void
+    {
+        self::$clusterConfiguration = null;
+        self::$clusterConfigurationLastUpdated = null;
+    }
+
     protected function configureCluster(): void
     {
+        if (!(!self::$clusterConfiguration || self::$clusterConfigurationLastUpdated <= time() - self::CLUSTER_CONFIGURATION_MAX_AGE_SECONDS)) {
+            return;
+        }
+
         $client = $this->getClient(self::CLIENTS_WRITEONLY);
         $nodes = array_filter(
             explode(
@@ -99,16 +109,31 @@ class Redis implements ClientInterface
         );
         self::$clusterConfiguration = [];
         foreach ($nodes as $node) {
-            list($id, $connection, $flags, $slaveOfId, $pingSent, $pongRecv, $configEpoch, $linkState) = explode(" ", $node);
+            // Dirty hack to make the number of elements in each node irrelevent.
+            $node = $node . " . . . . .";
+            $explodedNode = explode(" ", $node);
+            list($id, $connection, $flags, $slaveOfId, $pingSent, $pongRecv, $configEpoch, $linkState, $supportedHashRange) = $explodedNode;
+
+
+            // Split out the flags
             $flags = explode(",", $flags);
+            // And decode the type from it
             $type = in_array("master", $flags) ? 'master' : 'slave';
+
+            // Split our supportedHashRsange if we've got one.
+            if(isset($supportedHashRange) && stripos($supportedHashRange, "-") !== false) {
+                list($hashMin, $hashMax) = explode("-", $supportedHashRange, 2);
+            }
+
             self::$clusterConfiguration[$id] = [
                 "id" => $id,
-                "connection" => explode("@", $connection, 2)[0],
+                "connection" => "tcp://" . explode("@", $connection, 2)[0],
                 "type" => $type,
                 "slaveOf" => $slaveOfId != '-' ? $slaveOfId : null,
                 "configEpoch" => $configEpoch,
                 "linkState" => $linkState,
+                "hashMin" => $hashMin ?? null,
+                "hashMax" => $hashMax ?? null,
             ];
         }
 
@@ -117,6 +142,32 @@ class Redis implements ClientInterface
         });
 
         self::$clusterConfigurationLastUpdated = time();
+    }
+
+    /**
+     * @param int $hash
+     * @return Client
+     * @throws Exception
+     */
+    public function getServerByHash(int $hash) : Client
+    {
+        $this->clearClusterConfig();
+
+        // Check for Update to Cluster information, if its time
+        $this->configureCluster();
+
+        // Loop over our cluster information, and determine if we're in between the hashmins and maxes.
+        foreach(self::$clusterConfiguration as $clusterNodeConfiguration){
+            if(isset($clusterNodeConfiguration['hashMin']) && isset($clusterNodeConfiguration['hashMax'])){
+                if($hash >= $clusterNodeConfiguration['hashMin'] && $hash <= $clusterNodeConfiguration['hashMax']){
+                    //\Kint::dump($clusterNodeConfiguration['connection']);
+                    return $this->getClientByAddress($clusterNodeConfiguration['connection']);
+                }
+            }
+        }
+
+        // If we've gotten this far, something is chronically borked.
+        throw new Exception("Cannot find a Redis Server that is accepting hash {$hash}...");
     }
 
     protected function getClient($mode = self::CLIENTS_ALL): Client
@@ -204,6 +255,48 @@ class Redis implements ClientInterface
     public function __call($method, $arguments)
     {
         \Kint::dump($method, $arguments);
+
+        if(isset($arguments[0])) {
+            if(isset($arguments[0][0])) {
+                $affectedKeys = array_values($arguments[0]);
+            }else{
+                $affectedKeys = array_keys($arguments[0]);
+                $affectedValues = $arguments[0];
+            }
+            \Kint::dump($affectedKeys);
+        }
+
+        // If we have affected keys, lets work out what nodes they go to.
+        if(isset($affectedKeys)){
+            $mappedKeys = [];
+            foreach($affectedKeys as $key){
+                $hash = $this->clusterStrategy->getSlotByKey($key);
+                $server = $this->getServerByHash($hash);
+                $mappedKeys[$key] = array_filter([
+                    'hash' => $hash,
+                    'client' => $server,
+                    'value' => $affectedValues[$key] ?? null,
+                ]);
+            }
+            \Kint::$max_depth = 3;
+            \Kint::dump($mappedKeys);
+        }
+
+        // Okay, so we mapped 'em. Lets create n-nodes iterations of this __call, one for each server affected
+        if(isset($mappedKeys)){
+            $mappedServers = [];
+            foreach ($mappedKeys as $key => $mappedKey) {
+                $mappedServers[$mappedKey['client']->getId()][] = [
+                    'key' => $key,
+                    'value' => $mappedKey['value'] ?? null,
+                    'hash' => $mappedKey['hash']
+                ];
+            }
+            \Kint::dump(
+                $mappedServers,
+                array_keys($mappedServers)
+            );
+        }
 
         $response = false;
 
@@ -348,6 +441,11 @@ class Redis implements ClientInterface
         $movedStatement = explode(" ", $movedStatement);
         $address = "tcp://{$movedStatement[2]}";
 
+        return $this->getClientByAddress($address);
+    }
+
+    protected function getClientByAddress($address) : ?Client
+    {
         foreach ($this->getClients(self::CLIENTS_ALL) as $client) {
             if (in_array($address, $client->getConnectionDetails())) {
                 return $client;
