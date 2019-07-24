@@ -156,29 +156,11 @@ class Redis implements ClientInterface
     public function connect()
     {
         return true;
-
-        $success = ['write' => 0, 'read' => 0];
-        foreach ($this->getAllWriteClients() as $client) {
-            $success['write'] += (int)$client->connect();
-        }
-        foreach ($this->getAllReadClients() as $client) {
-            $success['read'] += (int)$client->connect();
-        }
-        return ($success['write'] >= 1 && $success['read'] >= 1);
     }
 
     public function disconnect()
     {
         return true;
-
-        $success = ['write' => 0, 'read' => 0];
-        foreach ($this->getClients(self::CLIENTS_WRITEONLY) as $client) {
-            $success['write'] += (int)$client->connect();
-        }
-        foreach ($this->getClients(self::CLIENTS_READONLY) as $client) {
-            $success['read'] += (int)$client->connect();
-        }
-        return ($success['write'] == count($this->getClients(self::CLIENTS_WRITEONLY)) && count($this->getClients(self::CLIENTS_READONLY)) >= 1);
     }
 
     public function getConnection()
@@ -196,14 +178,14 @@ class Redis implements ClientInterface
         return $this->getReadableClient()->executeCommand($command);
     }
 
-    public function keys($match = "*")
+    public function keys($match = "*", $count = null)
     {
         $match = str_replace("{", "\\{", $match);
         $match = str_replace("}", "}\\", $match);
         $keys = [];
         foreach($this->getClients(self::CLIENTS_ALL) as $client) {
             //$keys[$client->getHumanId()] = [];
-            foreach (new Iterator\Keyspace($client->getPredis(), $match) as $key) {
+            foreach (new Iterator\Keyspace($client->getPredis(), $match, $count) as $key) {
                 //$keys[$client->getHumanId()][] = $key;
                 $keys[] = $key;
             }
@@ -221,6 +203,8 @@ class Redis implements ClientInterface
 
     public function __call($method, $arguments)
     {
+        \Kint::dump($method, $arguments);
+
         $response = false;
 
         // Log the time call started
@@ -241,13 +225,6 @@ class Redis implements ClientInterface
         $requestAsString = implode(" ", $commandElements);
 
         $perfLog->setQuery($requestAsString);
-
-        // Log our redis activity
-        $this->logger->addInfo(sprintf(
-            "[REDIS %s] %s",
-            $client->getHumanId(),
-            $requestAsString
-        ));
 
         // Try the call, then handle MOVED and READONLY replies.
         try {
@@ -303,11 +280,14 @@ class Redis implements ClientInterface
             }
         }
 
+        // Stop the timer in perfLog.
         $this->perfLog[] = (
             $perfLog
                 ->timerStop()
-
         );
+
+        // Log our redis activity
+        $this->logger->addInfo($perfLog->__toString());
 
         return $response;
     }

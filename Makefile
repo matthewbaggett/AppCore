@@ -8,6 +8,8 @@ ifndef CI_COMMIT_SHORT_SHA
 CI_COMMIT_SHORT_SHA := $(shell git rev-parse --short HEAD)
 endif
 
+dev-test: setup phpunit
+
 all: clean setup test clean
 
 define setup
@@ -20,8 +22,10 @@ define setup
 	sleep 10
 endef
 
-setup: clean
-	$(call setup)
+setup:
+	@[[ -z `docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) ps -q test` ]] \
+		&& (echo "Starting Services" && $(call setup)) \
+		|| echo "Services already running"
 
 test:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
@@ -32,11 +36,7 @@ clean:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		down -v
 
-dev-test:
-	@[[ -z `docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) ps -q test` ]] \
-		&& (echo "Starting Services" && $(call setup)) \
-		|| echo "Services already running"
-
+phpunit:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		exec -T \
 			test vendor/phpunit/phpunit/phpunit \
@@ -46,3 +46,7 @@ dev-test:
 dev-logs:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		logs -f
+
+bash:
+	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
+		exec test bash

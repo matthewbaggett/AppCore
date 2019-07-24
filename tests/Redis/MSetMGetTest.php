@@ -5,14 +5,16 @@ use Predis;
 
 class MSetMGetTest extends RedisTest
 {
+    const ITERATIONS_MIN = 2;
+    const ITERATIONS_MAX = 2;
 
     public function testMSet()
     {
-        $prefix = $this->getFaker()->word;
-        $suffixes = $this->getFaker()->words($this->getFaker()->numberBetween(500,2000));
+        $prefix = "k-" . $this->getFaker()->word;
+        $suffixes = $this->getFaker()->words($this->getFaker()->numberBetween(self::ITERATIONS_MIN, self::ITERATIONS_MAX));
 
         foreach($suffixes as $suffix){
-            $data["{{$prefix}}:{$suffix}"] = $this->getFaker()->numberBetween(10000,99999);
+            $data["{{$prefix}}:{$suffix}"] = "v-" . $this->getFaker()->numberBetween(10000,99999);
         }
 
         ksort($data);

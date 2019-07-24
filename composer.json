@@ -14,6 +14,7 @@
     ],
     "require": {
         "php": "^7.1",
+        "ext-json": "*",
         "slim/slim": "^3.2",
         "gone.io/uuid": "^2.2",
         "gone.io/sessions": "^1.0",
