@@ -1,0 +1,42 @@
+version: "2.4"
+
+networks:
+  default:
+
+services:
+  test:
+    image: gone/php:cli-php7.3
+    volumes:
+      - ./:/app
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: tcp://redis:7000,tcp://redis:7001,tcp://redis:7002
+      REDIS_HOST_SLAVE: tcp://redis:7003,tcp://redis:7004,tcp://redis:7005
+
+  redis:
+    image: grokzen/redis-cluster:5.0.5
+    environment:
+      SENTINEL: "false"
+      STANDALONE: "false"
+    expose:
+      - '7000-7007'
+      - '5000-5002'
+    #ports:
+    #  - '127.110.21.18:6739:7000'
+    #  - '127.110.21.18:7000-7007:7000-7007'
+    #  - '127.110.21.18:5000-5002:5000-5002'
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "7000", "PING"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  redis-monitor:
+    image: redis:3
+    depends_on:
+      redis:
+        condition: service_healthy
+    command: redis-cli -h redis -p 7000 MONITOR

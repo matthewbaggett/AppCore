@@ -14,14 +14,26 @@ class Client {
     /** @var boolean */
     private $readOnly;
 
+    private $connectionDetails = [];
+
+    static private $nameGenerator;
+
+    static private $seedIndex = 0;
+
+    public function __construct()
+    {
+        if(self::$seedIndex === 0){
+            self::$seedIndex = crc32(gethostname());
+        }
+        $this->generateId();
+        self::$seedIndex++;
+    }
+
     /**
      * @return string
      */
     public function getId(): string
     {
-        if(!$this->id){
-            $this->generateId();
-        }
         return $this->id;
     }
 
@@ -37,7 +49,24 @@ class Client {
 
     public function generateId() : void
     {
-        $this->setId((new Person(App::Container()->get(Generator::class)))->name());
+        if(!self::$nameGenerator){
+            /** @var Generator $generator */
+            self::$nameGenerator = new Generator();
+            self::$nameGenerator->addProvider(new Person(self::$nameGenerator));
+            self::$nameGenerator->seed(self::$seedIndex);
+        }
+
+        $this->setId(str_replace(" ", "-", (new Person(self::$nameGenerator))->name()));
+    }
+
+    public function getHumanId() : string
+    {
+        return sprintf(
+            '%s-%s (%s)',
+            $this->isReadOnly() ? 'R' : 'W',
+            $this->getId(),
+            $this->getConnectionDetails()[0]
+        );
     }
 
     /**
@@ -55,6 +84,14 @@ class Client {
     public function setPredis(\Predis\Client $predis): Client
     {
         $this->predis = $predis;
+
+        $connectionString = parse_url($this->predis->getConnection()->__toString());
+
+        $this->connectionDetails = [
+            sprintf("tcp://%s:%d", $connectionString['host'], $connectionString['port']),
+            sprintf("tcp://%s:%d", gethostbyname($connectionString['host']), $connectionString['port']),
+        ];
+
         return $this;
     }
 
@@ -74,5 +111,28 @@ class Client {
     {
         $this->readOnly = $readOnly;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConnectionDetails(): array
+    {
+        return $this->connectionDetails;
+    }
+
+    /**
+     * @param array $connectionDetails
+     * @return Client
+     */
+    public function setConnectionDetails(array $connectionDetails): Client
+    {
+        $this->connectionDetails = $connectionDetails;
+        return $this;
+    }
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([$this->predis, $name], $arguments);
     }
 }

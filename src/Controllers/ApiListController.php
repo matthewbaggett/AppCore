@@ -3,6 +3,7 @@ namespace Gone\AppCore\Controllers;
 
 use Gone\AppCore\Abstracts\Controller;
 use Gone\AppCore\App;
+use Gone\AppCore\Redis\Redis;
 use Gone\AppCore\Router\Router;
 use Monolog\Logger;
 use Slim\Http\Request;
