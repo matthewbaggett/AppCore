@@ -13,6 +13,7 @@ all: clean setup test clean
 define setup
 	composer install && \
 	docker-compose pull && \
+	docker-compose build --pull test && \
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		up -d redis test \
 		&& \
@@ -35,6 +36,7 @@ dev-test:
 	@[[ -z `docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) ps -q test` ]] \
 		&& (echo "Starting Services" && $(call setup)) \
 		|| echo "Services already running"
+
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		exec -T \
 			test vendor/phpunit/phpunit/phpunit \

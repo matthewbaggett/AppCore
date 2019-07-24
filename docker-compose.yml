@@ -5,9 +5,9 @@ networks:
 
 services:
   test:
-    image: gone/php:cli-php7.3
-    volumes:
-      - ./:/app
+    build:
+      context: .
+      dockerfile: Dockerfile.Test
     depends_on:
       redis:
         condition: service_healthy
