@@ -13,7 +13,6 @@ all: clean setup test clean
 setup:
 	composer install
 	docker-compose pull
-	#docker-compose build --pull test
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
 		up -d redis
 	sleep 10
