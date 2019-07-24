@@ -1,4 +1,7 @@
-# AppCore
+AppCore
+=======
+
+[![Build Status](https://travis-ci.org/goneio/AppCore.svg?branch=master)](https://travis-ci.org/goneio/AppCore)
 
 A toolkit for rapidly prototyping applications built ontop of the following technology stack:
 
