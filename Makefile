@@ -19,7 +19,7 @@ define setup
 	sleep 10
 endef
 
-setup:
+setup: clean
 	$(call setup)
 
 test:
