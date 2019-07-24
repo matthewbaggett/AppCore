@@ -18,9 +18,7 @@ setup:
 
 test:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
-		run test vendor/bin/phpunit \
-		--stop-on-failure --stop-on-error \
-		--no-coverage
+		run test vendor/phpunit/phpunit/phpunit
 
 clean:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
