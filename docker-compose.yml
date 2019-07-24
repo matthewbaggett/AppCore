@@ -23,20 +23,9 @@ services:
     expose:
       - '7000-7007'
       - '5000-5002'
-    #ports:
-    #  - '127.110.21.18:6739:7000'
-    #  - '127.110.21.18:7000-7007:7000-7007'
-    #  - '127.110.21.18:5000-5002:5000-5002'
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "7000", "PING"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
-
-  redis-monitor:
-    image: redis:3
-    depends_on:
-      redis:
-        condition: service_healthy
-    command: redis-cli -h redis -p 7000 MONITOR
