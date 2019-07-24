@@ -28,6 +28,6 @@ clean:
 
 dev-test:
 	docker-compose -p $(CI_PROJECT_NAME)_$(CI_COMMIT_SHORT_SHA) \
-		run test vendor/bin/phpunit \
+		run test vendor/phpunit/phpunit/phpunit \
 		--stop-on-failure --stop-on-error \
 		--no-coverage
