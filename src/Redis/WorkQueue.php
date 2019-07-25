@@ -15,6 +15,8 @@ class WorkQueue
     /** @var WorkItem[] */
     protected $buffer = [];
 
+    protected const MAX_INDIVIDUAL_COMMIT_QUEUE_SIZE = 100;
+
     public function __construct(
         Redis $redis
     )
@@ -102,19 +104,23 @@ class WorkQueue
      */
     public function commitQueue() : bool
     {
-        if(count($this->buffer) == 0){
-            return true;
+        while(count($this->buffer) > 0) {
+            $dict = [];
+            while (
+                count($this->buffer) > 0 &&
+                count($dict) <= self::MAX_INDIVIDUAL_COMMIT_QUEUE_SIZE
+            ) {
+                $bufferedWorkItem = array_shift($this->buffer);
+                $dict[$this->namespace . ":" . $bufferedWorkItem->uniqueKey()] = $bufferedWorkItem->serialize();
+            }
+            /** @var Response\Status $status */
+            $status = $this->redis->mset($dict);
+            if($status->getPayload() != 'OK'){
+                return false;
+            }
         }
 
-        $dict = [];
-        foreach($this->buffer as $bufferedWorkItem){
-            $dict[$this->namespace . ":" . $bufferedWorkItem->uniqueKey()] = $bufferedWorkItem->serialize();
-        }
-        $this->buffer = [];
-        /** @var Response\Status $status */
-        $status = $this->redis->mset($dict);
-
-        return $status->getPayload() == 'OK';
+        return true;
     }
 
     public function getLength() : int
