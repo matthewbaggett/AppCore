@@ -22,10 +22,10 @@ use Predis\Collection\Iterator;
 class Redis implements ClientInterface
 {
     protected const CLUSTER_CONFIGURATION_MAX_AGE_SECONDS = 60;
-    protected const CLIENTS_ALL = 0;
-    protected const CLIENTS_READONLY = 1;
-    protected const CLIENTS_WRITEONLY = 2;
-    protected const SINGLE_ARG_COMMANDS = ["get", "set"];
+    public const CLIENTS_ALL = 0;
+    public const CLIENTS_READONLY = 1;
+    public const CLIENTS_WRITEONLY = 2;
+    protected const SINGLE_ARG_COMMANDS = ["get", "set", "hget", "hset"];
 
     protected static $clusterConfiguration;
     protected static $clusterConfigurationLastUpdated;
@@ -348,7 +348,7 @@ class Redis implements ClientInterface
                     ? $arguments
                     : [0 => $items];
 
-                #\Kint::dump($method, $hash, $items, $redirectedArguments);
+                #\Kint::dump($method, $hash, $items, $arguments, $redirectedArguments);
 
                 $response = $client->getPredis()
                     ->__call(
