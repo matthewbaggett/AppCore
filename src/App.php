@@ -419,7 +419,7 @@ class App
     public function setupMiddlewares() : void
     {
         // Middlewares
-        #$this->app->add(new Middleware\EnvironmentHeadersOnResponse());
+        $this->app->add(new Middleware\EnvironmentHeadersOnResponse());
         ##$this->app->add(new \Middlewares\ContentType(["text/html", "application/json"]));
         #$this->app->add(new \Middlewares\Debugbar());
         ##$this->app->add(new \Middlewares\Geolocation());
