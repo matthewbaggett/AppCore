@@ -69,14 +69,15 @@ class WorkQueue
         $key = $keys[0];
 
         // Atomically get and delete the node in a transaction
-        $this->redis->multi();
-        $data = $this->redis->get($key);
-        $this->redis->del($key);
-        $this->redis->exec();
+        $instance = $this->redis->getServerByKey($key)->getPredis();
+        $instance->multi();
+        $instance->get($key);
+        $instance->del($key);
+        list($getData, $deletedKeys) = $instance->exec();
 
-        \Kint::dump($data);
-        exit;
-
+        $workItem = new WorkItem();
+        $workItem->unserialize($getData);
+        return $workItem;
     }
 
     public function push(WorkItem $workItem) : WorkQueue

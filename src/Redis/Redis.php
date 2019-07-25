@@ -143,6 +143,12 @@ class Redis implements ClientInterface
         self::$clusterConfigurationLastUpdated = time();
     }
 
+    public function getServerByKey(string $key) : Client
+    {
+        return $this->getServerByHash(
+            $this->clusterStrategy->getSlotByKey($key)
+        );
+    }
     /**
      * @param int $hash
      * @return Client
@@ -315,12 +321,12 @@ class Redis implements ClientInterface
             $responses = [];
             foreach($mappedServerConnections as $serverName => $client){
                 /** @var $client Client */
-                echo sprintf(
-                    "Connecting to %s to call %s for %d sub-elements\n",
-                    $client->getHumanId(),
-                    strtoupper($method),
-                    count($mappedServerQueues[$serverName])
-                );
+                #echo sprintf(
+                #    "Connecting to %s to call %s for %d sub-elements\n",
+                #    $client->getHumanId(),
+                #    strtoupper($method),
+                #    count($mappedServerQueues[$serverName])
+                #);
                 #\Kint::dump($mappedServerQueues[$serverName]);exit;
                 foreach($mappedServerQueues[$serverName] as $hash => $items) {
                     #\Kint::dump($serverName, $hash, $items);

@@ -20,7 +20,7 @@ class WorkItem
 
     public function unserialize($serialized)
     {
-        $this->payloads = json_decode($serialized);
+        $this->payloads = json_decode($serialized, true);
     }
 
     /**

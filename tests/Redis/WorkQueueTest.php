@@ -34,6 +34,6 @@ class WorkQueueTest extends RedisTest
 
         $dataFromQueue = $this->workQueue->pop();
 
-        $this->assertEquals($data, $dataFromQueue);
+        $this->assertEquals($data, $dataFromQueue->getPayload());
     }
 }
