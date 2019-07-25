@@ -20,7 +20,7 @@ abstract class RedisTest extends BaseTestCase
     public function tearDown()
     {
         echo "\n" . $this->redis->__getPerfLogAsString();
-        $this->redis->flushall();
+        //$this->redis->flushall();
 
         parent::tearDown();
     }

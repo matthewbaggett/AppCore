@@ -220,4 +220,10 @@ abstract class BaseTestCase extends TestCase
     {
         return self::getAppObject()->getContainer();
     }
+
+    public function assertArraysEquitable($expected, $actual) : void
+    {
+        sort($expected); sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
 }

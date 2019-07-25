@@ -15,6 +15,7 @@ use Predis\Connection\ConnectionInterface;
 use Predis\Profile\ProfileInterface;
 use Predis\Profile\RedisVersion320;
 use Predis\Response\ServerException;
+use Predis\Response\Status;
 use Traversable;
 use Predis\Collection\Iterator;
 
@@ -67,18 +68,16 @@ class Redis implements ClientInterface
         }
         foreach ($this->redisMasterHosts as $masterHost) {
             $this->redisWritePools[] = (new Client())
-                ->setPredis(new \Predis\Client($masterHost))
+                ->setConnection($masterHost)
                 ->setReadOnly(false);
         }
         foreach ($this->redisSlaveHosts as $slaveHost) {
             $this->redisReadPools[] = (new Client())
-                ->setPredis(new \Predis\Client($slaveHost))
+                ->setConnection($slaveHost)
                 ->setReadOnly(true);
         }
 
-
-            $this->configureCluster();
-
+        $this->configureCluster();
 
         #!\Kint::dump(self::$clusterConfiguration, "Configuration is " . (self::$clusterConfigurationLastUpdated - time()) . " seconds old");
     }
@@ -254,16 +253,16 @@ class Redis implements ClientInterface
 
     public function __call($method, $arguments)
     {
-        \Kint::dump($method, $arguments);
+        #\Kint::dump($method, $arguments);
 
-        if(isset($arguments[0])) {
+        if(isset($arguments[0]) && is_array($arguments[0])) {
             if(isset($arguments[0][0])) {
                 $affectedKeys = array_values($arguments[0]);
             }else{
                 $affectedKeys = array_keys($arguments[0]);
                 $affectedValues = $arguments[0];
             }
-            \Kint::dump($affectedKeys);
+            #\Kint::dump($affectedKeys);
         }
 
         // If we have affected keys, lets work out what nodes they go to.
@@ -278,24 +277,75 @@ class Redis implements ClientInterface
                     'value' => $affectedValues[$key] ?? null,
                 ]);
             }
-            \Kint::$max_depth = 3;
-            \Kint::dump($mappedKeys);
+            #\Kint::$max_depth = 3;
+            #\Kint::dump($mappedKeys);
         }
 
         // Okay, so we mapped 'em. Lets create n-nodes iterations of this __call, one for each server affected
         if(isset($mappedKeys)){
             $mappedServers = [];
+            $mappedServerQueues = [];
+            $mappedServerConnections = [];
             foreach ($mappedKeys as $key => $mappedKey) {
-                $mappedServers[$mappedKey['client']->getId()][] = [
+                $mappedServers[$mappedKey['client']->getConnection()][$mappedKey['hash']][] = [
                     'key' => $key,
                     'value' => $mappedKey['value'] ?? null,
                     'hash' => $mappedKey['hash']
                 ];
+                if(isset($mappedKey['value'])) {
+                    $mappedServerQueues[$mappedKey['client']->getConnection()][$mappedKey['hash']][$key] = $mappedKey['value'];
+                }else{
+                    $mappedServerQueues[$mappedKey['client']->getConnection()][$mappedKey['hash']][] = $key;
+                }
+                if(!isset($mappedServerConnections[$mappedKey['client']->getConnection()])){
+                    $mappedServerConnections[$mappedKey['client']->getConnection()]
+                        = $mappedKey['client'];
+                }
             }
-            \Kint::dump(
-                $mappedServers,
-                array_keys($mappedServers)
-            );
+
+            #\Kint::$max_depth = 4;
+            #\Kint::dump(
+            #    $mappedServers,
+            #    self::$clusterConfiguration,
+            #    array_keys($mappedServers),
+            #    $mappedServerQueues,
+            #    $mappedServerConnections
+            #);
+
+            $responses = [];
+            foreach($mappedServerConnections as $serverName => $client){
+                /** @var $client Client */
+                echo sprintf(
+                    "Connecting to %s to call %s for %d sub-elements\n",
+                    $client->getHumanId(),
+                    strtoupper($method),
+                    count($mappedServerQueues[$serverName])
+                );
+                #\Kint::dump($mappedServerQueues[$serverName]);exit;
+                foreach($mappedServerQueues[$serverName] as $hash => $items) {
+                    #\Kint::dump($serverName, $hash, $items);
+                    $responses[] = $client->getPredis()->__call($method, [0 => $items]);
+                }
+            }
+
+            #\Kint::dump($method, $responses);
+            $mergedResponses = [];
+            foreach($responses as $response){
+                if(is_array($response)) {
+                    $mergedResponses = array_merge($mergedResponses, $response);
+                }else{
+                    $mergedResponses[] = $response;
+                }
+                if($response instanceof Status && $response->getPayload() != 'OK'){
+                    return $response;
+                }
+            }
+            #\Kint::dump($mergedResponses);
+            if(reset($mergedResponses) instanceof Status){
+                return reset($mergedResponses);
+            }
+            sort($mergedResponses);
+            return $mergedResponses;
         }
 
         $response = false;

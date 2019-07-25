@@ -5,9 +5,7 @@ networks:
 
 services:
   test:
-    build:
-      context: .
-      dockerfile: Dockerfile.Test
+    image: gone/php:cli-php7.3
     volumes:
       - ./:/app
     depends_on:

@@ -9,6 +9,8 @@ use Gone\AppCore\App;
 class Client {
     /** @var string */
     private $id;
+    /** @var string */
+    private $connection;
     /** @var \Predis\Client */
     private $predis;
     /** @var boolean */
@@ -67,6 +69,25 @@ class Client {
             $this->getId(),
             $this->getConnectionDetails()[0]
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getConnection(): string
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @param string $connection
+     * @return Client
+     */
+    public function setConnection(string $connection): Client
+    {
+        $this->connection = $connection;
+        $this->setPredis(new \Predis\Client($this->connection));
+        return $this;
     }
 
     /**
