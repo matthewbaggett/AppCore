@@ -327,6 +327,7 @@ class Redis implements ClientInterface
             $responses = [];
             foreach($mappedServerConnections as $serverName => $client){
                 /** @var $client Client */
+
                 #echo sprintf(
                 #    "Connecting to %s to call %s for %d sub-elements\n",
                 #    $client->getHumanId(),
@@ -334,21 +335,30 @@ class Redis implements ClientInterface
                 #    count($mappedServerQueues[$serverName])
                 #);
                 #\Kint::dump($mappedServerQueues[$serverName]);
-                foreach($mappedServerQueues[$serverName] as $hash => $items) {
 
-                    $redirectedArguments = in_array($method, self::SINGLE_ARG_COMMANDS) ? $arguments : [0 => $items];
+                foreach($mappedServerQueues[$serverName] as $hash => $items) {
+                    // if its a single argument command, just send the arguments as-is,
+                    // else send our processed items
+                    $redirectedArguments = in_array($method, self::SINGLE_ARG_COMMANDS)
+                        ? $arguments
+                        : [0 => $items]
+                    ;
 
                     #\Kint::dump($method, $hash, $items, $redirectedArguments);
 
-                    $responses[] = $client->getPredis()
+                    $response = $client->getPredis()
                         ->__call(
                             $method,
                             $redirectedArguments
                         );
 
-                    if(in_array($method, self::SINGLE_ARG_COMMANDS)){
-                        return reset($responses);
+                    // If its a single arg command, return fast with the response.
+                    if(in_array($method, self::SINGLE_ARG_COMMANDS)) {
+                        return $response;
                     }
+
+                    // If its not, add it to our list of responses.
+                    $responses[] = $response;
                 }
             }
 
