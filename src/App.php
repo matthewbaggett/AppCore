@@ -285,7 +285,7 @@ class App
             return (
                 new LineFormatter(
                     // the default output format is "[%datetime%] %channel%.%level_name%: %message% %context% %extra%"
-                    $environment->get("MONOLOG_FORMAT", "[%datetime%] %channel%.%level_name%: %message% %context% %extra%"),
+                    $environment->get("MONOLOG_FORMAT", "[%datetime%] %channel%.%level_name%: %message% %context% %extra%") . "\n",
                     "Y n j, g:i a"
                 )
             );
