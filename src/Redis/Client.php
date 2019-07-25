@@ -86,7 +86,7 @@ class Client {
     public function setConnection(string $connection): Client
     {
         $this->connection = $connection;
-        $this->setPredis(new \Predis\Client($this->connection));
+        $this->configureConnectionDetailsFromPredis(new \Predis\Client($this->connection));
         return $this;
     }
 
@@ -95,18 +95,16 @@ class Client {
      */
     public function getPredis(): \Predis\Client
     {
-        return $this->predis;
+        return new \Predis\Client($this->connection);
     }
 
     /**
      * @param \Predis\Client $redis
      * @return Client
      */
-    public function setPredis(\Predis\Client $predis): Client
+    public function configureConnectionDetailsFromPredis(\Predis\Client $predis): Client
     {
-        $this->predis = $predis;
-
-        $connectionString = parse_url($this->predis->getConnection()->__toString());
+        $connectionString = parse_url($predis->getConnection()->__toString());
 
         $this->connectionDetails = [
             sprintf("tcp://%s:%d", $connectionString['host'], $connectionString['port']),
@@ -154,6 +152,6 @@ class Client {
 
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->predis, $name], $arguments);
+        return call_user_func_array([$this->getPredis(), $name], $arguments);
     }
 }

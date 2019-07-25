@@ -25,7 +25,7 @@ class Redis implements ClientInterface
     public const CLIENTS_ALL = 0;
     public const CLIENTS_READONLY = 1;
     public const CLIENTS_WRITEONLY = 2;
-    protected const SINGLE_ARG_COMMANDS = ["get", "set", "hget", "hset"];
+    protected const SINGLE_ARG_COMMANDS = ["get", "set", "hget", "hset", "exists"];
 
     protected static $clusterConfiguration;
     protected static $clusterConfigurationLastUpdated;
@@ -102,13 +102,24 @@ class Redis implements ClientInterface
                     )
             )
         );
-        self::$clusterConfiguration = [];
-        foreach ($nodes as $node) {
-            // Dirty hack to make the number of elements in each node irrelevent.
-            $node = $node . " . . . . .";
-            $explodedNode = explode(" ", $node);
-            list($id, $connection, $flags, $slaveOfId, $pingSent, $pongRecv, $configEpoch, $linkState, $supportedHashRange) = $explodedNode;
 
+        self::$clusterConfiguration = [];
+        foreach ($nodes as $nodeIndex => $node) {
+            // Dirty hack to make the number of elements in each node irrelevent.
+            $explodedNode = explode(" ", $node . " . . . . .");
+            if($explodedNode[0] == 'ERR'){
+                if($node == 'ERR This instance has cluster support disabled') {
+                    self::$clusterConfiguration[$nodeIndex] = [
+                        "id" => $nodeIndex,
+                        "connection" => $client->getConnection(),
+                        "type" => "solo",
+                    ];
+                    continue;
+                }
+            }
+
+            // Write the exploded node into nice vars
+            list($id, $connection, $flags, $slaveOfId, $pingSent, $pongRecv, $configEpoch, $linkState, $supportedHashRange) = $explodedNode;
 
             // Split out the flags
             $flags = explode(",", $flags);
@@ -137,6 +148,8 @@ class Redis implements ClientInterface
         });
 
         self::$clusterConfigurationLastUpdated = time();
+
+        #\Kint::dump(self::$clusterConfiguration);exit;
     }
 
     protected function getClient($mode = self::CLIENTS_ALL): Client
@@ -189,6 +202,9 @@ class Redis implements ClientInterface
                     //\Kint::dump($clusterNodeConfiguration['connection']);
                     return $this->getClientByAddress($clusterNodeConfiguration['connection']);
                 }
+            }
+            if (isset($clusterNodeConfiguration['type']) && $clusterNodeConfiguration['type'] == 'solo'){
+                return $this->getClientByAddress($clusterNodeConfiguration['connection']);
             }
         }
 
@@ -315,6 +331,9 @@ class Redis implements ClientInterface
         $mappedServerQueues = [];
         $mappedServerConnections = [];
         foreach ($mappedKeys as $key => $mappedKey) {
+            if(!isset($mappedKey['hash'])) {
+                \Kint::dump($mappedKey);
+            }
             $mappedServers[$mappedKey['client']->getConnection()][$mappedKey['hash']][] = [
                 'key' => $key,
                 'value' => $mappedKey['value'] ?? null,

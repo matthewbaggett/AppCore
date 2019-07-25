@@ -75,7 +75,13 @@ class WorkQueue
         $instance->multi();
         $instance->get($key);
         $instance->del($key);
-        list($getData, $deletedKeys) = $instance->exec();
+        $result = $instance->exec();
+
+        if($result instanceof Response\Status){
+            \Kint::dump($result);
+        }
+        
+        list($getData, $deletedKeys) = $result;
 
         $workItem = new WorkItem();
         $workItem->unserialize($getData);
