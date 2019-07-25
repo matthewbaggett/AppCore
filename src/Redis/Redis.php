@@ -294,11 +294,13 @@ class Redis implements ClientInterface
             foreach ($affectedKeys as $key) {
                 $hash = $this->clusterStrategy->getSlotByKey($key);
                 $server = $this->getServerByHash($hash);
-                $mappedKeys[$key] = array_filter([
+                $mappedKeys[$key] = [
                     'hash' => $hash,
                     'client' => $server,
-                    'value' => $affectedValues[$key] ?? null,
-                ]);
+                ];
+                if(isset($affectedValues[$key])){
+                    $mappedKeys[$key]['value'] = $affectedValues[$key];
+                }
             }
             #\Kint::$max_depth = 3;
             #\Kint::dump($mappedKeys);
