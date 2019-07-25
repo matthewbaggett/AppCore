@@ -3,7 +3,7 @@ namespace Gone\AppCore\Tests\Redis;
 
 use Predis\Response;
 
-class MSetMGetTest extends RedisTest
+class HSetHGetTest extends RedisTest
 {
     const ITERATIONS_MIN = 20;
     const ITERATIONS_MAX = 80;

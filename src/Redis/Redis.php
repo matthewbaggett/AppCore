@@ -261,9 +261,13 @@ class Redis implements ClientInterface
     {
         #\Kint::dump($method, $arguments);
 
-        if(isset($arguments[0]) && is_array($arguments[0])) {
+        if(isset($arguments[0])) {
             if(isset($arguments[0][0])) {
-                $affectedKeys = array_values($arguments[0]);
+                if(is_array($arguments[0])) {
+                    $affectedKeys = array_values($arguments[0]);
+                }else{
+                    $affectedKeys = [$arguments[0]];
+                }
             }else{
                 $affectedKeys = array_keys($arguments[0]);
                 $affectedValues = $arguments[0];
@@ -287,8 +291,10 @@ class Redis implements ClientInterface
             #\Kint::dump($mappedKeys);
         }
 
-        // Okay, so we mapped 'em. Lets create n-nodes iterations of this __call, one for each server affected
-        if(isset($mappedKeys)){
+        if(!isset($mappedKeys)){
+            throw new Exception("Mapping keys failed!");
+        }else{
+            // Okay, so we mapped 'em. Lets create n-nodes iterations of this __call, one for each server affected
             $mappedServers = [];
             $mappedServerQueues = [];
             $mappedServerConnections = [];
@@ -327,10 +333,22 @@ class Redis implements ClientInterface
                 #    strtoupper($method),
                 #    count($mappedServerQueues[$serverName])
                 #);
-                #\Kint::dump($mappedServerQueues[$serverName]);exit;
+                #\Kint::dump($mappedServerQueues[$serverName]);
                 foreach($mappedServerQueues[$serverName] as $hash => $items) {
-                    #\Kint::dump($serverName, $hash, $items);
-                    $responses[] = $client->getPredis()->__call($method, [0 => $items]);
+
+                    $redirectedArguments = in_array($method, self::SINGLE_ARG_COMMANDS) ? $arguments : [0 => $items];
+
+                    #\Kint::dump($method, $hash, $items, $redirectedArguments);
+
+                    $responses[] = $client->getPredis()
+                        ->__call(
+                            $method,
+                            $redirectedArguments
+                        );
+
+                    if(in_array($method, self::SINGLE_ARG_COMMANDS)){
+                        return reset($responses);
+                    }
                 }
             }
 
@@ -353,93 +371,9 @@ class Redis implements ClientInterface
             sort($mergedResponses);
             return $mergedResponses;
         }
-
-        $response = false;
-
-        // Log the time call started
-        $perfLog = (new PerfLogItem());
-
-        // Get an appropriate client
-        $client = $this->getClient($this->isMethodWriting($method) ? self::CLIENTS_WRITEONLY : self::CLIENTS_READONLY);
-        $perfLog->setClient($client);
-
-        // Rebuild the Redis command, for now
-        $command = $this->getClient()->getPredis()->createCommand($method, $arguments);
-        $commandElements = [
-            $command->getId(),
-        ];
-        foreach($command->getArguments() as $argument){
-            $commandElements[] = "\"{$argument}\"";
-        }
-        $requestAsString = implode(" ", $commandElements);
-
-        $perfLog->setQuery($requestAsString);
-
-        // Try the call, then handle MOVED and READONLY replies.
-        try {
-            $response = $client->getPredis()->__call($method, $arguments);
-        } catch (ServerException $serverException) {
-            $responseKeyword = (explode(" ", $serverException->getMessage()))[0];
-
-            #$this->logger->addCritical("[ServerException] Request: {$requestAsString}, Response: \"{$responseKeyword}\": " . str_replace("\n", "  ", $serverException->getMessage()) . " ");
-
-            if ($responseKeyword == 'READONLY') {
-                $writeClient = $this->getClient(self::CLIENTS_WRITEONLY);
-                $perfLog
-                    ->setFlag(PerfLogItem::FLAG_READONLY)
-                    ->setClient($writeClient);
-                if ($writeClient) {
-                    $response = $writeClient->getPredis()->__call($method, $arguments);
-                }else{
-                    throw new Exception("Sent a READONLY command, but did not find a suitable client to move to.");
-                }
-            }
-
-            if ($responseKeyword == 'MOVED') {
-                $movedClient = $this->getClientByMoved($serverException->getMessage());
-                $perfLog
-                    ->setFlag(PerfLogItem::FLAG_MOVED)
-                    ->setClient($movedClient);
-                if ($movedClient) {
-                    $this->logger->addCritical("[MOVED] Rerunning on {$movedClient->getHumanId()}: {$requestAsString}");
-                    $response = $movedClient->getPredis()->__call($method, $arguments);
-                }else{
-                    throw new Exception("Sent a MOVED command, but did not find a suitable client to move to.");
-                }
-            }
-            
-            if ($responseKeyword == 'ERR') {
-                throw new Exception(
-                    sprintf(
-                        "Redis Error: %s. Query: %s",
-                        $serverException->getMessage(),
-                        $requestAsString
-                    )
-                );
-            }
-
-            if($response === false){
-                \Kint::dump(
-                    $responseKeyword,
-                    $serverException->getMessage(),
-                    $method,
-                    $arguments
-                ); exit;
-                throw $serverException;
-            }
-        }
-
-        // Stop the timer in perfLog.
-        $this->perfLog[] = (
-            $perfLog
-                ->timerStop()
-        );
-
-        // Log our redis activity
-        $this->logger->addInfo($perfLog->__toString());
-
-        return $response;
     }
+
+    protected const SINGLE_ARG_COMMANDS=["get","set"];
 
     public function __clearPerfLog() : void
     {
