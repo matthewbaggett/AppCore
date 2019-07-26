@@ -100,4 +100,9 @@ class EnvironmentService
         $this->environmentVariables[$key] = $value;
         return $this;
     }
+
+    public function keys() : array
+    {
+        return array_keys($this->environmentVariables);
+    }
 }
