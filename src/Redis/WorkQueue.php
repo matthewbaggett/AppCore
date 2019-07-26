@@ -75,6 +75,12 @@ class WorkQueue
         $instance->multi();
         $instance->get($key);
         $instance->del($key);
+        $instance->publishEvent(
+            (new Event())
+                ->setChannel("event:queue:{$this->getNamespacePrefix(false)}")
+                ->setPayload($key)
+                ->setType('QUEUE:SUB')
+        );
         $result = $instance->exec();
 
         if($result instanceof Response\Status){
@@ -98,10 +104,10 @@ class WorkQueue
         return $this->takeFromQueue();
     }
 
-    protected function getNamespacePrefix() : string
+    protected function getNamespacePrefix(bool $trailingColon = true) : string
     {
-        $namespace = preg_replace("/[^a-zA-Z0-9-_]/", '', strtolower($this->namespace));
-        return "{$namespace}:";
+        $namespace = preg_replace("/[^a-zA-Z0-9-_{}]/", '', strtolower($this->namespace));
+        return $trailingColon ? "{$namespace}:" : $namespace;
     }
 
     /**
@@ -110,14 +116,22 @@ class WorkQueue
      */
     public function commitQueue() : bool
     {
+        $addedToWorkQueue = 0;
+
+        $keys = [];
+
         while(count($this->buffer) > 0) {
             $dict = [];
+
             while (
                 count($this->buffer) > 0 &&
                 count($dict) <= self::MAX_INDIVIDUAL_COMMIT_QUEUE_SIZE
             ) {
                 $bufferedWorkItem = array_shift($this->buffer);
-                $dict[$this->namespace . ":" . $bufferedWorkItem->uniqueKey()] = $bufferedWorkItem->serialize();
+                $key = $this->getNamespacePrefix() . $bufferedWorkItem->uniqueKey();
+                $dict[$key] = $bufferedWorkItem->serialize();
+                $keys[] = $key;
+                $addedToWorkQueue++;
             }
             /** @var Response\Status $status */
             $status = $this->redis->mset($dict);
@@ -125,6 +139,13 @@ class WorkQueue
                 return false;
             }
         }
+
+        $this->redis->publishEvent(
+            (new Event())
+                ->setChannel("event:queue:{$this->getNamespacePrefix(false)}")
+                ->setPayload($keys)
+                ->setType('QUEUE:ADD')
+        );
 
         return true;
     }

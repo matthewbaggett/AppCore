@@ -11,6 +11,7 @@ use Predis\Cluster\RedisStrategy;
 use Predis\Command\CommandInterface;
 use Predis\Command\RawCommand;
 use Predis\Configuration\OptionsInterface;
+use Predis\Connection\ConnectionException;
 use Predis\Connection\ConnectionInterface;
 use Predis\Profile\ProfileInterface;
 use Predis\Profile\RedisVersion320;
@@ -19,13 +20,26 @@ use Predis\Response\Status;
 use Traversable;
 use Predis\Collection\Iterator;
 
+/**
+ * @method int    publishEvent(Event $event)
+ */
 class Redis implements ClientInterface
 {
     protected const CLUSTER_CONFIGURATION_MAX_AGE_SECONDS = 60;
     public const CLIENTS_ALL = 0;
     public const CLIENTS_READONLY = 1;
     public const CLIENTS_WRITEONLY = 2;
-    protected const SINGLE_ARG_COMMANDS = ["get", "set", "hget", "hset", "exists"];
+
+    protected const SINGLE_ARG_COMMANDS = [
+        "get", "set",
+        "hget", "hgetall", "hset",
+        "exists",
+    ];
+
+    protected const SPECIAL_COMMANDS = [
+        "hmset", //"hmget",
+        "publish",
+    ];
 
     protected static $clusterConfiguration;
     protected static $clusterConfigurationLastUpdated;
@@ -37,9 +51,9 @@ class Redis implements ClientInterface
     protected $redisMasterHosts = [];
     /** @var string[] */
     protected $redisSlaveHosts = [];
-    /** @var \Predis\Client[] */
+    /** @var PredisClient[] */
     protected $redisWritePools = [];
-    /** @var \Predis\Client[] */
+    /** @var PredisClient[] */
     protected $redisReadPools = [];
     /** @var ClusterStrategy */
     protected $clusterStrategy;
@@ -263,17 +277,40 @@ class Redis implements ClientInterface
         return $this->getReadableClient()->executeCommand($command);
     }
 
+    protected const SEARCH_USING_SCAN='scan';
+    protected const SEARCH_USING_KEYS='keys';
+    protected const SEARCH_METHOD=self::SEARCH_USING_KEYS;
+
     public function keys($match = "*", $count = null)
     {
         $match = str_replace("{", "\\{", $match);
         $match = str_replace("}", "}\\", $match);
         $keys = [];
-        foreach ($this->getClients(self::CLIENTS_ALL) as $client) {
-            //$keys[$client->getHumanId()] = [];
-            foreach (new Iterator\Keyspace($client->getPredis(), $match, $count) as $key) {
-                //$keys[$client->getHumanId()][] = $key;
-                $keys[] = $key;
-            }
+
+        switch (self::SEARCH_METHOD) {
+            case self::SEARCH_USING_KEYS:
+                foreach ($this->getClients(self::CLIENTS_WRITEONLY) as $client) {
+                    foreach($client->getPredis()->keys($match) as $key){
+                        $keys[] = $key;
+                    }
+                }
+                break;
+
+            case self::SEARCH_USING_SCAN:
+                foreach ($this->getClients(self::CLIENTS_WRITEONLY) as $client) {
+                    //$keys[$client->getHumanId()] = [];
+                    foreach (new Iterator\Keyspace($client->getPredis(), $match, $count) as $key) {
+                        //$keys[$client->getHumanId()][] = $key;
+                        $keys[] = $key;
+                    }
+                }
+                break;
+
+            default:
+                throw new Exception(sprintf(
+                    'Unknown SEARCH_METHOD: "%s"',
+                    self::SEARCH_METHOD
+                ));
         }
         sort($keys);
         return array_unique($keys);
@@ -365,17 +402,24 @@ class Redis implements ClientInterface
             foreach ($mappedServerQueues[$serverName] as $hash => $items) {
                 // if its a single argument command, just send the arguments as-is,
                 // else send our processed items
-                $redirectedArguments = in_array($method, self::SINGLE_ARG_COMMANDS)
+                $redirectedArguments = in_array($method, array_merge(self::SINGLE_ARG_COMMANDS, self::SPECIAL_COMMANDS))
                     ? $arguments
                     : [0 => $items];
 
                 #\Kint::dump($method, $hash, $items, $arguments, $redirectedArguments);
 
-                $response = $client->getPredis()
-                    ->__call(
-                        $method,
-                        $redirectedArguments
-                    );
+                #\Kint::dump($method, $arguments, $redirectedArguments);
+
+                try {
+                    $response = $client->getPredis()
+                        ->__call(
+                            $method,
+                            $redirectedArguments
+                        );
+                }catch(ConnectionException $connectionException){
+                    \Kint::dump($method, $hash, $items, $arguments, $redirectedArguments);
+                    throw $connectionException;
+                }
 
                 // If its a single arg command, return fast with the response.
                 if (in_array($method, self::SINGLE_ARG_COMMANDS)) {
@@ -437,6 +481,11 @@ class Redis implements ClientInterface
         $address = "tcp://{$movedStatement[2]}";
 
         return $this->getClientByAddress($address);
+    }
+
+    public function publishEvent(Event $event)
+    {
+        return $this->getClient(self::CLIENTS_WRITEONLY)->getPredis()->publishEvent($event);
     }
 
 

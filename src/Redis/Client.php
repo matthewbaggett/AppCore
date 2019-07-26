@@ -11,7 +11,7 @@ class Client {
     private $id;
     /** @var string */
     private $connection;
-    /** @var \Predis\Client */
+    /** @var PredisClient */
     private $predis;
     /** @var boolean */
     private $readOnly;
@@ -86,23 +86,23 @@ class Client {
     public function setConnection(string $connection): Client
     {
         $this->connection = $connection;
-        $this->configureConnectionDetailsFromPredis(new \Predis\Client($this->connection));
+        $this->configureConnectionDetailsFromPredis(new PredisClient($this->connection));
         return $this;
     }
 
     /**
-     * @return \Predis\Client
+     * @return PredisClient
      */
-    public function getPredis(): \Predis\Client
+    public function getPredis(): PredisClient
     {
-        return new \Predis\Client($this->connection);
+        return new PredisClient($this->connection);
     }
 
     /**
-     * @param \Predis\Client $redis
+     * @param PredisClient $redis
      * @return Client
      */
-    public function configureConnectionDetailsFromPredis(\Predis\Client $predis): Client
+    public function configureConnectionDetailsFromPredis(PredisClient $predis): Client
     {
         $connectionString = parse_url($predis->getConnection()->__toString());
 
@@ -152,6 +152,9 @@ class Client {
 
     public function __call($name, $arguments)
     {
+        // We could just do this:
+        // return $this->getPredis()->__call($name, $arguments);
+        // But then we wouldn't have the chance to override functions with named functions inside PredisClient.
         return call_user_func_array([$this->getPredis(), $name], $arguments);
     }
 }
