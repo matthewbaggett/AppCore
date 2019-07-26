@@ -14,6 +14,7 @@ class WorkQueueTest extends RedisTest
         parent::setUp();
 
         $this->workQueue = new WorkQueue($this->redis);
+        $this->workQueue->setNamespace("queue-{$this->getFaker()->firstName}");
     }
 
     public function testWorkQueueAdd()
