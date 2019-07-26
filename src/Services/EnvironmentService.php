@@ -76,22 +76,28 @@ class EnvironmentService
     }
 
     /**
-     * @param string|array    $var
+     * @param string|array    $key
      * @param string|int|bool $default
      *
      * @return string|int|bool
      */
-    public function get($var, $default = false)
+    public function get($key, $default = false)
     {
-        if (is_string($var)) {
-            return $this->isSet($var) ? $this->environmentVariables[$var] : $default;
-        } elseif (is_array($var)) {
-            foreach ($var as $option) {
+        if (is_string($key)) {
+            return $this->isSet($key) ? $this->environmentVariables[$key] : $default;
+        } elseif (is_array($key)) {
+            foreach ($key as $option) {
                 if ($this->isSet($option)) {
                     return $this->get($option);
                 }
             }
         }
         return $default;
+    }
+    
+    public function set($key, $value) : EnvironmentService
+    {
+        $this->environmentVariables[$key] = $value;
+        return $this;
     }
 }
