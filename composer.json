@@ -1,5 +1,8 @@
 {
     "name": "gone.io/appcore",
+    "description": "A clean skeleton application basis to build services in a RAD (Rapid Application Development) method.",
+    "type": "library",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Matthew Baggett",
